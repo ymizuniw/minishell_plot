@@ -32,8 +32,8 @@ int shell_loop(void)
         if (*line)
             add_history(line);
 
-        tokens = lexer(line);
-        ast    = parser(tokens);
+        tokens = lexer(line);//formant analisis. 
+        ast    = parser(tokens);//abstract structure tree.
         res    = executor(ast);
         output_manager(res);
 
