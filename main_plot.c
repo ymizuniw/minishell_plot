@@ -38,9 +38,9 @@ int shell_loop(void)
         output_manager(res);
 
         free(line);
-        // free_tokens(tokens);
-        // free_ast(ast);
-        // free_result(res);
+        free_tokens(tokens);
+        free_ast(ast);
+        free_result(res);
     }
     return (0);
 }
