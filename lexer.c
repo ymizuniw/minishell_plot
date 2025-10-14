@@ -65,3 +65,5 @@ t_token	*lexer(const char *input)
 		}
 	}
 }
+
+// quote removal test case:
