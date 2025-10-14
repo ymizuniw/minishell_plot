@@ -23,52 +23,44 @@ struct s_result t_result;
 //               A token that performs a control function.  It is one of the following symbols:
 //               || & && ; ;; ( ) | <newline>
 
-
-
-//issues
-//metachar set and reserved words shall be in separate structures?
-//the grammar is determined for only valid patterns? or that syntax will funct if it is implemented?
-
+//metacharacter splits input into tokens, if not quoted.
 typedef enum e_metachar
 {
-    OR,
-    AND,
-    LPAREN,
-    RPAREN,
-    LESS,
-    GREAT,
-    SPACE,
-    TAB
+    MT_OR,
+    MT_AND,
+    MT_LPAREN,
+    MT_RPAREN,
+    MT_LESS,
+    MT_GREAT,
+    MT_SPACE,
+    MT_TAB,
+    MT_NEWLINE
 } t_metachar;
 
-typedef enum e_reserved
+//token_type classifies which type the token belongs to.
+typedef enum e_token_type
 {
-    LBRACE,
-    RBRACE
-} t_reserved;
+    TK_WORD,
+    TK_PIPE,
+    TK_REDIRECT_IN,
+    TK_REDIRECT_OUT,
+    TK_HEREDOC,
+    TK_APPEND,
+    TK_EOF
 
-// Naming:
-//         AND_IF '&&' 
-//         OR_IF  '||'
-//         DLESS  '<<'
-//         DGREAT '>>'
-//         LESSGREAT '<>'
-// RESERVED WORDS
-//         Lbrace '{'
+    /*==bonus part==*/
+    TK_AND_IF,
+    TK_OR_IF,
+    TK_LPAREN,
+    TK_RPAREN,
+} t_token_type;
 
-//         Rbrace '}'
 typedef struct s_token
 {
-    OR_IF,
-    AND_IF,
-    LPAREN,
-    RPAREN,
-    PIPE,
-    NEWLINE,
-    DLESS,
-    DGREAT,
-    LESSGREAT
-} t_token;
+    t_token_type type;
+    char *value;
+    struct s_token *next;
+}
 
 typedef struct s_ast
 {

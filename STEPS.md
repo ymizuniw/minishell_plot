@@ -146,6 +146,10 @@ quote removal
 The order of expansions is: brace expansion; tilde expansion, parameter and variable expansion, arithmetic expansion, and command substitution (done in a left-to-right fashion); word splitting; filename expansion; and quote removal.
 
 
+//if quoted : echo "arg", arg is one token
+//          : echo "arg1" "arg2", arg1 and arg2 are token, split by metachar <space>
+//          : echo ""arg1" "arg2"", null, arg1<space>arg2, null. when it is passed to parser, null are not recognized.
+//          : 
 
 Quote removal is always performed last. It removes quote characters present in the original word, not ones resulting from one of the other expansions, unless they have been quoted themselves. See Quote Removal for more details.
 
