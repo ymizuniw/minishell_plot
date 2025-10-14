@@ -2,7 +2,10 @@
 The following is a brief description of the shell’s operation when it reads and executes a command. Basically, the shell does the following:
 
 Reads its input from a file (see Shell Scripts), from a string supplied as an argument to the -c invocation option (see Invoking Bash), or from the user’s terminal.
+
 Breaks the input into words and operators, obeying the quoting rules described in Quoting. These tokens are separated by metacharacters. This step performs alias expansion (see Aliases).
+
+
 Parses the tokens into simple and compound commands (see Shell Commands).
 Performs the various shell expansions (see Shell Expansions), breaking the expanded tokens into lists of filenames (see Filename Expansion) and commands and arguments.
 Performs any necessary redirections (see Redirections) and removes the redirection operators and their operands from the argument list.
@@ -141,21 +144,28 @@ word splitting
 filename expansion
 quote removal
 
-
-
 The order of expansions is: brace expansion; tilde expansion, parameter and variable expansion, arithmetic expansion, and command substitution (done in a left-to-right fashion); word splitting; filename expansion; and quote removal.
-
 
 //if quoted : echo "arg", arg is one token
 //          : echo "arg1" "arg2", arg1 and arg2 are token, split by metachar <space>
 //          : echo ""arg1" "arg2"", null, arg1<space>arg2, null. when it is passed to parser, null are not recognized.
 //          : 
 
+The ‘$’ character introduces parameter expansion, command substitution, or arithmetic expansion. The parameter name or symbol to be expanded may be enclosed in braces, which are optional but serve to protect the variable to be expanded from characters immediately following it which could be interpreted as part of the name. For example, if the first positional parameter has the value ‘a’, then ${11} expands to the value of the eleventh positional parameter, while $11 expands to ‘a1’.
+
+3.5.4 Command Substitution
+Command substitution allows the output of a command to replace the command itself. The standard form of command substitution occurs when a command is enclosed as follows:
+
+$(command)
+
+Bash performs command substitution by executing command in a subshell environment and replacing the command substitution with the standard output of the command, with any trailing newlines deleted. Embedded newlines are not deleted, but they may be removed during word splitting. The command substitution $(cat file) can be replaced by the equivalent but faster $(< file).
+
+
+
 Quote removal is always performed last. It removes quote characters present in the original word, not ones resulting from one of the other expansions, unless they have been quoted themselves. See Quote Removal for more details.
 
 Only brace expansion, word splitting, and filename expansion can increase the number of words of the expansion; other expansions expand a single word to a single word. The only exceptions to this are the expansions of "$@" and $* (see Special Parameters), and "${name[@]}" and ${name[*]} (see Arrays).
 
-Brace expansion is a mechanism to generate arbitrary strings sharing a common prefix and suffix, either of which can be empty. This mechanism is similar to filename expansion (see Filename Expansion), but the filenames generated need not exist. Patterns to be brace expanded are formed from an optional preamble, followed by either a series of comma-separated strings or a sequence expression between a pair of braces, followed by an optional postscript. The preamble is prefixed to each string contained within the braces, and the postscript is then appended to each resulting string, expanding left to right.
 
 The ‘$’ character introduces parameter expansion, command substitution, or arithmetic expansion. The parameter name or symbol to be expanded may be enclosed in braces, which are optional but serve to protect the variable to be expanded from characters immediately following it which could be interpreted as part of the name. For example, if the first positional parameter has the value ‘a’, then ${11} expands to the value of the eleventh positional parameter, while $11 expands to ‘a1’.
 
@@ -359,9 +369,3 @@ If the delimiter is not quoted, the \<newline> sequence is treated as a line con
 
 3.6.10 Opening File Descriptors for Reading and Writing
 The redirection operator
-
-//necessary?
-[n]<>word
-opens the file whose name is the expansion of word for both reading and writing on file descriptor n, or on file descriptor 0 if n is not specified. If the file does not exist, it is created.
-
-
