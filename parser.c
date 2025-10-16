@@ -228,12 +228,12 @@ void expand_token(t_ast *node, t_token *token)
 		while (word_len>i)
 		{
 			size_t start = i;
-			while (word_len>i)
+			if (isspace(token->value[i]) || token->value[i]=='$')
 			{
-				if (isspace(token->value[i]) || token->value[i]=='$')
-					break ;
 				i++;
+				break ;
 			}
+			i++;
 			char var = malloc(sizeof(char)*(i-start));
 			if (var==NULL)
 			{
