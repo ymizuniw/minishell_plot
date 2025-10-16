@@ -216,12 +216,16 @@ void concatenate_word(char **word, char entry, size_t entry_len)
 
 void expand_token(t_ast *node, t_token *token)
 {
+	//token, 
+
+	//doller, in_squote==false, in_dquote==true.
+
 	size_t word_len = strlen(token->value);
 	size_t remain_len=0;
 	char *doller = strchr(token->value, '$');
 	char **word=NULL;
-		char *tmp_buf = malloc(sizeof(char)*word_len);
-		bzero(tmp_buf, sizeof(char)*word_len);
+	char *tmp_buf = malloc(sizeof(char)*word_len);
+	bzero(tmp_buf, sizeof(char)*word_len);
 	size_t i = 0;
 	while (doller!=NULL)
 	{
@@ -265,7 +269,8 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 	if (ast == NULL)
 	{
 		node = alloc_node();
-		expand_token(node, token);
+		if (token->type==TK_WORD)
+			expand_token(node, token);
 		bzero(node, sizeof(t_ast));
 	}
 	if (token->type == TK_AND_IF)
@@ -289,7 +294,6 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 	else if (token->type == TK_EOF)
 		node->type == NODE_CMD;
 
-	
 	if (is_operator(node->type))
 	{
 		swap_and_set_right_node(node, node->parent);
@@ -315,5 +319,4 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 		}
 		redir = redirection(node, token);
 	}
-
 }
