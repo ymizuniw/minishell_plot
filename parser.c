@@ -7,8 +7,9 @@ t_ast	*parser(t_token *token_head)
 	t_token	*token;
 
 	token = token_head->next;
+
 	// logic and pipe
-	var_expansion();
+	
 }
 
 // consider the rule to generation grammar.
@@ -103,6 +104,7 @@ t_ast	*gen_tree(t_ast *ast, t_token *token)
 
 // 3.2.4 Lists of Commands
 
+//parse command
 int	check_parenthesis(t_token *token)
 {
 	t_token	*cur;
@@ -216,7 +218,8 @@ void concatenate_word(char **word, char entry, size_t entry_len)
 
 void expand_token(t_ast *node, t_token *token)
 {
-	//token, 
+	//token, in_squote==true,
+	
 
 	//doller, in_squote==false, in_dquote==true.
 
@@ -255,6 +258,8 @@ void expand_token(t_ast *node, t_token *token)
 	}
 }
 
+
+//gen_command_tree
 t_ast	*gen_command_list(t_ast *ast, t_token *token)
 {
 	t_ast			*node;
