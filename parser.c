@@ -196,6 +196,61 @@ t_redir	*redirection(t_ast *node, t_token *token)
 	return (node->cmd->redir);
 }
 
+void concatenate_word(char **word, char entry, size_t entry_len)
+{
+	size_t word_len=0;
+	if (word && *word)
+		word_len = strlen(*word);
+	char *new = malloc(sizeof(char)*(word_len + entry_len + 1));
+	if (new==NULL)
+	{
+		perror("malloc");
+		exit(1);
+	}
+	strlcpy(new, *word, word_len);
+	strlcpy(new + word_len, entry, entry_len + 1);
+	if (*word)
+		free(*word);
+	*word = new;
+}
+
+void expand_token(t_ast *node, t_token *token)
+{
+	size_t word_len = strlen(token->value);
+	size_t remain_len=0;
+	char *doller = strchr(token->value, '$');
+	char **word=NULL;
+		char *tmp_buf = malloc(sizeof(char)*word_len);
+		bzero(tmp_buf, sizeof(char)*word_len);
+	size_t i = 0;
+	while (doller!=NULL)
+	{
+		while (word_len>i)
+		{
+			size_t start = i;
+			while (word_len>i)
+			{
+				if (isspace(token->value[i]) || token->value[i]=='$')
+					break ;
+				i++;
+			}
+			char var = malloc(sizeof(char)*(i-start));
+			if (var==NULL)
+			{
+				perror("malloc");
+				exit(1);
+			}
+			strlcpy(var, doller+1, i-start);
+			char *entry = getenv(var);
+			if (entry!=NULL)
+				concatenate_word(*word, entry, strlen(entry));
+			free(var);
+			i++;
+		}
+		doller = strchr(&token->value[i], '$');
+	}
+}
+
 t_ast	*gen_command_list(t_ast *ast, t_token *token)
 {
 	t_ast			*node;
@@ -210,7 +265,7 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 	if (ast == NULL)
 	{
 		node = alloc_node();
-		expand_token(node);
+		expand_token(node, token);
 		bzero(node, sizeof(t_ast));
 	}
 	if (token->type == TK_AND_IF)
@@ -233,6 +288,8 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 		node->type == NODE_CMD;
 	else if (token->type == TK_EOF)
 		node->type == NODE_CMD;
+
+	
 	if (is_operator(node->type))
 	{
 		swap_and_set_right_node(node, node->parent);
@@ -258,4 +315,5 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 		}
 		redir = redirection(node, token);
 	}
+
 }
