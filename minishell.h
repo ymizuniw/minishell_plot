@@ -6,20 +6,20 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+# include <string.h>
+# include <unistd.h>
 
-#define VL_PIPE "|"
-#define VL_REDIRECT_IN	"<"
-#define VL_REDIRECT_OUT ">"
-#define VL_HEREDOC	"<<"
-#define VL_APPEND	">>"
-#define VL_EOF		"\0"
+# define VL_PIPE "|"
+# define VL_REDIRECT_IN "<"
+# define VL_REDIRECT_OUT ">"
+# define VL_HEREDOC "<<"
+# define VL_APPEND ">>"
+# define VL_EOF "\0"
 /*==bonus part==*/
-#define VL_AND_IF	"&&"
-#define VL_OR_IF	"||"
-#define VL_LPAREN	"("
-#define VL_RPAREN	")"
+# define VL_AND_IF "&&"
+# define VL_OR_IF "||"
+# define VL_LPAREN "("
+# define VL_RPAREN ")"
 
 typedef enum e_metachar
 {
@@ -55,7 +55,8 @@ typedef enum e_token_type
 
 typedef struct s_token
 {
-	size_t size;//for dummy head to keep the len of the list.
+	size_t size; // for dummy head to keep the len of the list.
+	struct s_token	*prev;
 	t_token_type	type;
 	bool			in_squote;
 	bool			in_dquote;
@@ -96,6 +97,8 @@ typedef struct s_cmd
 
 typedef struct s_ast
 {
+	struct s_ast	*parent;
+	struct s_ast	*subtree;
 	struct s_ast	*left;
 	t_node_type		type;
 	t_cmd			*cmd;
@@ -114,12 +117,14 @@ t_ast				*parser(t_token *tokens);
 t_result			*executor(t_ast *ast);
 void				output_manager(t_result *res);
 
-//lexer
+// lexer
 
-t_token_type get_token_type(char *input, size_t idx);
-unsigned char is_quote(int c);
-void set_token_type(t_token *token, char *input, size_t *tmp_idx);
-void set_quote_flag(t_token *token, char *input, char const quote_open);
-void set_token_value(t_token *token);
+t_token_type		get_token_type(char *input, size_t idx);
+unsigned char		is_quote(int c);
+void				set_token_type(t_token *token, char *input,
+						size_t *tmp_idx);
+void				set_quote_flag(t_token *token, char *input,
+						char const quote_open);
+void				set_token_value(t_token *token);
 
 #endif
