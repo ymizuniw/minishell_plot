@@ -25,7 +25,6 @@ int	shell_loop(void)
 		tokens = lexer(line); // formant analisis.
 		ast = parser(tokens); // abstract structure tree.
 		res = executor(ast);
-		output_manager(res);
 		free(line);
 		free_tokens(tokens);
 		free_ast(ast);
