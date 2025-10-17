@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 t_token		*lexer(const char *input);
 t_ast		*parser(t_token *tokens);
