@@ -96,6 +96,7 @@ void set_quote_flag(t_token *token, char *input, char const quote_open)
         token->in_squote = true;    
 }
 
+//this maybe not needed.
 void set_token_value(t_token *token)
 {
     if (token->type==TK_PIPE)
