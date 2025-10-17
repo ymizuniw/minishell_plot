@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-t_ast	*parser(t_token *);
-
 t_ast	*parser(t_token *token_head)
 {
 	t_token	*token;
@@ -9,7 +7,6 @@ t_ast	*parser(t_token *token_head)
 	token = token_head->next;
 
 	// logic and pipe
-	
 }
 
 int parse_command(t_token *token, t_cmd *cmd)
