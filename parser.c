@@ -9,48 +9,7 @@ t_ast	*parser(t_token *token_head)
 	token = token_head->next;
 
 	// logic and pipe
-	
 }
-
-// consider the rule to generation grammar.
-
-// 1. <cmd1> | <cmd2>
-// 2. <cmd1> && <cmd2>
-// 3. <cmd1> && (cmd2 && cmd3)
-// 4. < <cmd1>
-// 5. << <cmd1>
-// 6. <cmd1> > file_name
-// 7. <cmd1> >> file_name
-
-// 1.
-//         |
-// <cmd1>      <cmd2>
-
-// 2.
-//         &&
-// <cmd1>      <cmd2>
-
-// 3.
-//             &&
-// <cmd1>              &&
-//             <cmd2>      <cmd3>
-
-// token->type==LPAREN;
-// while (token->type!=RPAREN)
-//     cur = cur->next;
-
-// t_ast *node;
-// node->type = NODE_AND;
-// node->right = cmd5_node;
-// node->left = cmd_tree;
-// cmd_tree =  <cmd1> &&1 (subshell)
-// cmd_tree = &&1->left=<cmd1>, &&1->right=<subshell>
-
-// if type==NODE_CMD
-// t_cmd cmd = expand_token();
-// if type==NODE_*
-
-// 1.logical operator.2.pipe. 3.other.
 
 t_ast	*gen_tree(t_ast *ast, t_token *token)
 {
@@ -73,38 +32,6 @@ t_ast	*gen_tree(t_ast *ast, t_token *token)
 	return (node);
 }
 
-// //後ろから論理演算記号を上位ノードに置く。
-// 3.1 <cmd1> &&1 (cmd2 &&2 (cmd3 &&3 cmd4)) &&4 cmd5
-
-//                             &&4
-//             &&1                             cmd5
-// <cmd1>              $SUBSHELL
-
-// SUBSHELL:
-//             &&
-// <cmd2>                  &&
-//                 <cmd3>      <cmd4>
-
-// 3.2 <cmd1> && <cmd2> && <cmd3>
-//                 &&
-//     <cmd1>                     &&
-//                     <cmd2>              <cmd3>
-
-// 4.
-//     < <comd1>
-
-// 5.
-//     << <comd1>
-
-// 6.
-//     <comd1> > file_name
-
-// 7.
-//     <cmd1> >> file_name
-
-// 3.2.4 Lists of Commands
-
-//parse command
 int	check_parenthesis(t_token *token)
 {
 	t_token	*cur;
@@ -220,7 +147,6 @@ void expand_token(t_ast *node, t_token *token)
 {
 	//token, in_squote==true,
 	
-
 	//doller, in_squote==false, in_dquote==true.
 
 	size_t word_len = strlen(token->value);
@@ -325,3 +251,9 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 		redir = redirection(node, token);
 	}
 }
+
+
+
+//parse_command()
+
+//parse_operator()
