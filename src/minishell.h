@@ -51,6 +51,7 @@ typedef enum e_token_type
 	TK_OR_IF,
 	TK_LPAREN,
 	TK_RPAREN,
+	TK_DOLLER,
 	TK_HEAD
 }					t_token_type;
 
@@ -128,5 +129,8 @@ void				set_token_type(t_token *token, char *input,
 void				set_quote_flag(t_token *token, char *input,
 						char const quote_open);
 void				set_token_value(t_token *token);
+
+//utils
+char *expand_value(t_token *token);
 
 #endif

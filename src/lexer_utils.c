@@ -74,6 +74,8 @@ t_token_type get_token_type(char *input, size_t *idx)
         {
             return (TK_RPAREN);
         }
+        else if (input[*idx]=='$' && input[*idx+1]=='\0')
+            return (TK_DOLLER);
         else
             return (TK_WORD);
     }

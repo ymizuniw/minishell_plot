@@ -70,13 +70,13 @@ t_redir	*redirection(t_redir *redir, t_token *token)
 	{
         if (token->next==NULL)
             return ;
-		char *file_name = expand_value();
+		char *file_name = expand_value(token);
 		redir->type=REDIR_IN;
 		redir->filename=file_name;
 	}
 	else if (token->type==TK_REDIRECT_OUT)
 	{
-		char *file_name = expand_value();
+		char *file_name = expand_value(token);
 		redir->type=REDIR_OUT;
 		redir->filename=file_name;
 	}
@@ -86,11 +86,11 @@ t_redir	*redirection(t_redir *redir, t_token *token)
 		redir->type=REDIR_HEREDOC;
 		redir->filename=delim;
 		if (token->next->in_dquote || token->next->in_squote)
-			redir->delim_quoted = true;
+			redir->delim_quoted = true;//if quoted, the $var won't be expanded in here-document.
 	}
 	else if (token->type==TK_APPEND)
 	{
-		char *file_name = expand_value();
+		char *file_name = expand_value(token);
 		redir->type=REDIR_APPEND;
 		redir->filename=file_name;
 	}
@@ -121,41 +121,60 @@ void concatenate_word(char **word, char entry, size_t entry_len)
 	*word = new;
 }
 
+// [word] [word_list]
+// cmd arg.
+
+// if quotation found in the middle of the string, the $var effect disappears.
+
+
+//middle quotatin flag is needed.
+
 //expand TK_WORD token's value.
 char *expand_value(t_token *token)
 {
 	//token, in_squote==true,
 	//doller, in_squote==false, in_dquote==true.
-
-	size_t word_len = strlen(token->value);
-	size_t remain_len=0;
-	char *doller = strchr(token->value, '$');
+	size_t word_len;
+	word_len = strlen(token->value);
 	char **word=NULL;
-	char *tmp_buf = malloc(sizeof(char)*word_len);
-	bzero(tmp_buf, sizeof(char)*word_len);
-	size_t i = 0;
-	while (doller!=NULL)
+	char *tmp_buf = malloc(sizeof(char)*word_len+1);
+	bzero(tmp_buf, sizeof(char)*(word_len+1));
+
+	if (token->in_dquote || token->in_squote)
 	{
-		while (word_len>i)
-		{
-			size_t start = i;
-			if (!isspace(doller[i]) || doller[i]!='$')
-				i++;
-			char *var = malloc(sizeof(char)*(i-start+1));
-			if (var==NULL)
-			{
-				perror("malloc");
-				exit(1);
-			}
-			bzero(var, sizeof(char)*(i-start+1));
-			strlcpy(var, doller+1, i-start);
-			char *entry = getenv(var);
-			if (entry!=NULL)
-				concatenate_word(*word, entry, strlen(entry));
-			free(var);
-			i++;
-		}
-		doller = strchr(&doller[i], '$');
+		*word = malloc(sizeof(char)*(word_len+1));
+		bzero(tmp_buf, sizeof(char)*(word_len+1));
+		strlcpy(*word, token->value, word_len);
 	}
+	else
+	{
+		char *doller = strchr(token->value, '$');
+		size_t i = 0;
+		if (doller[1]=='\0')
+		while (doller!=NULL)
+		{
+			while (word_len>i)
+			{
+				size_t start = i;
+				if (!isspace(doller[i]) || doller[i]!='$')
+					i++;
+				char *var = malloc(sizeof(char)*(i-start+1));
+				if (var==NULL)
+				{
+					perror("malloc");
+					exit(1);
+				}
+				bzero(var, sizeof(char)*(i-start+1));
+				strlcpy(var, doller+1, i-start);
+				char *entry = getenv(var);
+				if (entry!=NULL)
+					concatenate_word(*word, entry, strlen(entry));
+				free(var);
+				i++;
+			}
+			doller = strchr(&doller[i], '$');
+		}
+	}
+	
 	return (*word);
 }

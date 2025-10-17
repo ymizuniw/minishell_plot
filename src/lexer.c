@@ -97,10 +97,11 @@ t_token	*lexer(const char *input)
 			idx++;
 			continue ;
 		}
+		new = token_alloc();
+		bzero(new, sizeof(t_token));
 		meta = get_meta_char(input[idx]);
 		if (meta != MT_OTHER)
 		{
-			new = token_alloc();
 			new->type = get_token_type((char *)input, &idx);
 			set_token_value(new);
 			append_token(token_head, new);
@@ -109,11 +110,15 @@ t_token	*lexer(const char *input)
 		}
 		else
 		{
+			if (is_quote(input[idx]) && (input[idx + 1] && input[idx+1]=='$') && (input[idx+2] && input[idx + 2] && is_quote(input[idx+2])))
+			{
+				new->type = TK_DOLLER;
+				append_token(token_head, new);
+			}
 			word_len = 0;
 			if (word && *word)
 				word_len = strlen(*word);
 			idx = word_concatenation(word, word_len, input, input_len, idx);
-			new = token_alloc();
 			new->type = TK_WORD;
 			word_len = strlen(*word);
 			new->value = malloc(sizeof(char) * (word_len + 1));
