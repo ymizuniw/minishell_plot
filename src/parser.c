@@ -9,12 +9,6 @@ t_ast	*parser(t_token *token_head)
 	// logic and pipe
 }
 
-int parse_command(t_token *token, t_cmd *cmd)
-{
-	size_t i=0;
-	
-}
-
 void set_argv(char **argv, t_token *token, size_t i)
 {
 	argv[i] = expand_value();
@@ -66,6 +60,8 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 			token=token->next;
 		t_token *keep_token = token;
 		syntax_check(token);
+		if (token->type==TK_REDIRECT_IN || token->type==TK_REDIRECT_OUT || token->type==TK_HEREDOC || token->type==TK_APPEND)
+			node->cmd->redir_in = redirection(node->cmd->redir_in, token);
 		if (token->type == TK_WORD)
 		{
 			node->cmd->argv[i] = expand_value();
@@ -73,6 +69,6 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 				set_argv(node->cmd->argv, token->prev, i+1);
 		}
 		if (token->type==TK_REDIRECT_IN || token->type==TK_REDIRECT_OUT || token->type==TK_HEREDOC || token->type==TK_APPEND)
-			node->cmd->redir = redirection(node->cmd->redir, token);
+			node->cmd->redir_out = redirection(node->cmd->redir_out, token);
 	}
 }
