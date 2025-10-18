@@ -1,11 +1,5 @@
 #include "../includes/minishell.h"
 
-#define TYPE_AST 1
-#define TYPE_CMD 2
-#define TYPE_TOKEN 3
-// #define
-// #define
-
 void *alloc_t(int type, size_t n)
 {
     if (type==TYPE_AST)

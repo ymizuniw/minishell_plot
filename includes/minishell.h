@@ -9,6 +9,8 @@
 # include <string.h>
 # include <unistd.h>
 
+# include "data_management.h"
+
 # define VL_PIPE "|"
 # define VL_REDIRECT_IN "<"
 # define VL_REDIRECT_OUT ">"
@@ -45,6 +47,7 @@ typedef enum e_token_type
 	TK_REDIRECT_IN_AND_OUT,
 	TK_HEREDOC,
 	TK_APPEND,
+	TK_NEWLINE,
 	TK_EOF,
 
 	/*==bonus part==*/
