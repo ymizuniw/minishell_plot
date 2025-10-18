@@ -2,10 +2,9 @@
 
 t_token		*lexer(const char *input);
 t_ast		*parser(t_token *tokens);
-t_result	*executor(t_ast *ast);
-void		output_manager(t_result *res);
+t_result	*executor(t_ast *ast, char **env);
 
-int	shell_loop(void)
+int	shell_loop(char **env)
 {
 	char		*line;
 	t_token		*tokens;
@@ -24,7 +23,7 @@ int	shell_loop(void)
 			add_history(line);
 		tokens = lexer(line); // formant analisis.
 		ast = parser(tokens); // abstract structure tree.
-		res = executor(ast);
+		res = executor(ast, env);
 		free(line);
 		free_tokens(tokens);
 		free_ast(ast);

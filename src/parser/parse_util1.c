@@ -19,6 +19,7 @@ int	check_parenthesis(t_token *token)
 }
 
 //check if the token arrangement syntax is correct
+//the arg end comes after redirection 
 int	syntax_check(t_token *token)
 {
 	t_token_type	token_type;
@@ -30,9 +31,14 @@ int	syntax_check(t_token *token)
 		return (check_parenthesis(token));
 	if (token_type == TK_REDIRECT_IN)
 	{
-        if (token->prev->type == TK_HEAD || (token->prev->prev->type == TK_HEAD))
+        if (token->prev->type == TK_HEAD)
             return (0);
-		if (!(token->prev->type == TK_WORD && token->prev->prev->type == TK_WORD))
+		if (token->prev->type == TK_NEWLINE)
+		{
+			print_syntax_error(TK_NEWLINE);
+			return (0);
+		}
+		if (!(token->prev->type == TK_WORD))
             return (0);
 	}
 	if (token_type == TK_HEREDOC)
@@ -44,12 +50,17 @@ int	syntax_check(t_token *token)
 	{
         if (token->prev->type == TK_HEAD || (token->prev->prev->type == TK_HEAD))
             return (0);
-		if (!(token->prev->type == TK_WORD && token->prev->prev->type == TK_WORD))
+		if (!(token->prev->type == TK_WORD))
 			return (0);
 	}
 	if (token_type == TK_APPEND)
 	{
-		if (token->prev->type == TK_WORD && token->prev->prev->type == TK_WORD)
+		if (token->prev->type != TK_WORD)
+			return (0);
+	}
+	if (token_type == TK_REDIRECT_IN_AND_OUT)
+	{
+		if (token->prev->type != TK_WORD)
 			return (0);
 	}
 	return (1);
