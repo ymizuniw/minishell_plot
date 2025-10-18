@@ -125,15 +125,13 @@ void concatenate_word(char **word, char entry, size_t entry_len)
 // cmd arg.
 
 // if quotation found in the middle of the string, the $var effect disappears.
-
-
 //middle quotatin flag is needed.
 
 //expand TK_WORD token's value.
+
+//<>
 char *expand_value(t_token *token)
 {
-	//token, in_squote==true,
-	//doller, in_squote==false, in_dquote==true.
 	size_t word_len;
 	word_len = strlen(token->value);
 	char **word=NULL;
@@ -150,7 +148,6 @@ char *expand_value(t_token *token)
 	{
 		char *doller = strchr(token->value, '$');
 		size_t i = 0;
-		if (doller[1]=='\0')
 		while (doller!=NULL)
 		{
 			while (word_len>i)
@@ -175,6 +172,5 @@ char *expand_value(t_token *token)
 			doller = strchr(&doller[i], '$');
 		}
 	}
-	
 	return (*word);
 }

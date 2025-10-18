@@ -1,8 +1,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-// # include <readline/history.h>
-// # include <readline/readline.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -42,6 +42,7 @@ typedef enum e_token_type
 	TK_PIPE,
 	TK_REDIRECT_IN,
 	TK_REDIRECT_OUT,
+	TK_REDIRECT_IN_AND_OUT,
 	TK_HEREDOC,
 	TK_APPEND,
 	TK_EOF,
@@ -121,7 +122,6 @@ t_result			*executor(t_ast *ast);
 void				output_manager(t_result *res);
 
 // lexer
-
 t_token_type		get_token_type(char *input, size_t idx);
 unsigned char		is_quote(int c);
 void				set_token_type(t_token *token, char *input,
