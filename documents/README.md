@@ -68,7 +68,6 @@ Implement the following redirections:
 
 ### Signal Handling    // SEMI_COLON,
 
-
 - Handle `ctrl-C`, `ctrl-D`, and `ctrl-\` which should behave like in bash.  
 - In interactive mode:  
   - `ctrl-C` displays a new prompt on a new line.  
