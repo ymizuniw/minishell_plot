@@ -19,6 +19,7 @@ int	check_parenthesis(t_token *token)
 }
 
 //check if the token arrangement syntax is correct
+//the arg end comes after redirection 
 int	syntax_check(t_token *token)
 {
 	t_token_type	token_type;
@@ -30,9 +31,14 @@ int	syntax_check(t_token *token)
 		return (check_parenthesis(token));
 	if (token_type == TK_REDIRECT_IN)
 	{
-        if (token->prev->type == TK_HEAD || (token->prev->prev->type == TK_HEAD))
+        if (token->prev->type == TK_HEAD)
             return (0);
-		if (!(token->prev->type == TK_WORD && token->prev->prev->type == TK_WORD))
+		if (token->prev->type == TK_NEWLINE)
+		{
+			print_syntax_error(TK_NEWLINE);
+			return (0);
+		}
+		if (!(token->prev->type == TK_WORD))
             return (0);
 	}
 	if (token_type == TK_HEREDOC)
@@ -44,12 +50,17 @@ int	syntax_check(t_token *token)
 	{
         if (token->prev->type == TK_HEAD || (token->prev->prev->type == TK_HEAD))
             return (0);
-		if (!(token->prev->type == TK_WORD && token->prev->prev->type == TK_WORD))
+		if (!(token->prev->type == TK_WORD))
 			return (0);
 	}
 	if (token_type == TK_APPEND)
 	{
-		if (token->prev->type == TK_WORD && token->prev->prev->type == TK_WORD)
+		if (token->prev->type != TK_WORD)
+			return (0);
+	}
+	if (token_type == TK_REDIRECT_IN_AND_OUT)
+	{
+		if (token->prev->type != TK_WORD)
 			return (0);
 	}
 	return (1);
@@ -125,15 +136,13 @@ void concatenate_word(char **word, char entry, size_t entry_len)
 // cmd arg.
 
 // if quotation found in the middle of the string, the $var effect disappears.
-
-
 //middle quotatin flag is needed.
 
 //expand TK_WORD token's value.
+
+//<>
 char *expand_value(t_token *token)
 {
-	//token, in_squote==true,
-	//doller, in_squote==false, in_dquote==true.
 	size_t word_len;
 	word_len = strlen(token->value);
 	char **word=NULL;
@@ -150,7 +159,6 @@ char *expand_value(t_token *token)
 	{
 		char *doller = strchr(token->value, '$');
 		size_t i = 0;
-		if (doller[1]=='\0')
 		while (doller!=NULL)
 		{
 			while (word_len>i)
@@ -175,6 +183,5 @@ char *expand_value(t_token *token)
 			doller = strchr(&doller[i], '$');
 		}
 	}
-	
 	return (*word);
 }

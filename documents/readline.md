@@ -10,7 +10,5 @@ Replace the contents of rl_line_buffer with text. This preserves the point and m
 Function: void rl_redisplay (void)
 Change what’s displayed on the screen to reflect the current contents of rl_line_buffer.
 
-
-
 accept-line (Newline or Return)
 Accept the line regardless of where the cursor is. If this line is non-empty, you can add it to the history list using add_history(). If this line is a modified history line, then restore the history line to its original state.

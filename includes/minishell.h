@@ -1,13 +1,15 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-// # include <readline/history.h>
-// # include <readline/readline.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+
+# include "data_management.h"
 
 # define VL_PIPE "|"
 # define VL_REDIRECT_IN "<"
@@ -42,8 +44,10 @@ typedef enum e_token_type
 	TK_PIPE,
 	TK_REDIRECT_IN,
 	TK_REDIRECT_OUT,
+	TK_REDIRECT_IN_AND_OUT,
 	TK_HEREDOC,
 	TK_APPEND,
+	TK_NEWLINE,
 	TK_EOF,
 
 	/*==bonus part==*/

@@ -51,6 +51,8 @@ t_token_type get_token_type(char *input, size_t *idx)
         {
             if (input[*idx+1] && input[++*idx]=='<')
                 return (TK_HEREDOC);
+            else if (input[*idx+1] && input[++*idx]=='>')
+                return (TK_REDIRECT_IN_AND_OUT);
             else
                 return (TK_REDIRECT_IN);
         }
@@ -74,8 +76,11 @@ t_token_type get_token_type(char *input, size_t *idx)
         {
             return (TK_RPAREN);
         }
-        else if (input[*idx]=='$' && input[*idx+1]=='\0')
-            return (TK_DOLLER);
+        else if (input[*idx]=='$')
+        {
+            if (input[*idx]=='\0' || ((input[*idx+1] && input[*idx+1]=='\"' && input[*idx+2] && input[*idx+2] == '\"') || (input[*idx+1] && input[*idx+1]=='\'' && input[*idx+2] && input[*idx+2] == '\'')))
+                return (TK_DOLLER);
+        }
         else
             return (TK_WORD);
     }
