@@ -36,7 +36,7 @@ char *expand_value(t_token *token)
 				strlcpy(var, doller+1, i-start);
 				char *entry = getenv(var);
 				if (entry!=NULL)
-					cat_word(*word, entry, strlen(entry));
+					cat_word(word, entry, strlen(entry));
 				free(var);
 				i++;
 			}

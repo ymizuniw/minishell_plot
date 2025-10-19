@@ -1,5 +1,10 @@
 #include "../../../includes/minishell.h"
 
+int is_operator(t_token_type type)
+{
+	if (type!=TK_WORD || type!=TK_DOLLER)
+}
+
 //generate a tree of command.
 t_ast	*gen_command_list(t_ast *ast, t_token *token)
 {
@@ -13,19 +18,19 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 		if (token->type == TK_AND_IF)
 			node->type = NODE_AND;
 		else if (token->type == TK_OR_IF)
-			node->type == NODE_OR;
+			node->type = NODE_OR;
 		else if (token->type == TK_PIPE)
-			node->type == NODE_PIPE;
-		swap_and_set_right_node(node, node->parent);
+			node->type = NODE_PIPE;
+		// swap_and_set_right_node(node, node->parent);
 		node->left = gen_command_list(node->left, token->next);
 	}
 	else if (token->type==TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
-		if (!syntax_check(token))
-			syntax_err();
-		node->subtree = gen_subtree(node->subtree, token,
-				&consumed_token_count);
+		// if (!syntax_check(token))
+			// syntax_err();
+		// node->subtree = gen_subtree(node->subtree, token,
+		// 		&consumed_token_count);
 		while (consumed_token_count > 0)
 		{
 			token = token->next;
@@ -58,6 +63,6 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 	}
 	else
 	{
-		syntax_err();
+		// syntax_err();
 	}
 }

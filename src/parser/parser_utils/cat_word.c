@@ -1,7 +1,7 @@
 #include "../../../includes/minishell.h"
 
 //concatenate word after $ expansion.
-void cat_word(char **word, char entry, size_t entry_len)
+void cat_word(char **word, char *entry, size_t entry_len)
 {
 	size_t word_len=0;
 	if (word && *word)
