@@ -2,7 +2,9 @@
 
 int is_operator(t_token_type type)
 {
-	if (type!=TK_WORD || type!=TK_DOLLER)
+	if (type==TK_NEWLINE || type==TK_PIPE || type==TK_AND_IF || type==TK_OR_IF || type == TK_LPAREN || type==TK_RPAREN)
+		return (1);
+	return (0);
 }
 
 //generate a tree of command.
