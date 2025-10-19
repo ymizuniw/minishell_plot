@@ -24,7 +24,6 @@ void *signal_hander(int signum)
         signal(signum, sig_int_event);
     else if (signum==SIGTERM)
         signal(signum, sig_term_event);
-
 }
 
 void signal_initializer(int *g_set)
@@ -32,6 +31,3 @@ void signal_initializer(int *g_set)
     sigemptyset(g_set);
     sigaddset(g_set, SIGINT);
 }
-
-
-     sig_t signal(int sig, sig_t func);

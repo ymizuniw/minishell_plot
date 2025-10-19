@@ -114,7 +114,7 @@ t_redir	*redirection(t_redir *redir, t_token *token)
 }
 
 //concatenate word for get_env()'s argment.
-void concatenate_word(char **word, char entry, size_t entry_len)
+void cat_word(char **word, char entry, size_t entry_len)
 {
 	size_t word_len=0;
 	if (word && *word)
@@ -140,7 +140,7 @@ void concatenate_word(char **word, char entry, size_t entry_len)
 
 //expand TK_WORD token's value.
 
-//<>
+//
 char *expand_value(t_token *token)
 {
 	size_t word_len;
