@@ -1,21 +1,5 @@
 #include "../includes/minishell.h"
 
-//append_token should add front to parse from last token.
-void	append_tokens(t_token *head, t_token *new)
-{
-	new->next = head->next;
-	head->next->prev = new;
-	head->next = new;
-	new->prev = head;
-	head->size++;
-	return (1);
-}
-
-t_metachar is_meta_char(int c);
-t_token_type get_token_type(t_token *token);
-void set_token_value(t_token *new);
-void append_tokens(t_token *head, t_token *new);
-
 t_token	*lexer(const char *input)
 {
 	size_t		idx;

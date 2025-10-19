@@ -18,7 +18,6 @@
 # define VL_HEREDOC "<<"
 # define VL_APPEND ">>"
 # define VL_EOF "\0"
-/*==bonus part==*/
 # define VL_AND_IF "&&"
 # define VL_OR_IF "||"
 # define VL_LPAREN "("

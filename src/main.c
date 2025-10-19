@@ -25,9 +25,7 @@ int	shell_loop(char **env)
 		ast = parser(tokens); // abstract structure tree.
 		res = executor(ast, env);
 		free(line);
-		free_tokens(tokens);
-		free_ast(ast);
-		free_result(res);
+		//free result and ast elements.
 	}
 	return (0);
 }

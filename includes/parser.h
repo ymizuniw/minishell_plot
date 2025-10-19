@@ -3,6 +3,9 @@
 
 #include "minishell.h"
 
+void set_argv(char **argv, t_token *token, size_t i);
+t_ast	*gen_command_list(t_ast *ast, t_token *token);
+
 int	check_parenthesis(t_token *token);
 int	syntax_check(t_token *token);
 t_redir	*redirection(t_redir *redir, t_token *token);
