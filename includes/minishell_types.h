@@ -27,6 +27,7 @@ typedef enum e_metachar
 // token_type classifies which type the token belongs to.
 typedef enum e_token_type
 {
+	TK_NEWLINE,
 	TK_WORD,
 	TK_PIPE,
 	TK_REDIRECT_IN,
@@ -34,13 +35,12 @@ typedef enum e_token_type
 	TK_REDIRECT_IN_AND_OUT,
 	TK_HEREDOC,
 	TK_APPEND,
-	TK_NEWLINE,
-	TK_EOF,
 	TK_AND_IF,
 	TK_OR_IF,
 	TK_LPAREN,
 	TK_RPAREN,
 	TK_DOLLER,
+	TK_EOF,
 	TK_HEAD
 }					t_token_type;
 
