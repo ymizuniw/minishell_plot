@@ -11,12 +11,10 @@ void	append_tokens(t_token *head, t_token *new)
 	return (1);
 }
 
-void set_token_value(t_token *new);
-t_token_type get_token_type(t_token *token);
-void append_tokens(t_token *head, t_token *new);
 t_metachar is_meta_char(int c);
-
-
+t_token_type get_token_type(t_token *token);
+void set_token_value(t_token *new);
+void append_tokens(t_token *head, t_token *new);
 
 t_token	*lexer(const char *input)
 {

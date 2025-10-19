@@ -18,7 +18,7 @@ void *sig_term_event(void)
     rl_clear_history();
 }
 
-void *signal_hander(int signum)
+void *signal_handler(int signum)
 {
     if (signum==SIGINT)
         signal(signum, sig_int_event);

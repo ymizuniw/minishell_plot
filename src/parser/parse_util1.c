@@ -20,6 +20,7 @@ int	check_parenthesis(t_token *token)
 
 //check if the token arrangement syntax is correct
 //the arg end comes after redirection 
+
 int	syntax_check(t_token *token)
 {
 	t_token_type	token_type;
@@ -65,6 +66,14 @@ int	syntax_check(t_token *token)
 	}
 	return (1);
 }
+
+
+int	check_parenthesis(t_token *token);
+int	syntax_check(t_token *token);
+t_redir	*redirection(t_redir *redir, t_token *token);
+void cat_word(char **word, char entry, size_t entry_len);
+char *expand_value(t_token *token);
+
 
 //create a list of redirection
 t_redir	*redirection(t_redir *redir, t_token *token)
