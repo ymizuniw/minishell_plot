@@ -1,6 +1,6 @@
 #include "../../../includes/minishell.h"
 
-//gen_command_tree
+//generate a tree of command.
 t_ast	*gen_command_list(t_ast *ast, t_token *token)
 {
 	t_ast			*node;

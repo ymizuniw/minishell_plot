@@ -38,8 +38,7 @@ t_token	*lexer(const char *input)
 		meta = get_meta_char(input[idx]);
 		if (meta != MT_OTHER)
 		{
-			new->type = get_token_type(input[idx]);
-			set_token_value(new);
+			new->type = get_token_type(input[idx], &idx);
 			append_token(token_head, new);
 			idx++;
 			continue ;
@@ -50,24 +49,29 @@ t_token	*lexer(const char *input)
 			{
 				new->type = TK_DOLLER;
 				append_token(token_head, new);
+				idx++;
+				continue;
 			}
-			word_len = 0;
-			if (word && *word)
+			else{
+				word_len = 0;
+				if (word && *word)
+					word_len = strlen(*word);
+				idx = word_cat(word, word_len, input, input_len, idx);
+				new->type = TK_WORD;
 				word_len = strlen(*word);
-			idx = word_cat(word, word_len, input, input_len, idx);
-			new->type = TK_WORD;
-			word_len = strlen(*word);
-			new->value = malloc(sizeof(char) * (word_len + 1));
-			if (new->value == NULL)
-			{
-				perror("malloc");
-				exit(1);
+				new->value = malloc(sizeof(char) * (word_len + 1));
+				if (new->value == NULL)
+				{
+					perror("malloc");
+					exit(1);
+				}
+				new->value[word_len] = '\0';
+				strlcpy(new->value, *word, word_len + 1);
+				new->value = *word;
+				new->next = NULL;
+				append_token(token_head, new);
 			}
-			new->value[word_len] = '\0';
-			strlcpy(new->value, *word, word_len + 1);
-			new->value = *word;
-			new->next = NULL;
-			append_token(token_head, new);
+
 		}
 	}
 }

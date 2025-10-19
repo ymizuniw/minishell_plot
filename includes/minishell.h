@@ -121,18 +121,7 @@ typedef struct s_result
 // main.c
 t_token				*lexer(const char *input);
 t_ast				*parser(t_token *tokens);
-t_result			*executor(t_ast *ast);
+t_result			*executor(t_ast *ast, char **env);
 
-// lexer
-t_token_type		get_token_type(char *input, size_t idx);
-unsigned char		is_quote(int c);
-void				set_token_type(t_token *token, char *input,
-						size_t *tmp_idx);
-void				set_quote_flag(t_token *token, char *input,
-						char const quote_open);
-void				set_token_value(t_token *token);
-
-//utils
-char *expand_value(t_token *token);
 
 #endif

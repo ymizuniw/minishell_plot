@@ -1,6 +1,6 @@
 #include "../../../includes/minishell.h"
 
-//after quotation problems are solved.
+//get the token_type begin with the current idx of input.
 t_token_type get_token_type(char *input, size_t *idx)
 {
     if (input[*idx]){

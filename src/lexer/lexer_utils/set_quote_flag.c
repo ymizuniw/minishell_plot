@@ -1,6 +1,7 @@
 #include "../../../includes/minishell.h"
 
-void set_quote_flag(t_token *token, char *input, char const quote_open)
+//set either double/single quotation flag to token.
+void set_quote_flag(t_token *token, char const quote_open)
 {
     if (quote_open=='\"')
         token->in_dquote = true;

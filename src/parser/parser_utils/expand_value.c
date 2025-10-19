@@ -1,5 +1,6 @@
 #include "../../../includes/minishell.h"
 
+//just expand the value content or apply $ expansion and form a word.
 char *expand_value(t_token *token)
 {
 	size_t word_len;

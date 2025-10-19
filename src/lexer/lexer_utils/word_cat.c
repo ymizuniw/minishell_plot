@@ -1,7 +1,6 @@
 #include "../../includes/minishell.h"
-// if the token type is TK_WORD, then word_concatenation() concatenate words
-// 1. WORD * WORD (tokenization occurs first.)
-// 2. WORD (cocatenate before tokenization)
+
+// if the token type is TK_WORD and concatenate it if it is a unit of word, in quotation, not delimited by metachar.
 size_t	word_cat(char **word, size_t word_len, char *input,
 		size_t input_len, size_t idx)
 {
@@ -13,7 +12,6 @@ size_t	word_cat(char **word, size_t word_len, char *input,
 	size_t			new_len;
 
 	consumed_len = 0;
-	// if quote comes
 	quote_open = is_quote(input[idx]);
 	if (quote_open)
 	{
@@ -23,7 +21,6 @@ size_t	word_cat(char **word, size_t word_len, char *input,
 			fprintf(stderr, "syntax error: unclosed quote\n");
 			return (NULL);
 		}
-		// extract word between the quotation.
 		new_len = quote_close - &input[idx];
 		*word = realloc(word_len + new_len + 1, sizeof(char));
 		if (!word)
@@ -31,7 +28,6 @@ size_t	word_cat(char **word, size_t word_len, char *input,
 		strlcpy(*word + word_len, &input[idx], new_len + 1);
 		consumed_len = word_len + 2;
 	}
-	// quotation does not come.
 	else
 	{
 		tmp_ptr = &input[idx];

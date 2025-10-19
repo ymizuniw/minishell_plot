@@ -1,9 +1,5 @@
 #include "../includes/minishell.h"
 
-t_token		*lexer(const char *input);
-t_ast		*parser(t_token *tokens);
-t_result	*executor(t_ast *ast, char **env);
-
 int	shell_loop(char **env)
 {
 	char		*line;
@@ -28,4 +24,10 @@ int	shell_loop(char **env)
 		//free result and ast elements.
 	}
 	return (0);
+}
+
+int main(int argc, char **argv, char **env)
+{
+	shell_loop(env);
+	return(0);
 }
