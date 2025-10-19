@@ -7,6 +7,7 @@
 t_token *alloc_token(void);
 t_cmd *alloc_cmd(void);
 t_ast *alloc_node(void);
+t_redir *alloc_redir(void);
 
 //free application
 void free_ast_tree(t_ast *p);

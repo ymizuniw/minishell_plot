@@ -14,3 +14,8 @@ t_token *alloc_token(void)
 {
     return ((t_token *)malloc(sizeof(t_token)));
 }
+
+t_redir *alloc_redir(void)
+{
+    return ((t_redir *)malloc(sizeof(t_redir)));
+}

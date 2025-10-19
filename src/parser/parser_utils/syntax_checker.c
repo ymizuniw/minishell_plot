@@ -1,7 +1,7 @@
 #include "../../../includes/minishell.h"
 
 //check the syntax of given token is correct.
-int	syntax_checker(t_token *token)
+int	syntax_check(t_token *token)
 {
 	t_token_type	token_type;
 

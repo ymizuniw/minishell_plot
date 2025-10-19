@@ -43,6 +43,6 @@ t_redir	*parse_redirection(t_redir *redir, t_token *token)
 	if (cur_token->type != TK_HEAD && cur_token->type == TK_REDIRECT_IN
 		|| cur_token->type == TK_REDIRECT_OUT || cur_token->type == TK_HEREDOC
 		|| cur_token->type == TK_APPEND)
-		return (redirection(cur_redir, cur_token));
+		return (parse_redirection(cur_redir, cur_token));
 	return (redir);
 }

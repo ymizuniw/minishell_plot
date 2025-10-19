@@ -47,24 +47,25 @@ t_ast	*gen_command_list(t_ast *ast, t_token *token)
 	{
 		size_t i = 0;
 		node->type = NODE_CMD;
-		while (token->next && token->type == TK_WORD || token->type==TK_REDIRECT_IN || token->type==TK_REDIRECT_OUT || token->type==TK_HEREDOC || token->type==TK_APPEND || token->type==TK_DOLLER)
-			token=token->next;
+		while (token->next && (token->type == TK_WORD || token->type == TK_REDIRECT_IN || token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC || token->type == TK_APPEND || token->type == TK_DOLLER))
+			token = token->next;
 		t_token *keep_token = token;
 		syntax_check(token);
-		if (token->type==TK_REDIRECT_IN || token->type==TK_REDIRECT_OUT || token->type==TK_HEREDOC || token->type==TK_APPEND)
+		if (token->type == TK_REDIRECT_IN || token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC || token->type == TK_APPEND)
 			node->cmd->redir_in = redirection(node->cmd->redir_in, token);
 		if (token->type == TK_WORD || token->type == TK_DOLLER)
 		{
-			node->cmd->argv = realloc(node->cmd->argv, sizeof(char *)*(i+3));
+			node->cmd->argv = realloc(node->cmd->argv, sizeof(char *) * (i + 3));
 			node->cmd->argv[i] = expand_value(token);
-			if (token->prev->type==TK_WORD || token->prev->type==TK_DOLLER)
-				set_argv(node->cmd->argv, token->prev, i+1);
+			if (token->prev->type == TK_WORD || token->prev->type == TK_DOLLER)
+				set_argv(node->cmd->argv, token->prev, i + 1);
 		}
-		if (token->type==TK_REDIRECT_IN || token->type==TK_REDIRECT_OUT || token->type==TK_HEREDOC || token->type==TK_APPEND)
+		if (token->type == TK_REDIRECT_IN || token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC || token->type == TK_APPEND)
 			node->cmd->redir_out = redirection(node->cmd->redir_out, token);
 	}
 	else
 	{
 		// syntax_err();
 	}
+	return node;
 }
