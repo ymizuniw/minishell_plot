@@ -32,16 +32,15 @@ size_t	word_cat(char **word, size_t word_len, char *input,
 		tmp_ptr = &input[idx];
 		while (idx < input_len && !isspace((int)input[idx])
 			&& is_meta_char(input[idx]) == MT_OTHER)
-			tmp_ptr++;
-		new_len = tmp_ptr - &input[idx];
+			idx++;
+		new_len = &input[idx] - tmp_ptr;
 		*word = realloc(*word, sizeof(char)*(word_len + new_len + 1));
 		if (!*word)
 			return (0);
-		strlcpy(*word + word_len, &input[idx], new_len + 1);
+		strlcpy(*word + word_len, tmp_ptr, new_len + 1);
 		consumed_len = new_len;
 	}
-	idx += consumed_len;
 	if (idx < input_len && is_meta_char(input[idx]) == MT_OTHER)
-		idx = word_cat(word, word_len, input, input_len, idx);
-	return (idx);
+		return word_cat(word, word_len + consumed_len, input, input_len, idx);
+	return (consumed_len);
 }
