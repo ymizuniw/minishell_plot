@@ -1,8 +1,8 @@
 #include "../../../includes/minishell.h"
 
-// if the token type is TK_WORD and concatenate it if it is a unit of word, in quotation, not delimited by metachar.
-size_t	word_cat(char **word, size_t word_len, char *input,
-		size_t input_len, size_t idx)
+// if the token type is TK_WORD and concatenate it if it is a unit of word,
+in quotation, not delimited by metachar.size_t word_cat(char **word,
+	size_t word_len, char *input, size_t input_len, size_t idx)
 {
 	size_t			consumed_len;
 	unsigned char	quote_open;
@@ -21,7 +21,7 @@ size_t	word_cat(char **word, size_t word_len, char *input,
 			return (0);
 		}
 		new_len = quote_close - &input[idx];
-		*word = realloc(*word, sizeof(char)*(word_len + new_len + 1));
+		*word = realloc(*word, sizeof(char) * (word_len + new_len + 1));
 		if (!word)
 			return (0);
 		strlcpy(*word + word_len, &input[idx], new_len + 1);
@@ -34,13 +34,13 @@ size_t	word_cat(char **word, size_t word_len, char *input,
 			&& is_meta_char(input[idx]) == MT_OTHER)
 			idx++;
 		new_len = &input[idx] - tmp_ptr;
-		*word = realloc(*word, sizeof(char)*(word_len + new_len + 1));
+		*word = realloc(*word, sizeof(char) * (word_len + new_len + 1));
 		if (!*word)
 			return (0);
 		strlcpy(*word + word_len, tmp_ptr, new_len + 1);
 		consumed_len = new_len;
 	}
 	if (idx < input_len && is_meta_char(input[idx]) == MT_OTHER)
-		return word_cat(word, word_len + consumed_len, input, input_len, idx);
+		return (word_cat(word, word_len + consumed_len, input, input_len, idx));
 	return (consumed_len);
 }

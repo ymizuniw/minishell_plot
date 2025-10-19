@@ -60,9 +60,9 @@ t_token_type	get_token_type(char *input, size_t *idx)
 		}
 		else if (input[*idx] == '$') //$"word", $<EOF>, $<NEWLINE>,
 			'$' print token.
-		{
-			return (TK_DOLLER);
-		}
+			{
+				return (TK_DOLLER);
+			}
 		else
 			return (TK_WORD);
 	}

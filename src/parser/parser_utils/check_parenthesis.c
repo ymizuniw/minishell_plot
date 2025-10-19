@@ -1,6 +1,6 @@
 #include "../../../includes/minishell.h"
 
-//check if parenthesis arrangement is correct.
+// check if parenthesis arrangement is correct.
 int	check_parenthesis(t_token *token)
 {
 	t_token	*cur;

@@ -7,10 +7,10 @@ char	*expand_value(t_token *token)
 	char	*word;
 	char	*tmp_buf;
 	char	*doller;
-			size_t i;
-			char *var;
-			char *entry;
-				size_t start;
+	size_t	i;
+	char	*var;
+	char	*entry;
+	size_t	start;
 
 	word_len = strlen(token->value);
 	word = NULL;
