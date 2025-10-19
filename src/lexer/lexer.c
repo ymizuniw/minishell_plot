@@ -35,7 +35,7 @@ t_token	*lexer(const char *input)
 		}
 		new = token_alloc();
 		bzero(new, sizeof(t_token));
-		meta = get_meta_char(input[idx]);
+		meta = is_meta_char(input[idx]);
 		if (meta != MT_OTHER)
 		{
 			new->type = get_token_type(input[idx], &idx);
@@ -71,7 +71,6 @@ t_token	*lexer(const char *input)
 				new->next = NULL;
 				append_token(token_head, new);
 			}
-
 		}
 	}
 }

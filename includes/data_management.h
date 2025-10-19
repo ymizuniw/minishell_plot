@@ -1,7 +1,7 @@
 #ifndef DATA_MANAGE_H
 #define DATA_MANAGE_H
 
-#include "minishell.h"
+#include "minishell_types.h"
 
 //alloc application
 t_token *alloc_token(void);

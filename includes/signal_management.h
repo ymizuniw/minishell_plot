@@ -1,7 +1,7 @@
 #ifndef SIGNAL_MANAGE_H
 #define SIGNAL_MANAGE_H
 
-#include "minishell.h"
+#include <signal.h>
 
 void *sig_int_event(void);
 void *sig_term_event(void);

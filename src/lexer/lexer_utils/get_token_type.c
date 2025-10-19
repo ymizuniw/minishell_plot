@@ -50,6 +50,5 @@ t_token_type get_token_type(char *input, size_t *idx)
         else
             return (TK_WORD);
     }
-    else
-        return (TK_EOF);
+    return (TK_EOF);
 }

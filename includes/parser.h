@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "minishell.h"
+#include "minishell_types.h"
 
 void set_argv(char **argv, t_token *token, size_t i);
 t_ast	*gen_command_list(t_ast *ast, t_token *token);
