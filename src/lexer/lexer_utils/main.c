@@ -1,7 +1,7 @@
 #include "../../../includes/minishell.h"
 
-int main(void)
+int	main(void)
 {
-    printf("compile test\n");
-    return (0);
+	printf("compile test\n");
+	return (0);
 }

@@ -21,13 +21,13 @@ int	shell_loop(char **env)
 		ast = parser(tokens); // abstract structure tree.
 		res = executor(ast, env);
 		free(line);
-		//free result and ast elements.
+		// free result and ast elements.
 	}
 	return (0);
 }
 
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
 	shell_loop(env);
-	return(0);
+	return (0);
 }
