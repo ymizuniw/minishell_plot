@@ -1,18 +1,5 @@
 #include "../../../includes/minishell.h"
 
-#define SYNTAX_ERR_TEMPLATE "minishell: syntax error near unexpected token `"
-#define SYNTAX_ERR_TEMPLATE_LEN 47
-#define TOKEN_VALUE_NEWLINE "newline"
-#define TOKEN_VALUE_PIPE "|"
-#define TOKEN_VALUE_AND_IF "&&"
-#define TOKEN_VALUE_OR_IF "||"
-#define TOKEN_VALUE_LPAREN "("
-#define TOKEN_VALUE_RPAREN ")"
-#define TOKEN_VALUE_REDIRECT_IN "<"
-#define TOKEN_VALUE_REDIRECT_OUT ">"
-#define TOKEN_VALUE_HEREDOC "<<"
-#define TOKEN_VALUE_APPEND ">>"
-
 void syntax_error(t_token_type type)
 {
     char *token;

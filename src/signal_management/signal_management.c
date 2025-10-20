@@ -2,7 +2,7 @@
 
 void *sig_int_event(void)
 {
-    int clear_undo;
+    int clear_undo=1;
     char *text="";
 
     rl_on_new_line();

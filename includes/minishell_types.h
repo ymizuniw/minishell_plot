@@ -3,12 +3,25 @@
 
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <unistd.h>
-#include <stdbool.h>
-# include <ctype.h>
+# include <stdio.h>//printf()
+# include <stdlib.h>//malloc()
+# include <string.h>//strlcpy()->rem
+# include <unistd.h>//write()
+# include <stdbool.h>
+# include <ctype.h>//isspace()->rem
+
+#define SYNTAX_ERR_TEMPLATE "minishell: syntax error near unexpected token `"
+#define SYNTAX_ERR_TEMPLATE_LEN 47
+#define TOKEN_VALUE_NEWLINE "newline"
+#define TOKEN_VALUE_PIPE "|"
+#define TOKEN_VALUE_AND_IF "&&"
+#define TOKEN_VALUE_OR_IF "||"
+#define TOKEN_VALUE_LPAREN "("
+#define TOKEN_VALUE_RPAREN ")"
+#define TOKEN_VALUE_REDIRECT_IN "<"
+#define TOKEN_VALUE_REDIRECT_OUT ">"
+#define TOKEN_VALUE_HEREDOC "<<"
+#define TOKEN_VALUE_APPEND ">>"
 
 typedef enum e_metachar
 {

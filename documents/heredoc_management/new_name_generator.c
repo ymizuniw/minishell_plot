@@ -16,7 +16,8 @@ char *unique_filename(char *filename, size_t len, int *charset[], size_t times)
         if (mod==0)
         {
             int cur = (int)filename[i];
-            if (charset[cur])
+            if (charset[cur]<times)
+                filename[i]=
         }
         if (mod==1)
         {
@@ -41,6 +42,4 @@ char *gen_filename(char *filename)
 
         }
     }
-
-
 }

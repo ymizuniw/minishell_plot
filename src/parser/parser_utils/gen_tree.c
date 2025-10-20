@@ -1,6 +1,6 @@
 #include "../../../includes/minishell.h"
 
-int is_operator(t_token_type type)
+static int is_operator(t_token_type type)
 {
 	if (type==TK_NEWLINE || type==TK_PIPE || type==TK_AND_IF || type==TK_OR_IF || type == TK_LPAREN || type==TK_RPAREN)
 		return (1);
@@ -9,7 +9,7 @@ int is_operator(t_token_type type)
 
 //swap current node and its parent node, and set the parent node as current node's right node.
 //you should add NULL handler.
-void swap_and_set_right_node(t_ast *node, t_ast *parent)
+static void swap_and_set_right_node(t_ast *node, t_ast *parent)
 {
 	t_ast *grand_node = parent->parent;
 	t_ast *new_right_node = parent;
