@@ -179,18 +179,31 @@ int ast_traversal(t_ast *node, char **env)
 
     if (cur!=NULL)
     {
-        if (cur->left!=NULL)
+        if (is_operator(node->type) && cur->left!=NULL)
         {
             pid_t pid = fork();
             last_exit_status = ast_traversal(cur->left, env);
+        }
+        if (cur->type==NODE_AND)
+        {
+            if (last_exit_status==0)
+                ;
+            else
+                return (last_exit_status);
+        }
+        else if (cur->type==NODE_OR)
+        {
+            if (last_exit_status!=0)
+                ;
+            else
+                return (last_exit_status);
         }
         if (cur->right!=NULL)
         {
             pid_t pid = fork();
             last_exit_status = ast_traversal(cur->right, env);
         }
-        if (cur->type==NODE_CMD)
-            last_exit_status = exec_plot(cur, env, last_exit_status);
+        last_exit_status = exec_plot(cur, env, last_exit_status);
     }
     return (last_exit_status);
 }
