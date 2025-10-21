@@ -9,6 +9,7 @@
 # include <unistd.h>//write()
 # include <stdbool.h>
 # include <ctype.h>//isspace()->rem
+# include <fcntl.h>//open()
 
 #define SYNTAX_ERR_TEMPLATE "minishell: syntax error near unexpected token `"
 #define SYNTAX_ERR_TEMPLATE_LEN 47

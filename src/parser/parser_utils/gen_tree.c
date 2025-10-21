@@ -38,6 +38,8 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 
 	node = alloc_node();
 	bzero(node, sizeof(t_ast));
+	if (pipeline==true)
+		node->pipeline->in_pipeline=true;
 	if (is_operator(token->type))
 	{
 		if (token->type == TK_AND_IF)
@@ -52,6 +54,7 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	else if (token->type == TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
+		
 		if (!syntax_check(token))
 			return (NULL);
 		node->subtree = gen_tree(node->subtree, token, 1, pipeline);
@@ -72,7 +75,6 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	{
 		i = 0;
 		node->type = NODE_CMD;
-		node->pipeline->in_pipeline = pipeline;
 		while (token->next && (token->type == TK_WORD
 				|| token->type == TK_REDIRECT_IN
 				|| token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC
