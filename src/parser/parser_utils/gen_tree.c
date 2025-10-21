@@ -30,7 +30,7 @@ void swap_and_set_right_node(t_ast *node, t_ast *parent)
 }
 
 // generate a tree of command.
-t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell)
+t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 {
 	t_ast	*node;
 	size_t	i;
@@ -47,14 +47,14 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell)
 		else if (token->type == TK_PIPE)
 			node->type = NODE_PIPE;
 		swap_and_set_right_node(node, node->parent);
-		node->left = gen_tree(node->left, token->next, subshell);
+		node->left = gen_tree(node->left, token->next, subshell, 1);
 	}
 	else if (token->type == TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
 		if (!syntax_check(token))
 			return (NULL);
-		node->subtree = gen_tree(node->subtree, token, 1);
+		node->subtree = gen_tree(node->subtree, token, 1, pipeline);
 		if (node->subtree == NULL)
 			return (NULL);
 	}
@@ -72,6 +72,7 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell)
 	{
 		i = 0;
 		node->type = NODE_CMD;
+		node->pipeline->in_pipeline = pipeline;
 		while (token->next && (token->type == TK_WORD
 				|| token->type == TK_REDIRECT_IN
 				|| token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC
