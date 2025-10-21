@@ -2,18 +2,18 @@
 #include <assert.h>
 #include <stdio.h>
 
-void test_alloc_node(void)
+void	test_alloc_node(void)
 {
-    t_ast *node = alloc_node();
-    
-    assert(node != NULL);
-    printf("alloc_node test passed\n");
-    
-    free(node);
+	t_ast	*node;
+
+	node = alloc_node();
+	assert(node != NULL);
+	printf("alloc_node test passed\n");
+	free(node);
 }
 
-int main(void)
+int	main(void)
 {
-    test_alloc_node();
-    return 0;
+	test_alloc_node();
+	return (0);
 }

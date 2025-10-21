@@ -2,18 +2,18 @@
 #include <assert.h>
 #include <stdio.h>
 
-void test_alloc_cmd(void)
+void	test_alloc_cmd(void)
 {
-    t_cmd *cmd = alloc_cmd();
-    
-    assert(cmd != NULL);
-    printf("alloc_cmd test passed\n");
-    
-    free(cmd);
+	t_cmd	*cmd;
+
+	cmd = alloc_cmd();
+	assert(cmd != NULL);
+	printf("alloc_cmd test passed\n");
+	free(cmd);
 }
 
-int main(void)
+int	main(void)
 {
-    test_alloc_cmd();
-    return 0;
+	test_alloc_cmd();
+	return (0);
 }

@@ -1,6 +1,6 @@
 #include "../../../includes/minishell.h"
 
-static int is_operator(t_token_type type)
+static int	is_operator(t_token_type type)
 {
 	if (type == TK_NEWLINE || type == TK_PIPE || type == TK_AND_IF
 		|| type == TK_OR_IF || type == TK_LPAREN || type == TK_RPAREN)
@@ -8,9 +8,9 @@ static int is_operator(t_token_type type)
 	return (0);
 }
 
-//swap current node and its parent node, and set the parent node as current node's right node.
-//you should add NULL handler.
-void swap_and_set_right_node(t_ast *node, t_ast *parent)
+// swap current node and its parent node,
+// and set the parent node as current node's right node.
+void	swap_and_set_right_node(t_ast *node, t_ast *parent)
 {
 	t_ast	*grand_node;
 	t_ast	*new_right_node;
@@ -36,10 +36,21 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	size_t	i;
 	t_token	*keep_token;
 
+	if (!token)
+		return (NULL);
 	node = alloc_node();
+	if (!node)
+		return (NULL);
 	bzero(node, sizeof(t_ast));
-	if (pipeline==true)
-		node->pipeline->in_pipeline=true;
+	if (pipeline == 1)
+	{
+		node->pipeline = malloc(sizeof(t_pipeline));
+		if (node->pipeline)
+		{
+			bzero(node->pipeline, sizeof(t_pipeline));
+			node->pipeline->in_pipeline = true;
+		}
+	}
 	if (is_operator(token->type))
 	{
 		if (token->type == TK_AND_IF)
@@ -74,13 +85,18 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	{
 		i = 0;
 		node->type = NODE_CMD;
+		node->cmd = alloc_cmd();
+		if (!node->cmd)
+			return (NULL);
+		bzero(node->cmd, sizeof(t_cmd));
 		while (token->next && (token->type == TK_WORD
 				|| token->type == TK_REDIRECT_IN
 				|| token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC
 				|| token->type == TK_APPEND || token->type == TK_DOLLER))
 			token = token->next;
 		keep_token = token;
-		syntax_check(token);
+		if (!syntax_check(token))
+			return (NULL);
 		if (token->type == TK_REDIRECT_IN || token->type == TK_REDIRECT_OUT
 			|| token->type == TK_HEREDOC || token->type == TK_APPEND)
 			node->cmd->redir_in = parse_redirection(node->cmd->redir_in, token);

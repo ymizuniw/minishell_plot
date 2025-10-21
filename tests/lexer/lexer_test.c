@@ -95,13 +95,22 @@ void	test_quotes(void)
 
 void	test_logical_operators(void)
 {
-	const char	*input = "cmd1 && cmd2 || cmd3";
+	const char	*input;
 	t_token		*tokens;
 
+	printf("Test 5: Logical operators\n");
+	// Test 5a: AND operator
+	input = "cmd1 && cmd2";
+	printf("Input 5a: '%s'\n", input);
 	tokens = lexer(input);
 	assert(tokens != NULL);
-	printf("Test 5: Logical operators\n");
-	printf("Input: '%s'\n", input);
+	print_tokens(tokens);
+	free_token_list(tokens);
+	// Test 5b: OR operator
+	input = "cmd1 || cmd2";
+	printf("Input 5b: '%s'\n", input);
+	tokens = lexer(input);
+	assert(tokens != NULL);
 	print_tokens(tokens);
 	free_token_list(tokens);
 	printf("✓ Test 5 passed\n\n");
