@@ -1,5 +1,5 @@
 // command search and expansion
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // If no command name results, redirections are performed, but do not affect the current shell environment. A redirection error causes the command to exit with a non-zero status.
 
@@ -44,7 +44,7 @@ int exec_plot(t_ast *node, char **env, int last_exit_status)
         {
             if (last_exit_status==0)
             {
-
+                exec_plot(node->right, env, last_exit_status);
             }
             else
                 return (last_exit_status);
@@ -53,7 +53,13 @@ int exec_plot(t_ast *node, char **env, int last_exit_status)
         {
             if (last_exit_status!=0)
             {
-                return (exec_plot(node, env, last_exit_status));
+                exit_status = exec_plot(node, env, last_exit_status);
+                if (exit_status==0)
+                    return (exit_status);
+                else
+                {
+                    //non-zero exit return value.
+                }
             }
             else
                 return (last_exit_status);
@@ -84,7 +90,11 @@ int exec_plot(t_ast *node, char **env, int last_exit_status)
         do_redirection(node);
         do_pipe_redirection(node);
         const char *path = path_validation(node->cmd->argv[0], env);
-        exit_status = execve(path, node->cmd->argv[0], env);
+        if (path==NULL)
+        {
+            //path null exit();
+        }
+        execve(path, node->cmd->argv[0], env);
     }
     return (exit_status);
 }
@@ -177,7 +187,7 @@ int ast_traversal(t_ast *node, char **env)
         if (cur->right!=NULL)
         {
             pid_t pid = fork();
-            last_exit_status = ast_traversal(cur->left, env);
+            last_exit_status = ast_traversal(cur->right, env);
         }
         if (cur->type==NODE_CMD)
             last_exit_status = exec_plot(cur, env, last_exit_status);

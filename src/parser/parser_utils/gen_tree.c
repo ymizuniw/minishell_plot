@@ -54,7 +54,6 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	else if (token->type == TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
-		
 		if (!syntax_check(token))
 			return (NULL);
 		node->subtree = gen_tree(node->subtree, token, 1, pipeline);

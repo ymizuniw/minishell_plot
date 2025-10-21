@@ -61,3 +61,5 @@ void free_cmd_structure(t_cmd *p)
         free_redir_list(p->redir_out);
     free(p);
 }
+
+//s_pipeline 
