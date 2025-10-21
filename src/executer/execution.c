@@ -161,35 +161,6 @@ int do_pipe_redirection(t_ast *node)
     }
 }
 
-char *path_validation(const char *cmd_name, char **env)
-{
-    if (command_name_with_no_slash)
-    {
-        if (find_the_name())//refer to "shell function"
-        {
-            command_invoke();
-        }
-        else
-        {
-            if (search_built_in_command())
-            {
-                command_invoke();
-            }
-            else
-            {
-                if(search_path_of_the_name())
-                {
-                    command_invoke();
-                }
-                else
-                {
-                    find_command_not_found_handle();
-                }
-            }
-        }
-    }
-}
-
 int ast_traversal(t_ast *node, char **env)
 {
     t_ast *cur;
