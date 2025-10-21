@@ -1,4 +1,4 @@
-//command search and expansion
+// command search and expansion
 #include "../includes/minishell.h"
 
 // If no command name results, redirections are performed, but do not affect the current shell environment. A redirection error causes the command to exit with a non-zero status.

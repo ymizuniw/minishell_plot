@@ -32,3 +32,18 @@ void	signal_initializer(int *g_set)
 	sigemptyset(g_set);
 	sigaddset(g_set, SIGINT);
 }
+
+
+
+//Reference for child signal exit value.
+// void		status_child(void)
+// {
+// 	if (WIFEXITED(g_pid))
+// 		g_status = WEXITSTATUS(g_pid);
+// 	if (WIFSIGNALED(g_pid))
+// 	{
+// 		g_status = WTERMSIG(g_pid);
+// 		if (g_status != 131)
+// 			g_status += 128;
+// 	}
+// }

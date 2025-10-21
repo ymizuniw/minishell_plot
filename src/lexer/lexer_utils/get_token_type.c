@@ -59,7 +59,7 @@ t_token_type	get_token_type(char *input, size_t *idx)
 			return (TK_RPAREN);
 		}
 		else if (input[*idx] == '$') //$"word", $<EOF>, $<NEWLINE>,
-			'$' print token.
+			// '$' print token.
 			{
 				return (TK_DOLLER);
 			}
