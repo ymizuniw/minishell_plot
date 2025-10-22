@@ -97,11 +97,6 @@ Bash provides two ways to group a list of commands to be executed as a unit. Whe
 ( list )
 Placing a list of commands between parentheses forces the shell to create a subshell (see Command Execution Environment), and each of the commands in list is executed in that subshell environment. Since the list is executed in a subshell, variable assignments do not remain in effect after the subshell completes.
 
-{}
-{ list; }
-Placing a list of commands between curly braces causes the list to be executed in the current shell environment. No subshell is created. The semicolon (or newline) following list is required.
-
-In addition to the creation of a subshell, there is a subtle difference between these two constructs due to historical reasons. The braces are reserved words, so they must be separated from the list by blanks or other shell metacharacters. The parentheses are operators, and are recognized as separate tokens by the shell even if they are not separated from the list by whitespace.
 
 The exit status of both of these constructs is the exit status of list.
 
@@ -129,9 +124,7 @@ The shell treats several parameters specially. These parameters may only be refe
 
 $
 ($$) Expands to the process ID of the shell. In a subshell, it expands to the process ID of the invoking shell, not the subshell.
-
-
-
+1
 3.5 Shell Expansions
 Expansion is performed on the command line after it has been split into tokens. Bash performs these expansions:
 

@@ -12,7 +12,7 @@ void	cat_word(char **word, char *entry, size_t entry_len)
 	new = malloc(sizeof(char) * (word_len + entry_len + 1));
 	if (new == NULL)
 	{
-		perror("malloc");
+		perror("malloc :");
 		exit(1);
 	}
 	if (*word)
