@@ -2,7 +2,7 @@
 #include "../../includes/minishell.h"
 
 // If no command name results, redirections are performed,
-	but do not affect the current shell environment. A redirection error causes the command to exit with a non-zero status.
+	// but do not affect the current shell environment. A redirection error causes the command to exit with a non-zero status.
 
 //&& creates subshell
 // evaluate previous command's return value,
@@ -35,7 +35,7 @@
 // or operator nodes are skipped?
 
 // stdout redirection are done,
-	so this node should inherit the types to the next node or leaf.
+	// so this node should inherit the types to the next node or leaf.
 
 int	exec_plot(t_ast *node, char **env, int last_exit_status)
 {

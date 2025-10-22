@@ -8,33 +8,25 @@ static int	is_operator(t_token_type type)
 	return (0);
 }
 
-// swap current node and its parent node,
-// and set the parent node as current node's right node.
-void	swap_and_set_right_node(t_ast *node, t_ast *parent)
+t_ast *swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 {
-	t_ast	*grand_node;
-	t_ast	*new_right_node;
-
-	if (!node || !parent)
-		return ;
-	grand_node = parent->parent;
-	new_right_node = parent;
-	if (grand_node && grand_node->left == parent)
-		grand_node->left = node;
-	else if (grand_node && grand_node->right == parent)
-		grand_node->right = node;
-	parent->parent = node;
-	parent->left = NULL;
-	parent->right = NULL;
-	node->right = parent;
+	if (!new_parent)
+		return (old_parent);
+	if (!old_parent)
+		return (new_parent);
+	new_parent->right = old_parent;
+	old_parent->parent = new_parent;
+	return (new_parent);
 }
 
 // generate a tree of command.
-t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
+// manage corrent token by having the ptr's address.
+t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 {
 	t_ast	*node;
 	size_t	i;
-	t_token	*keep_token;
+	t_token *token = *tail_token;
+	t_token *next_token = NULL;
 
 	if (!token)
 		return (NULL);
@@ -42,6 +34,20 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	if (!node)
 		return (NULL);
 	bzero(node, sizeof(t_ast));
+
+	if (token->type == TK_AND_IF)
+		node->type = NODE_AND;
+	else if (token->type == TK_OR_IF)
+		node->type = NODE_OR;
+	else if (token->type == TK_PIPE)
+	{
+		node->type = NODE_PIPE;
+		pipeline = 1;
+	}
+	else
+		node->type = NODE_CMD;
+
+	node->parent=ast;
 	if (pipeline == 1)
 	{
 		node->pipeline = malloc(sizeof(t_pipeline));
@@ -53,28 +59,32 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	}
 	if (is_operator(token->type))
 	{
-		if (token->type == TK_AND_IF)
-			node->type = NODE_AND;
-		else if (token->type == TK_OR_IF)
-			node->type = NODE_OR;
-		else if (token->type == TK_PIPE)
-			node->type = NODE_PIPE;
-		swap_and_set_right_node(node, node->parent);
-		node->left = gen_tree(node->left, token->next, subshell, 1);
+		node = swap_and_set_right_node(node, ast);
+		next_token = token->next;
+		node->left = gen_tree(NULL, &next_token, subshell, pipeline);
+		if (node->left)
+			node->left->parent = node;
+		return (node);
 	}
 	else if (token->type == TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
 		if (!syntax_check(token))
 			return (NULL);
-		node->subtree = gen_tree(node->subtree, token, 1, pipeline);
+		next_token=token->next;
+		node->subtree = gen_tree(NULL, &next_token, 1, pipeline);
 		if (node->subtree == NULL)
 			return (NULL);
+		*tail_token = (*tail_token)->next;
+		return (node);
 	}
 	else if (token->type == TK_LPAREN)
 	{
 		if (subshell == 1)
+		{
+			*tail_token = (*tail_token)->next;
 			return (node);
+		}
 		else
 		{
 			syntax_error(TK_LPAREN);
@@ -84,34 +94,12 @@ t_ast	*gen_tree(t_ast *ast, t_token *token, int subshell, int pipeline)
 	else if (token->type == TK_WORD || token->type == TK_DOLLER)
 	{
 		i = 0;
-		node->type = NODE_CMD;
 		node->cmd = alloc_cmd();
 		if (!node->cmd)
 			return (NULL);
 		bzero(node->cmd, sizeof(t_cmd));
-		while (token->next && (token->type == TK_WORD
-				|| token->type == TK_REDIRECT_IN
-				|| token->type == TK_REDIRECT_OUT || token->type == TK_HEREDOC
-				|| token->type == TK_APPEND || token->type == TK_DOLLER))
-			token = token->next;
-		keep_token = token;
-		if (!syntax_check(token))
-			return (NULL);
-		if (token->type == TK_REDIRECT_IN || token->type == TK_REDIRECT_OUT
-			|| token->type == TK_HEREDOC || token->type == TK_APPEND)
-			node->cmd->redir_in = parse_redirection(node->cmd->redir_in, token);
-		if (token->type == TK_WORD || token->type == TK_DOLLER)
-		{
-			node->cmd->argv = realloc(node->cmd->argv, sizeof(char *) * (i
-						+ 3));
-			node->cmd->argv[i] = expand_value(token);
-			if (token->prev->type == TK_WORD || token->prev->type == TK_DOLLER)
-				set_argv(node->cmd->argv, token->prev, i + 1);
-		}
-		if (token->type == TK_REDIRECT_IN || token->type == TK_REDIRECT_OUT
-			|| token->type == TK_HEREDOC || token->type == TK_APPEND)
-			node->cmd->redir_out = parse_redirection(node->cmd->redir_out,
-					token);
+		node->cmd->redir = parse_redirection(node->cmd->redir, tail_token);
+		set_argv(node->cmd->argv, tail_token, i + 1);
 	}
 	return (node);
 }
