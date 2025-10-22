@@ -3,9 +3,9 @@
 
 #include <signal.h>
 
-void *sig_int_event(void);
-void *sig_term_event(void);
+void sig_int_event(int signum);
+void sig_term_event(int signum);
 void signal_initializer(int *g_set);
-void *signal_handler(int signum);
+void signal_handler(int signum);
 
 #endif

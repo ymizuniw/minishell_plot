@@ -3,16 +3,23 @@
 void	cpy_env(char ***env, char **envp)
 {
 	size_t	env_size;
+	size_t	i;
 
 	if (envp == NULL || *envp == NULL)
 		return ;
 	env_size = 0;
 	while (envp[env_size])
 		env_size++;
-	*env = malloc(sizeof(char *) * env_size);
-	bzero(*env, sizeof(char *) * env_size);
-	while (env_size-- > 0)
-		(*env)[env_size] = env[env_size];
+	*env = malloc(sizeof(char *) * (env_size + 1));
+	if (!*env)
+		return ;
+	i = 0;
+	while (i < env_size)
+	{
+		(*env)[i] = strdup(envp[i]);
+		i++;
+	}
+	(*env)[env_size] = NULL;
 }
 
 int	shell_loop(char **envp)
@@ -20,11 +27,10 @@ int	shell_loop(char **envp)
 	char		*line;
 	t_token		*tokens;
 	t_ast		*ast;
-	t_result	*res;
 	char		**env;
 
 	env = NULL;
-	cpy_envp_to_env(&env, envp);
+	cpy_env(&env, envp);
 	while (1)
 	{
 		line = readline("minishell> ");
@@ -35,17 +41,26 @@ int	shell_loop(char **envp)
 		}
 		if (*line)
 			add_history(line);
-		tokens = lexer(line); // formant analisis.
+		tokens = lexer(line); // format analysis.
 		ast = parser(tokens); // abstract structure tree.
-		res = executor(ast, env);
+		// t_result *res = executor(ast, env);  // Commented out since executor not implemented
 		free(line);
-		// free result and ast elements.
+		// Free tokens and ast
+		if (tokens)
+			free_token_list(tokens);
+		if (ast)
+			free_ast_tree(ast);
 	}
+	// Free environment copy
+	if (env)
+		free_double_array(env);
 	return (0);
 }
 
 int	main(int argc, char **argv, char **env)
 {
+	(void)argc;  // Suppress unused parameter warning
+	(void)argv;  // Suppress unused parameter warning
 	shell_loop(env);
 	return (0);
 }

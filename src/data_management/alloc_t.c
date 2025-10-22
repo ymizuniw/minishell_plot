@@ -8,7 +8,7 @@ t_ast *alloc_node(void)
 
 t_cmd *alloc_cmd(void)
 {
-    return (t_cmd *)malloc(sizeof(t_ast));
+    return (t_cmd *)malloc(sizeof(t_cmd));
 }
 
 t_token *alloc_token(void)

@@ -1,25 +1,24 @@
 #include "../includes/minishell.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
-void	*sig_int_event(void)
+void	sig_int_event(int signum)
 {
-    int clear_undo=1;
-    char *text="";
-
-	text = "";
+    (void)signum;  // Suppress unused parameter warning
+	printf("\n");
 	rl_on_new_line();
-	rl_replace_line(text, clear_undo);
 	rl_redisplay();
 }
 
-void	*sig_term_event(void)
+void	sig_term_event(int signum)
 {
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	rl_clear_history();
+    (void)signum;  // Suppress unused parameter warning
+	printf("\nTerminating...\n");
+	clear_history();
+	exit(0);
 }
 
-void	*signal_handler(int signum)
+void	signal_handler(int signum)
 {
 	if (signum == SIGINT)
 		signal(signum, sig_int_event);
