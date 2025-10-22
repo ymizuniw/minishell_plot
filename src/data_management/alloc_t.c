@@ -1,5 +1,6 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
+//these may well have bzero?
 t_ast *alloc_node(void)
 {
     return (t_ast *)malloc(sizeof(t_ast));
@@ -18,4 +19,9 @@ t_token *alloc_token(void)
 t_redir *alloc_redir(void)
 {
     return ((t_redir *)malloc(sizeof(t_redir)));
+}
+
+t_pipeline *alloc_pipeline(void)
+{
+    return ((t_pipeline *)malloc(sizeof(t_pipeline)));
 }
