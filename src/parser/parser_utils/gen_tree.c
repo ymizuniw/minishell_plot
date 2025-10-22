@@ -8,7 +8,7 @@ static int	is_operator(t_token_type type)
 	return (0);
 }
 
-t_ast *swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
+t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 {
 	if (!new_parent)
 		return (old_parent);
@@ -24,17 +24,17 @@ t_ast *swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 {
 	t_ast	*node;
-	size_t	i;
-	t_token *token = *tail_token;
-	t_token *next_token = NULL;
+	t_token	*token;
+	t_token	*next_token;
 
-	if (!token)
+	if (!tail_token || !*tail_token)
 		return (NULL);
+	token = *tail_token;
+	next_token = NULL;
 	node = alloc_node();
 	if (!node)
 		return (NULL);
 	bzero(node, sizeof(t_ast));
-
 	if (token->type == TK_AND_IF)
 		node->type = NODE_AND;
 	else if (token->type == TK_OR_IF)
@@ -46,8 +46,7 @@ t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 	}
 	else
 		node->type = NODE_CMD;
-
-	node->parent=ast;
+	node->parent = ast;
 	if (pipeline == 1)
 	{
 		node->pipeline = malloc(sizeof(t_pipeline));
@@ -60,46 +59,49 @@ t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 	if (is_operator(token->type))
 	{
 		node = swap_and_set_right_node(node, ast);
-		next_token = token->next;
+		*tail_token = token->next;
+		next_token = *tail_token;
 		node->left = gen_tree(NULL, &next_token, subshell, pipeline);
 		if (node->left)
 			node->left->parent = node;
-		return (node);
-	}
-	else if (token->type == TK_RPAREN)
-	{
-		node->type = NODE_SUBSHELL;
-		if (!syntax_check(token))
-			return (NULL);
-		next_token=token->next;
-		node->subtree = gen_tree(NULL, &next_token, 1, pipeline);
-		if (node->subtree == NULL)
-			return (NULL);
-		*tail_token = (*tail_token)->next;
+		*tail_token = next_token;
 		return (node);
 	}
 	else if (token->type == TK_LPAREN)
 	{
+		node->type = NODE_SUBSHELL;
+		if (syntax_check(token) != 1)
+			return (NULL);
+		*tail_token = token->next;
+		next_token = *tail_token;
+		node->subtree = gen_tree(NULL, &next_token, 1, pipeline);
+		if (node->subtree == NULL)
+			return (NULL);
+		*tail_token = next_token;
+		return (node);
+	}
+	else if (token->type == TK_RPAREN)
+	{
 		if (subshell == 1)
 		{
-			*tail_token = (*tail_token)->next;
-			return (node);
+			*tail_token = token->next;
+			return (ast);
 		}
 		else
 		{
-			syntax_error(TK_LPAREN);
+			syntax_error(TK_RPAREN);
 			return (NULL);
 		}
 	}
 	else if (token->type == TK_WORD || token->type == TK_DOLLER)
 	{
-		i = 0;
 		node->cmd = alloc_cmd();
 		if (!node->cmd)
 			return (NULL);
 		bzero(node->cmd, sizeof(t_cmd));
 		node->cmd->redir = parse_redirection(node->cmd->redir, tail_token);
-		set_argv(node->cmd->argv, tail_token, i + 1);
+		set_argv(node->cmd->argv, tail_token, 0);
+		node->cmd->argv[0] = NULL;
 	}
 	return (node);
 }

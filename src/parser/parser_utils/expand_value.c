@@ -5,7 +5,6 @@ char	*expand_value(t_token *token)
 {
 	size_t	word_len;
 	char	*word;
-	char	*tmp_buf;
 	char	*doller;
 	size_t	i;
 	char	*var;
@@ -14,18 +13,11 @@ char	*expand_value(t_token *token)
 
 	word_len = strlen(token->value);
 	word = NULL;
-	tmp_buf = malloc(sizeof(char) * (word_len + 1));
-	if (!tmp_buf)
-		return (NULL);
-	bzero(tmp_buf, sizeof(char) * (word_len + 1));
 	if (token->in_dquote || token->in_squote)
 	{
 		word = malloc(sizeof(char) * (word_len + 1));
 		if (!word)
-		{
-			free(tmp_buf);
 			return (NULL);
-		}
 		strlcpy(word, token->value, word_len + 1);
 	}
 	else
@@ -40,14 +32,13 @@ char	*expand_value(t_token *token)
 				i++;
 				while (doller[i] && !isspace(doller[i]) && doller[i] != '$')
 					i++;
-				var = malloc(sizeof(char) * (i - start));
+				var = malloc(sizeof(char) * (i - start + 1));
 				if (!var)
 				{
-					free(tmp_buf);
 					free(word);
 					return (NULL);
 				}
-				bzero(var, sizeof(char) * (i - start));
+				bzero(var, sizeof(char) * (i - start + 1));
 				strlcpy(var, doller + start + 1, i - start);
 				entry = getenv(var);
 				if (entry != NULL)
@@ -64,6 +55,5 @@ char	*expand_value(t_token *token)
 			word = strdup(token->value);
 		}
 	}
-	free(tmp_buf);
 	return (word);
 }

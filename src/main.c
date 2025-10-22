@@ -1,16 +1,18 @@
 #include "../includes/minishell.h"
 
-void cpy_env(char ***env, char **envp)
+void	cpy_env(char ***env, char **envp)
 {
-	if (envp==NULL || *envp==NULL)
+	size_t	env_size;
+
+	if (envp == NULL || *envp == NULL)
 		return ;
-	size_t env_size = 0;
+	env_size = 0;
 	while (envp[env_size])
 		env_size++;
-	*env = malloc(sizeof(char *)*env_size);
-	bzero(*env, sizeof(char *)*env_size);
-	while (env_size-->0)
-		(*env)[env_size]=env[env_size];
+	*env = malloc(sizeof(char *) * env_size);
+	bzero(*env, sizeof(char *) * env_size);
+	while (env_size-- > 0)
+		(*env)[env_size] = env[env_size];
 }
 
 int	shell_loop(char **envp)
@@ -19,8 +21,9 @@ int	shell_loop(char **envp)
 	t_token		*tokens;
 	t_ast		*ast;
 	t_result	*res;
+	char		**env;
 
-	char **env = NULL;
+	env = NULL;
 	cpy_envp_to_env(&env, envp);
 	while (1)
 	{
