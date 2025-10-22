@@ -1,59 +1,61 @@
 #include "../../../../includes/minishell.h"
 
-char *get_unique_filename(void)
+char	*get_unique_filename(void)
 {
-	int prime = 13;
-	//take_mod();
-	//char *filename = itoa();
-	//int open_ret = open(filename, O_WRONLY|O_EXCL);
-	//if (open_ret<0)
-	//free(filename);
-	//continue;
-	//else
-	//return filename;
+	// TODO: Implement unique filename generation for heredoc
+	return (NULL);
 }
 
 int	do_redirection(t_ast *node)
 {
 	t_redir	*cur;
-			int fd;
+	int		fd;
 
-	cur = node->cmd->redir;
+	if (!node || !node->cmd)
+		return (0);
+	cur = node->cmd->redir_in;
 	while (cur != NULL)
 	{
 		if (cur->type == REDIR_IN)
 		{
-			fd = open(cur->filename, O_RDONLY);//open fail, "dev/null"?
-			dup2(fd, stdin);
+			fd = open(cur->filename, O_RDONLY);
+			if (fd < 0)
+				return (-1);
+			dup2(fd, STDIN_FILENO);
 			close(fd);
 		}
 		else if (cur->type == REDIR_HEREDOC)
 		{
+			// TODO: Implement heredoc handling
 			cur->filename = get_unique_filename();
+			if (!cur->filename)
+				return (-1);
 			fd = open(cur->filename, O_WRONLY | O_APPEND | O_EXCL);
-			if (cur->type == REDIR_IN)
-			{
-				dup2(fd, STDIN_FILENO);
-				close(fd);
-			}
+			if (fd < 0)
+				return (-1);
+			dup2(fd, STDIN_FILENO);
+			close(fd);
 		}
-		else if (cur->type == REDIR_OUT)
+		cur = cur->next;
+	}
+	cur = node->cmd->redir_out;
+	while (cur != NULL)
+	{
+		if (cur->type == REDIR_OUT)
 		{
-			fd = open(cur->filename, O_RDONLY | O_CREAT | O_TRUNC);
-			if (cur->type == REDIR_IN)
-			{
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
+			fd = open(cur->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd < 0)
+				return (-1);
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
 		}
 		else if (cur->type == REDIR_APPEND)
 		{
-			fd = open(cur->filename, O_WRONLY | O_CREAT |O_APPEND);
-			if (cur->type == REDIR_IN)
-			{
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
+			fd = open(cur->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd < 0)
+				return (-1);
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
 		}
 		cur = cur->next;
 	}
