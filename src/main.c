@@ -1,12 +1,27 @@
 #include "../includes/minishell.h"
 
-int	shell_loop(char **env)
+void cpy_env(char ***env, char **envp)
+{
+	if (envp==NULL || *envp==NULL)
+		return ;
+	size_t env_size = 0;
+	while (envp[env_size])
+		env_size++;
+	*env = malloc(sizeof(char *)*env_size);
+	bzero(*env, sizeof(char *)*env_size);
+	while (env_size-->0)
+		(*env)[env_size]=env[env_size];
+}
+
+int	shell_loop(char **envp)
 {
 	char		*line;
 	t_token		*tokens;
 	t_ast		*ast;
 	t_result	*res;
 
+	char **env = NULL;
+	cpy_envp_to_env(&env, envp);
 	while (1)
 	{
 		line = readline("minishell> ");
