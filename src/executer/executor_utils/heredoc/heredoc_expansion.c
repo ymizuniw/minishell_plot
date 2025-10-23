@@ -1,33 +1,63 @@
 
 #include "../../../includes/minishell.h"
 
-  char *heredoc_value_expansion(char *word, bool in_quote, size_t *len)
+  char *heredoc_value_expansion(char *word, bool in_quote, int fd, size_t total_len)
   {
+    char *buf;
+    if (fd==0)
+    {
+      if (word==NULL)
+        return (NULL);
+      buf = strdup(word);
+    }
+    else
+    {
+      buf = malloc(sizeof(char)*(total_len+1));
+      if (buf==NULL)
+      {
+        perror("malloc: ");
+        return (NULL);
+      }
+    }
+    while (1)
+    {
+      ssize_t rb = 0;
+      rb = read(fd, buf, total_len);
+      if (rb<0)
+      {
+        perror("read: ");
+        return (NULL);
+      }
+      else if (rb==0)
+        break ;
+    }
+    //if $ comes, then consume the idx and concatenate word.
+  }
+
+char *heredoc_expansion(char *word, bool in_quote, int fd, size_t total_len)
+{
+  size_t len=0;
+
+    size_t len = 0;
       if (word==NULL || word[0]=='\0')
       {
-        *len = 0;
+        len = 0;
         return (word);
       }
       if (in_quote)
       {
-        *len=strlen(word);
+        len=strlen(word);
         return (word);
       }
 
-  }
-
-char *heredoc_expansion(char *word, bool in_quote)
-{
-  size_t len=0;
-
   char *value = heredoc_value_expansion(word, in_quote, &len);
-
+  //if quoted, non expansion $.
 
 }
 
 int get_tmp_fd(char *src, size_t size)
 {
-  int tmp_fd = ft_mkstmpfd(template);
+  int tmp_fd = ft_mkstmpfd(TMP_TEMPLATE);
   if (tmp_fd<0)
     return(-1);
   write(tmp_fd, src, size);
