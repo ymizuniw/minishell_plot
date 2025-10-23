@@ -1,24 +1,93 @@
 
-/*
-  <heredoc_expand()>
-  if (redirectee->word == 0 || redirectee->word[0] == '\0')
+#include "../../../includes/minishell.h"
+
+  char *heredoc_value_expansion(char *word, bool in_quote, size_t *len)
+  {
+      if (word==NULL || word[0]=='\0')
+      {
+        *len = 0;
+        return (word);
+      }
+      if (in_quote)
+      {
+        *len=strlen(word);
+        return (word);
+      }
+
+  }
+
+char *heredoc_expansion(char *word, bool in_quote)
+{
+  size_t len=0;
+
+  char *value = heredoc_value_expansion(word, in_quote, &len);
+
+
+}
+
+int get_tmp_fd(char *src, size_t size)
+{
+  int tmp_fd = ft_mkstmpfd(template);
+  if (tmp_fd<0)
+    return(-1);
+  write(tmp_fd, src, size);
+  return tmp_fd;
+}
+
+int heredoc_loop(char **value, t_redir *hd)
+{
+  char *line = NULL;
+  size_t line_len = 0;
+  line = get_next_line();
+  size_t delim_len = strlen(hd->filename);
+  size_t total_len = 0;
+  char *buf = NULL;
+  if (value==NULL)
+    return (-1);
+
+  if (total_len>PIPE_SIZE)
+      goto USE_TMP;
+  while (strncmp(line, hd->filename, delim_len)!=0)
+  {
+    // write(tmp_fd, line, line_len);
+    if (total_len>PIPE_SIZE)
+      goto USE_TMP;
+    *value = realloc(buf, sizeof(char)*(total_len + 1));
+    if (!*value)
     {
-      if (lenp)
-        *lenp = 0;
-      return (redirectee->word);
+      perror("realloc: ");
+      return (-1);
     }
+    bzero(*value, sizeof(char)*(total_len+1));
+    strncpy(value + total_len - line_len - 1, line, line_len+1);
+    free(line);
+    line = get_next_line();
+    if (line==NULL)
+      return (0);
+    line_len = strlen(line);
+    total_len += line_len;
+  }
+  return (1);
+  USE_TMP:
+    int tmp_fd = get_tmp_fd(*value, total_len);
+  if (total_len>PIPE_SIZE)
+  {
+    while (strncmp(line, hd->filename, delim_len)!=0)
+    {
+      write(tmp_fd, line, line_len);
+      free(line);
+      line = get_next_line(tmp_fd);
+      if (line==NULL)
+        return (0);
+      line_len = strlen(line);
+      total_len += line_len;
+    }
+  }
+  free(line);
+  free(*value);
+  return (0);
+}
 
-  /* Quoted here documents are not expanded */
-//   if (ri != r_reading_string && (redirectee->flags & W_QUOTED))
-//     {
-//       if (lenp)
-//         *lenp = STRLEN (redirectee->word);
-//       return (redirectee->word);
-//     }
-
-
-// /* Write HEREDOC (of length HDLEN) to FD, returning 0 on success and ERRNO on
-//    error. Don't handle interrupts. */
 // static int
 // heredoc_write (int fd, const char *heredoc, size_t herelen)
 // {

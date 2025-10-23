@@ -29,12 +29,12 @@ int ft_mkstmpfd(char *template, int pid)
 }
 
 //template = "/tmp/heredoc_tmp_XXXXX".
-char *ft_mkstmp(char *template, int num)
+char *ft_mkstmp(char *template, unsigned int num)
 {
     static const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     char *p;
     size_t len = strlen(template);
-    int pid_keep = num;
+    unsigned int num_keep = num;
 
     char *name  = strdup(template);
     if (!name)
@@ -48,7 +48,7 @@ char *ft_mkstmp(char *template, int num)
         *p = charset[idx];
         num/=10;
         if (num==0)
-            num = pid_keep;
+            num = num_keep;
     }
     return (name);
 }
