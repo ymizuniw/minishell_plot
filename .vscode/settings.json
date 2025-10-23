@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "minishell.h": "c"
+        "*.h": "c",
+        "minishell.h": "c",
+        "random": "c"
     }
 }
