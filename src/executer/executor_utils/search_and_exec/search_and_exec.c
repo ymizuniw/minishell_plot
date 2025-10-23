@@ -1,6 +1,6 @@
 #include "../../../../includes/minishell.h"
 
-int search_and_exec(char *cmd)
+int search_and_exec(char *cmd, char **env)
 {
     /*Shell function is not required, maybe.
         if no slash cmd name comes,attempts to locale it.

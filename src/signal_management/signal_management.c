@@ -49,10 +49,10 @@ int handle_child(int *last_exit_status, pid_t pid)
 		return -1;
 	}
 	if (WIFEXITED(local_status))
-		*status = WEXITSTATUS(local_status);
+		*last_exit_status = WEXITSTATUS(local_status);
 	else if (WIFSIGNALED(local_status))
 	{
-		*status  = 128 + WTERMSIG(local_status);
+		*last_exit_status  = 128 + WTERMSIG(local_status);
 		if (WTERMSIG(local_status)==SIGQUIT)
 			write(2, "Quit (core dumped)\n", 19);
 	}
