@@ -16,13 +16,9 @@ int	exec_subshell(t_ast *node, char **env)
 	if (pid == 0)
 	{
 		if (node && node->subtree)
-			exit(ast_traversal(node->subtree, env));
+			return (ast_traversal(node->subtree, env));
 		else
-			exit(0);
+			return (0);
 	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	else
-		return (EXIT_FAILURE);
+	handle_child(&status, pid);
 }

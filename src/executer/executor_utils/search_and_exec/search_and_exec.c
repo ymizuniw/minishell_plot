@@ -38,7 +38,7 @@ int search_and_exec(char *cmd)
     */
     else
     {
-        exec_path();
+        return (exec_path());
     }
     /*
         If this execution fails bacause the file is not in executable format, and the file is not a directory,

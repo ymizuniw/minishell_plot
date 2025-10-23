@@ -56,10 +56,6 @@ int	exec_pipe(t_ast *node, char **env)
 	}
 	close(pip[0]);
 	close(pip[1]);
-	waitpid(left_pid, &left_status, 0);
-	waitpid(right_pid, &right_status, 0);
-	if (WIFEXITED(right_status))
-		return (WEXITSTATUS(right_status));
-	else
-		return (EXIT_FAILURE);
+	handle_child(&left_status, left_pid);
+	handle_child(&right_status, right_pid);
 }

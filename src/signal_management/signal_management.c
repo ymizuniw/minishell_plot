@@ -4,7 +4,6 @@
 
 valatile sig_atomic_t g_recept_signal = 0;
 
-
 static void signal_handler(int signum)
 {
 	if (signum == SIGINT)
@@ -40,14 +39,14 @@ int	signal_initializer(int *g_set)
 	return (1);
 }
 
-void handle_child(int *last_exit_status, pid_t pid)
+int handle_child(int *last_exit_status, pid_t pid)
 {
 	int local_status = 0;
 	waitpid(pid, &local_status, 0==-1)
 	{
 		perror("waitpid");
 		*status = 1;
-		return ;
+		return -1;
 	}
 	if (WIFEXITED(local_status))
 		*status = WEXITSTATUS(local_status);
@@ -57,6 +56,7 @@ void handle_child(int *last_exit_status, pid_t pid)
 		if (WTERMSIG(local_status)==SIGQUIT)
 			write(2, "Quit (core dumped)\n", 19);
 	}
+	return 1;
 }
 
 //Reference for child signal exit value.
