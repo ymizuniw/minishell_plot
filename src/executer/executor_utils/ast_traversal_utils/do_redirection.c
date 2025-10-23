@@ -13,7 +13,7 @@ int	do_redirection(t_ast *node)
 
 	if (!node || !node->cmd)
 		return (0);
-	cur = node->cmd->redir_in;
+	cur = node->cmd->redir;
 	while (cur != NULL)
 	{
 		if (cur->type == REDIR_IN)
@@ -36,12 +36,7 @@ int	do_redirection(t_ast *node)
 			dup2(fd, STDIN_FILENO);
 			close(fd);
 		}
-		cur = cur->next;
-	}
-	cur = node->cmd->redir_out;
-	while (cur != NULL)
-	{
-		if (cur->type == REDIR_OUT)
+		else if (cur->type == REDIR_OUT)
 		{
 			fd = open(cur->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0)
