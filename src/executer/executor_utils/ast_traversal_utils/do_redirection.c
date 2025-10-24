@@ -1,11 +1,5 @@
 #include "../../../../includes/minishell.h"
 
-char	*get_unique_filename(void)
-{
-	// TODO: Implement unique filename generation for heredoc
-	return (ft_mkstmp("XXXXXX"));
-}
-
 int	do_redirection(t_ast *node)
 {
 	t_redir	*cur;
@@ -26,13 +20,9 @@ int	do_redirection(t_ast *node)
 		}
 		else if (cur->type == REDIR_HEREDOC)
 		{
-			void *stash_addr = (void *)&fd;
-			unsigned int *cast_addr = (unsigned int *)stash_addr;
-			fd = ft_mkstmpfd("/tmp/heredoc_tmp_XXXXX", *cast_addr);
+			fd = make_heredoc();
 			if (fd < 0)
 				return (-1);
-			dup2(fd, STDIN_FILENO);
-			close(fd);
 		}
 		else if (cur->type == REDIR_OUT)
 		{

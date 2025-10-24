@@ -1,6 +1,5 @@
 #include "../../../../includes/minishell.h"
 
-#define TEMPLATE  "/tmp/heredoc_tmp_XXXXX"
 //generate a random num
 unsigned int ft_rand(void)
 {
@@ -9,25 +8,6 @@ unsigned int ft_rand(void)
     unsigned int seed = (a * seed) % m;
     unsigned int random = seed / m;
     return (random);
-}
-
-int ft_mkstmpfd(char *template, unsigned int num)
-{
-    size_t try_limit = 1000;
-    if (template==NULL)
-        return (-1);
-    while (1)
-    {
-        char *name = ft_mkstmp(template, num);
-        int fd = open(name, O_CREAT|O_WRONLY|O_EXCL);
-        if (fd>=0)
-            return (fd);
-        free(name);
-        try_limit--;
-        if (try_limit==0)
-            return -1;
-    }
-    return (-1);
 }
 
 char *ft_mkstmp(char *template, unsigned int num)
@@ -52,4 +32,22 @@ char *ft_mkstmp(char *template, unsigned int num)
             num = num_keep;
     }
     return (name);
+}
+
+int ft_mkstmpfd(char *template, unsigned int num, char **filename)
+{
+    size_t try_limit = 1000;
+    if (template==NULL)
+        return (-1);
+    while (1)
+    {
+        *filename = ft_mkstmp(template, num);
+        int fd = open(*filename, O_CREAT|O_WRONLY|O_EXCL);
+        if (fd>=0)
+            return (fd);
+        try_limit--;
+        if (try_limit==0)
+            return -1;
+    }
+    return (-1);
 }

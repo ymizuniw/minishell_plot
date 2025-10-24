@@ -11,6 +11,7 @@ size_t	word_cat(char **word, size_t word_len, char *input, size_t input_len,
 	size_t			new_len;
 	char			*tmp_ptr;
 	size_t			additional;
+
 	consumed_len = 0;
 	quote_open = is_quote(input[idx]);
 	if (quote_open)

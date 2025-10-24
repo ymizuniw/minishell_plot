@@ -48,7 +48,7 @@ t_token_type	get_token_type(char *input, size_t *idx)
 				return (TK_AND_IF);
 			}
 			else
-				return (TK_WORD); // Single & treated as word
+				return (TK_WORD);
 		}
 		else if (input[*idx] == '(')
 		{
@@ -58,11 +58,10 @@ t_token_type	get_token_type(char *input, size_t *idx)
 		{
 			return (TK_RPAREN);
 		}
-		else if (input[*idx] == '$') //$"word", $<EOF>, $<NEWLINE>,
-			// '$' print token.
-			{
-				return (TK_DOLLER);
-			}
+		else if (input[*idx] == '$')
+		{
+			return (TK_DOLLER);
+		}
 		else
 			return (TK_WORD);
 	}

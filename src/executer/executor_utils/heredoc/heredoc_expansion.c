@@ -1,7 +1,6 @@
 
 #include "../../../includes/minishell.h"
 
-
 char *ext_unit(char *src, size_t start, size_t end)
 {
   char *unit = malloc(sizeof(char)*(end-start+2));
@@ -18,69 +17,22 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
   return (1);
 }
 
-  char *heredoc_value_expansion(char *word, bool in_quote, int fd, size_t total_len)
+//heredoc mode will expand all environment variables and quotations. It means that it won't recognize quotations.
+  char *heredoc_value_expansion(char *value, bool in_quote, size_t value_len)
   {
-    char *buf;
-    if (fd==0)
-    {
-      if (word==NULL)
-        return (NULL);
-      buf = strdup(word);
-    }
-    else
-    {
-      buf = malloc(sizeof(char)*(total_len+1));
-      if (buf==NULL)
-      {
-        perror("malloc: ");
-        return (NULL);
-      }
-    }
-    while (1)
-    {
-      ssize_t rb = 0;
-      rb = read(fd, buf, total_len);
-      if (rb<0)
-      {
-        perror("read: ");
-        return (NULL);
-      }
-      else if (rb==0)
-        break ;
-    }
     //if $ comes, then consume the idx and concatenate word.
     size_t i=0;
     char *start = word;
     char *res = NULL;
     size_t res_len = 0;
+    
     while (i<total_len)
     {
-      char *dq1 = strchr(start, '\"');
-      char *sq1 = strchr(start, '\'');
-      if (dq1<sq1)
-        int dq_on = 1;
-      size_t dq1_idx = dq1 - start;
-      start = dq1+1;
-      char *dq2 = strchr(tmp, '\"');
-      char *end  = dq2;
-      size_t dq2_idx = dq2 - start;
-      size_t part_len = dq2 - start - 2;
-
-      char *part = malloc(sizeof(char)*(dq2_idx - dq1_idx + 2));
       strlcpy(part, start, part_len+1);
     
       char *doller = strchr(part, '$');
       if (doller!=NULL)
       {
-        //$ mono case.
-        if (doller[1]=='\'' || doller[1]=='\"' || isspace(dolelr[1]))
-        {
-          if (res!=NULL)
-            res_len = strlen(res);
-          res = realloc(res, res_len + 2);
-          strlcpy(res + res_len, "$", 2);
-        }
-        // $var case
         size_t start = 1;
         size_t end = 1;
         while (&doller[end]<&word[total_len])
@@ -88,7 +40,7 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
           char *unit = ext_unit(doller, start, end);
           if (unit==NULL)
             break ;
-          char *value = getenv(unit);
+          char *value = ft_getenv(unit);
           if (value != NULL)
           {
             if (join_value(res, unit, strlen(*res), strlen(value)))
@@ -106,107 +58,125 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
 
   //if delimiter has any quote, the value won't expanded.
 
-char *heredoc_expansion(char *word, bool in_quote, int fd, size_t total_len)
+char *heredoc_expansion(char *value, bool in_quote, size_t value_len)
 {
-  size_t len=0;
-
-    size_t len = 0;
-      if (word==NULL || word[0]=='\0')
-      {
-        len = 0;
-        return (word);
-      }
-      if (in_quote)
-      {
-        len=strlen(word);
-        return (word);
-      }
-
-  char *value = heredoc_value_expansion(word, in_quote, &len);
-  if (value==NULL)
+  char *new = heredoc_value_expansion(value, in_quote, value_len);
+  if (new==NULL)
       return (NULL);
-  return (value);
+  return (new);
 }
 
-int get_tmp_fd(char *src, size_t size)
+int get_tmp_fd(char *src, size_t size, char **filename)
 {
-  int tmp_fd = ft_mkstmpfd(TMP_TEMPLATE);
+  int tmp_fd = ft_mkstmpfd(TMP_TEMPLATE, filename);
   if (tmp_fd<0)
     return(-1);
   write(tmp_fd, src, size);
   return tmp_fd;
 }
 
-int heredoc_loop(char **value, t_redir *hd)
+int get_document(t_redir *hd, char **document, size_t *document_len)
 {
+  char *delim = hd->filename;
+  size_t delim_len = strlen(delim);
   char *line = NULL;
   size_t line_len = 0;
-  line = get_next_line();
-  size_t delim_len = strlen(hd->filename);
-  size_t total_len = 0;
-  char *buf = NULL;
-  if (value==NULL)
-    return (-1);
 
-  if (total_len>PIPE_SIZE)
-      goto USE_TMP;
-  while (strncmp(line, hd->filename, delim_len)!=0)
+  while (1)
   {
-    if (total_len>PIPE_SIZE)
-      goto USE_TMP;
-    *value = realloc(buf, sizeof(char)*(total_len + 1));
-    if (!*value)
-    {
-      perror("realloc: ");
-      return (-1);
-    }
-    bzero(*value, sizeof(char)*(total_len+1));
-    strncpy(value + total_len - line_len - 1, line, line_len+1);
-    free(line);
-    line = get_next_line();
-    if (line==NULL)
-      return (0);
-    line_len = strlen(line);
-    total_len += line_len;
-  }
-  return (1);
-  USE_TMP:
-    int tmp_fd = get_tmp_fd(*value, total_len);
-  if (total_len>PIPE_SIZE)
-  {
-    while (strncmp(line, hd->filename, delim_len)!=0)
-    {
-      write(tmp_fd, line, line_len);
-      free(line);
-      line = get_next_line(tmp_fd);
-      if (line==NULL)
-        return (0);
+    line = readline("> ");
+    if (strncmp(line, delim, delim_len)==0)
+      return (1);
+    if (line!=NULL)
       line_len = strlen(line);
-      total_len += line_len;
-    }
+    char *value = heredoc_expansion(line, hd->delim_quoted, line_len);
+    size_t value_len = strlen(value);
+    if (join_value(*document, value, *document_len, value_len)<0)
+      return (-1);
+    *document_len += value_len;
+    free(line);
+    free(value);
   }
-  free(line);
-  free(*value);
-  return (0);
+  return (-1);
 }
 
-// static int
-// heredoc_write (int fd, const char *heredoc, size_t herelen)
-// {
-//   ssize_t nw;
-//   int e;
+ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len)
+{
+  ssize_t wb = 0;
+  wb = write(fd, document, document_len);
+  if (wb!=document_len)
+  {
+    return (0);
+  }
+  return (wb);
+}
 
-//   errno = 0;
-//   nw = write (fd, heredoc, herelen);
-//   e = errno;
-//   if (nw != herelen)
-//     {
-//       if (e == 0)
-// 	e = ENOSPC;
-//       return e;
-//     }
-//   return 0;
-// }
+int make_heredoc(t_redir *hd)
+{
+  char *delim = hd->filename;
+  size_t delim_len = strlen(delim);
+  char *line = NULL;
+  size_t line_len = 0;
+  char *document=NULL;
+  size_t document_len = 0;
+  char *filename=NULL;
+  int fd;
+
+  if (get_document(hd, &document, &document_len)<0)
+    return (-1);
+  if (document_len==0)
+  {
+    fd = open("dev/null", O_RDONLY);
+    if (fd<0)
+      perror("open: ");
+    free(document);
+    return (fd);
+  }
+  if (document_len + 1 <= PIPE_SIZE)
+  {
+    int herepipe[2];
+    int ret = pipe(herepipe);
+    if (ret<0)
+    {
+      perror("pipe: ");
+      free(document);
+    }
+    ssize_t wb = heredoc_write_to_fd(herepipe, document, document_len);
+    close(herepipe[1]);
+    if (wb == 0)
+    {
+      close(herepipe[0]);//no read.
+      unlink (filename);
+      free (filename);
+      return (-1);
+    }
+    return (herepipe[0]);
+  }
+  else
+  {
+    int tmp_fd = get_tmp_fd(document, document_len, &filename);//get tmp_fd and write buffer content to it.
+    if (tmp_fd<0)
+    {
+      free(line);
+      free(value);
+      return (-1);
+    }
+    int fd = open(filename, O_RDONLY);
+    if (fd<0)
+    {
+      perror("open: ");
+      close(tmp_fd);
+      unlink(filename);
+      free(filename);
+      return (-1);
+    }
+    close(tmp_fd);
+    return (fd);
+  }
+  return (-1);
+}
+
+
 
 /* Create a temporary file or pipe holding the text of the here document
    pointed to by REDIRECTEE, and return a file descriptor open for reading
@@ -220,9 +190,6 @@ int heredoc_loop(char **value, t_redir *hd)
 //   int r, fd, fd2, herepipe[2];
 //   char *document;
 //   size_t document_len;
-// #if HEREDOC_PARANOID
-//   struct stat st1, st2;
-// #endif
 
 //   /* Expand the here-document/here-string first and then decide what to do. */
 //   document = heredoc_expand (redirectee, ri, &document_len);
@@ -231,15 +198,9 @@ int heredoc_loop(char **value, t_redir *hd)
 //   if (document_len == 0)
 //     {
 //       fd = open ("/dev/null", O_RDONLY);
-//       r = errno;
-//       if (document != redirectee->word)
-// 	FREE (document);
-//       errno = r;
 //       return fd;
 //     }
 
-//   if (shell_compatibility_level <= 50)
-//     goto use_tempfile;
 
 // #if HEREDOC_PIPESIZE
 //   /* Try to use a pipe internal to this process if the document is shorter
@@ -249,11 +210,6 @@ int heredoc_loop(char **value, t_redir *hd)
 //     {
 //       if (pipe (herepipe) < 0)
 // 	{
-// 	  /* XXX - goto use_tempfile; ? */
-// 	  r = errno;
-// 	  if (document != redirectee->word)
-// 	    free (document);
-// 	  errno = r;
 // 	  return (-1);
 // 	}
 
@@ -267,13 +223,10 @@ int heredoc_loop(char **value, t_redir *hd)
 // #endif
 
 //       r = heredoc_write (herepipe[1], document, document_len);
-//       if (document != redirectee->word)
-// 	free (document);
 //       close (herepipe[1]);
 //       if (r)			/* write error */
 // 	{
 // 	  close (herepipe[0]);
-// 	  errno = r;
 // 	  return (-1);
 // 	}
 //       return (herepipe[0]);
@@ -288,28 +241,17 @@ int heredoc_loop(char **value, t_redir *hd)
 //   /* If we failed for some reason other than the file existing, abort */
 //   if (fd < 0)
 //     {
-//       r = errno;
 //       FREE (filename);
-//       if (document != redirectee->word)
-// 	FREE (document);
-//       errno = r;
 //       return (fd);
 //     }
 
-//   fchmod (fd, S_IRUSR | S_IWUSR);
-//   SET_CLOSE_ON_EXEC (fd);
-
-//   errno = r = 0;		/* XXX */
 //   r = heredoc_write (fd, document, document_len);
-//   if (document != redirectee->word)
-//     FREE (document);
 
 //   if (r)
 //     {
 //       close (fd);
 //       unlink (filename);
 //       free (filename);
-//       errno = r;
 //       return (-1);
 //     }
 
@@ -328,21 +270,6 @@ int heredoc_loop(char **value, t_redir *hd)
 //       return -1;
 //     }
 
-// #if HEREDOC_PARANOID
-//   /* We can use same_file here to check whether or not fd and fd2 refer to
-//      the same file, but we don't do that unless HEREDOC_PARANOID is defined. */
-//   if (fstat (fd, &st1) < 0 || S_ISREG (st1.st_mode) == 0 ||
-//       fstat (fd2, &st2) < 0 || S_ISREG (st2.st_mode) == 0 ||
-//       same_file (filename, filename, &st1, &st2) == 0)
-//     {
-//       unlink (filename);
-//       free (filename);
-//       close (fd);
-//       close (fd2);
-//       errno = EEXIST;
-//       return -1;
-//     }
-// #endif
 
 //   close (fd);
 //   if (unlink (filename) < 0)
