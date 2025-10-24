@@ -10,6 +10,7 @@
 # include <stdbool.h>
 # include <ctype.h>//isspace()->rem
 # include <fcntl.h>//open()
+#include <signal.h>
 
 //heredoc pipe capacity from system default size.
 #define HERE_PIPE_SIZE 4096

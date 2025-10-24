@@ -1,6 +1,4 @@
-#include "../includes/minishell.h"
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "../../includes/minishell.h"
 
 volatile sig_atomic_t g_recept_signal = 0;
 
