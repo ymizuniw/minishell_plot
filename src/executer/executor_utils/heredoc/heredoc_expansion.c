@@ -56,8 +56,6 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
     return (res);
   }
 
-  //if delimiter has any quote, the value won't expanded.
-
 char *heredoc_expansion(char *value, bool in_quote, size_t value_len)
 {
   char *new = heredoc_value_expansion(value, in_quote, value_len);
@@ -105,9 +103,7 @@ ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len
   ssize_t wb = 0;
   wb = write(fd, document, document_len);
   if (wb!=document_len)
-  {
     return (0);
-  }
   return (wb);
 }
 
@@ -176,8 +172,6 @@ int make_heredoc(t_redir *hd)
   return (-1);
 }
 
-
-
 /* Create a temporary file or pipe holding the text of the here document
    pointed to by REDIRECTEE, and return a file descriptor open for reading
    to it. Return -1 on any error, and make sure errno is set appropriately. */
@@ -200,7 +194,6 @@ int make_heredoc(t_redir *hd)
 //       fd = open ("/dev/null", O_RDONLY);
 //       return fd;
 //     }
-
 
 // #if HEREDOC_PIPESIZE
 //   /* Try to use a pipe internal to this process if the document is shorter

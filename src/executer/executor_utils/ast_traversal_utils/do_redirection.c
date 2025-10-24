@@ -23,6 +23,8 @@ int	do_redirection(t_ast *node)
 			fd = make_heredoc();
 			if (fd < 0)
 				return (-1);
+			dup2(fd, STDIN_FILENO);
+			close(fd);
 		}
 		else if (cur->type == REDIR_OUT)
 		{
