@@ -62,15 +62,6 @@ char *heredoc_expansion(char *line, bool in_quote, size_t line_len)
   return (new);
 }
 
-int get_tmp_fd(char *src, size_t size, char **filename)
-{
-  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, filename);
-  if (tmp_fd<0)
-    return(-1);
-  write(tmp_fd, src, size);
-  return tmp_fd;
-}
-
 int get_document(t_redir *hd, char **document, size_t *document_len)
 {
   char *delim = hd->filename;
@@ -103,6 +94,20 @@ ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len
   if (wb!=document_len)
     return (0);
   return (wb);
+}
+
+int get_tmp_fd(char *src, size_t size, char **filename)
+{
+  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, filename);
+  if (tmp_fd<0)
+    return(-1);
+  ssize_t wb = write(tmp_fd, src, size);
+  if (wb!=size)
+  {
+    close(tmp_fd);
+    return (-1);
+  }
+  return tmp_fd;
 }
 
 int make_heredoc(t_redir *hd)
@@ -173,7 +178,6 @@ int make_heredoc(t_redir *hd)
 /* Create a temporary file or pipe holding the text of the here document
    pointed to by REDIRECTEE, and return a file descriptor open for reading
    to it. Return -1 on any error, and make sure errno is set appropriately. */
-
 
 // static int
 // here_document_to_fd (WORD_DESC *redirectee, enum r_instruction ri)

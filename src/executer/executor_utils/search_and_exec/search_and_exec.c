@@ -26,6 +26,7 @@ int search_and_exec(char *cmd, char **env)
     */
     if (with_no_slash())
     {
+        //int err = 0; the result of search_hash and find_path should be kept for return value, maybe.
         if (search_hash())//if you implement command hash map
             return (exec_path());
         else if (find_path())

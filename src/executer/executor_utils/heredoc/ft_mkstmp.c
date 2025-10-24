@@ -36,7 +36,7 @@ char *ft_mkstmp(char *template, unsigned int num)
 
 int ft_mkstmpfd(char *template, unsigned int num, char **filename)
 {
-    size_t try_limit = 1000;
+    size_t try_limit = 5000;
     if (template==NULL)
         return (-1);
     while (1)

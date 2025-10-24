@@ -11,7 +11,6 @@
 # include <ctype.h>//isspace()->rem
 # include <fcntl.h>//open()
 
-
 //heredoc pipe capacity from system default size.
 #define HERE_PIPE_SIZE 4096
 //HEREDOC TMPFILE'S TEMPLATE
