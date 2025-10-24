@@ -1,6 +1,23 @@
 
 #include "../../../includes/minishell.h"
 
+
+char *ext_unit(char *src, size_t start, size_t end)
+{
+  char *unit = malloc(sizeof(char)*(end-start+2));
+  strlcpy(unit, &src[start], end-start+2);
+  return (unit);
+}
+
+int join_value(char **res, char *value, size_t size1, size_t size2)
+{
+  *res = realloc(*res, sizeof(char)*(size1 + size2 + 1));
+  if (res==NULL)
+    return (0);
+  strlcpy(*res, value, size2+1);
+  return (1);
+}
+
   char *heredoc_value_expansion(char *word, bool in_quote, int fd, size_t total_len)
   {
     char *buf;
@@ -32,7 +49,62 @@
         break ;
     }
     //if $ comes, then consume the idx and concatenate word.
+    size_t i=0;
+    char *start = word;
+    char *res = NULL;
+    size_t res_len = 0;
+    while (i<total_len)
+    {
+      char *dq1 = strchr(start, '\"');
+      char *sq1 = strchr(start, '\'');
+      if (dq1<sq1)
+        int dq_on = 1;
+      size_t dq1_idx = dq1 - start;
+      start = dq1+1;
+      char *dq2 = strchr(tmp, '\"');
+      char *end  = dq2;
+      size_t dq2_idx = dq2 - start;
+      size_t part_len = dq2 - start - 2;
+
+      char *part = malloc(sizeof(char)*(dq2_idx - dq1_idx + 2));
+      strlcpy(part, start, part_len+1);
+    
+      char *doller = strchr(part, '$');
+      if (doller!=NULL)
+      {
+        //$ mono case.
+        if (doller[1]=='\'' || doller[1]=='\"' || isspace(dolelr[1]))
+        {
+          if (res!=NULL)
+            res_len = strlen(res);
+          res = realloc(res, res_len + 2);
+          strlcpy(res + res_len, "$", 2);
+        }
+        // $var case
+        size_t start = 1;
+        size_t end = 1;
+        while (&doller[end]<&word[total_len])
+        {
+          char *unit = ext_unit(doller, start, end);
+          if (unit==NULL)
+            break ;
+          char *value = getenv(unit);
+          if (value != NULL)
+          {
+            if (join_value(res, unit, strlen(*res), strlen(value)))
+              return (NULL);
+            i += end;
+            break ;
+          }
+          end++;
+        }
+      }
+      start = end+1;
+    }
+    return (res);
   }
+
+  //if delimiter has any quote, the value won't expanded.
 
 char *heredoc_expansion(char *word, bool in_quote, int fd, size_t total_len)
 {
@@ -51,8 +123,9 @@ char *heredoc_expansion(char *word, bool in_quote, int fd, size_t total_len)
       }
 
   char *value = heredoc_value_expansion(word, in_quote, &len);
-  //if quoted, non expansion $.
-
+  if (value==NULL)
+      return (NULL);
+  return (value);
 }
 
 int get_tmp_fd(char *src, size_t size)
@@ -79,7 +152,6 @@ int heredoc_loop(char **value, t_redir *hd)
       goto USE_TMP;
   while (strncmp(line, hd->filename, delim_len)!=0)
   {
-    // write(tmp_fd, line, line_len);
     if (total_len>PIPE_SIZE)
       goto USE_TMP;
     *value = realloc(buf, sizeof(char)*(total_len + 1));

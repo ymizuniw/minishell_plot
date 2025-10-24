@@ -1,5 +1,32 @@
 #include "../../includes/minishell.h"
 
+//"$", '$', $"var", $'var', $<space>, $<eof>
+int is_doller_token(char *p,  size_t *idx_p)
+{
+	size_t idx = 0;
+	char quote = is_quote(p[idx]);
+	if (quote!='\0')
+	{
+		while (isspace(p[idx]))
+			idx++;
+		if (p[idx] == '\0' || (p[idx] && p[idx]!='$'))
+		{
+			*idx_p += idx;
+			return (0);
+		}
+		while (isspace(p[idx]))
+			idx++;
+		if(quote == p[idx])
+		{
+			*idx_p += idx;
+			return (0);		
+		}
+		*idx_p += idx;
+		return (0);
+	}
+	return (0);
+}
+
 t_token	*lexer(const char *input)
 {
 	size_t		idx;
@@ -37,13 +64,11 @@ t_token	*lexer(const char *input)
 		}
 		else
 		{
-			if (is_quote(input[idx]) && idx + 2 < input_len && input[idx
-				+ 1] == '$' && is_quote(input[idx + 2]))
+			if (is_doller_token(&input[idx],&idx))
 			{
 				new->type = TK_DOLLER;
 				new->value = strdup("$");
 				append_tokens(token_head, new);
-				idx += 3;
 				continue ;
 			}
 			else

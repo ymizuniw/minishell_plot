@@ -11,6 +11,9 @@
 # include <ctype.h>//isspace()->rem
 # include <fcntl.h>//open()
 
+//HEREDOC TMPFILE'S TEMPLATE
+#define TEMPLATE  "/tmp/heredoc_tmp_XXXXX"
+
 #define SYNTAX_ERR_TEMPLATE "minishell: syntax error near unexpected token `"
 #define SYNTAX_ERR_TEMPLATE_LEN 47
 #define TOKEN_VALUE_NEWLINE "newline"

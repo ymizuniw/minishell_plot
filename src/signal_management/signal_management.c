@@ -2,7 +2,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-valatile sig_atomic_t g_recept_signal = 0;
+volatile sig_atomic_t g_recept_signal = 0;
 
 static void signal_handler(int signum)
 {
