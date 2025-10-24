@@ -20,7 +20,7 @@ int	do_redirection(t_ast *node)
 		}
 		else if (cur->type == REDIR_HEREDOC)
 		{
-			fd = make_heredoc();
+			fd = make_heredoc(cur);
 			if (fd < 0)
 				return (-1);
 			dup2(fd, STDIN_FILENO);
