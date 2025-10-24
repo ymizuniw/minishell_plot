@@ -1,5 +1,5 @@
 
-#include "../../../includes/minishell.h"
+#include "../../../../includes/minishell.h"
 
 char *ext_unit(char *src, size_t start, size_t end)
 {
@@ -18,47 +18,46 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
 }
 
 //heredoc mode will expand all environment variables and quotations. It means that it won't recognize quotations.
-  char *heredoc_value_expansion(char *value, bool in_quote, size_t value_len)
-  {
-    //if $ comes, then consume the idx and concatenate word.
-    size_t i=0;
-    char *start = word;
-    char *res = NULL;
-    size_t res_len = 0;
-    
-    while (i<total_len)
-    {
-      strlcpy(part, start, part_len+1);
-    
-      char *doller = strchr(part, '$');
-      if (doller!=NULL)
-      {
-        size_t start = 1;
-        size_t end = 1;
-        while (&doller[end]<&word[total_len])
-        {
-          char *unit = ext_unit(doller, start, end);
-          if (unit==NULL)
-            break ;
-          char *value = ft_getenv(unit);
-          if (value != NULL)
-          {
-            if (join_value(res, unit, strlen(*res), strlen(value)))
-              return (NULL);
-            i += end;
-            break ;
-          }
-          end++;
-        }
-      }
-      start = end+1;
-    }
-    return (res);
-  }
-
-char *heredoc_expansion(char *value, bool in_quote, size_t value_len)
+char *heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
 {
-  char *new = heredoc_value_expansion(value, in_quote, value_len);
+  //if $ comes, then consume the idx and concatenate word.
+  size_t i=0;
+  char *start = line;
+  char *end  = start;
+  char *res = NULL;
+  size_t res_len = 0;
+  size_t start_idx = 1;
+  size_t end_idx = 1;
+  
+  while (i<line_len)
+  {
+    char *doller = strchr(start, '$');
+    if (doller!=NULL)
+    {
+      while (&doller[end_idx]<&line[line_len])
+      {
+        char *unit = ext_unit(doller, start, end_idx);
+        if (unit==NULL)
+          break ;
+        char *var = ft_getenv(unit);
+        if (var != NULL)
+        {
+          if (join_value(res, unit, strlen(*res), strlen(var)))
+            return (NULL);
+          i += end_idx;
+          break ;
+        }
+        end_idx++;
+      }
+    }
+    start = &start[end_idx]+1;
+  }
+  return (res);
+}
+
+char *heredoc_expansion(char *line, bool in_quote, size_t line_len)
+{
+  char *new = heredoc_value_expansion(line, in_quote, line_len);
   if (new==NULL)
       return (NULL);
   return (new);
@@ -66,7 +65,7 @@ char *heredoc_expansion(char *value, bool in_quote, size_t value_len)
 
 int get_tmp_fd(char *src, size_t size, char **filename)
 {
-  int tmp_fd = ft_mkstmpfd(TMP_TEMPLATE, filename);
+  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, filename);
   if (tmp_fd<0)
     return(-1);
   write(tmp_fd, src, size);
@@ -101,7 +100,7 @@ int get_document(t_redir *hd, char **document, size_t *document_len)
 ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len)
 {
   ssize_t wb = 0;
-  wb = write(fd, document, document_len);
+  wb = write(herepipe[1], document, document_len);
   if (wb!=document_len)
     return (0);
   return (wb);
@@ -141,7 +140,7 @@ int make_heredoc(t_redir *hd)
     close(herepipe[1]);
     if (wb == 0)
     {
-      close(herepipe[0]);//no read.
+      close(herepipe[0]);
       unlink (filename);
       free (filename);
       return (-1);
@@ -154,7 +153,7 @@ int make_heredoc(t_redir *hd)
     if (tmp_fd<0)
     {
       free(line);
-      free(value);
+      free(document);
       return (-1);
     }
     int fd = open(filename, O_RDONLY);
