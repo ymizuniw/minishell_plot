@@ -126,7 +126,7 @@ int make_heredoc(t_redir *hd)
     free(document);
     return (fd);
   }
-  if (document_len + 1 <= PIPE_SIZE)
+  if (document_len + 1 <= HERE_PIPE_SIZE)
   {
     int herepipe[2];
     int ret = pipe(herepipe);
