@@ -3,6 +3,10 @@
 
 #include "minishell_types.h"
 
+//wrapper for malloc and free
+void *xmalloc(size_t);
+void xfree(void *);
+
 //alloc application
 t_token *alloc_token(void);
 t_cmd *alloc_cmd(void);

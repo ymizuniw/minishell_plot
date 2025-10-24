@@ -26,7 +26,7 @@ int search_and_exec(char *cmd, char **env)
     */
     if (with_no_slash())
     {
-        if (search_hash())
+        if (search_hash())//if you implement command hash map
             return (exec_path());
         else if (find_path())
             return (exec_path());
@@ -55,7 +55,6 @@ int search_and_exec(char *cmd, char **env)
 
 //if cached in hash table and could not conducted,
 //it will return 127 or 126? not found or command failure?
-
 
 // Bash scripts often begin with #! /bin/bash (assuming that Bash has been installed in /bin), since this ensures that Bash will be used to interpret the script, even if it is executed under another shell. It’s a common idiom to use env to find bash even if it’s been installed in another directory: #!/usr/bin/env bash will find the first occurrence of bash in $PATH.
 

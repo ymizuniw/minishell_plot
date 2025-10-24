@@ -27,6 +27,20 @@
 #define TOKEN_VALUE_HEREDOC "<<"
 #define TOKEN_VALUE_APPEND ">>"
 
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	int				exported;
+	struct s_env	*next;
+}	t_env;
+
+typedef struct s_shell
+{
+	t_env	*env_list;
+	char	*pwd;
+}	t_shell;
+
 typedef enum e_metachar
 {
 	MT_OTHER,

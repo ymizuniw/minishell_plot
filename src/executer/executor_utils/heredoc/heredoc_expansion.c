@@ -20,7 +20,6 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
 //heredoc mode will expand all environment variables and quotations. It means that it won't recognize quotations.
 char *heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
 {
-  //if $ comes, then consume the idx and concatenate word.
   size_t i=0;
   char *start = line;
   char *end  = start;
