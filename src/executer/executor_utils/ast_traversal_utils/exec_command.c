@@ -1,7 +1,7 @@
 #include "../../../../includes/minishell.h"
 
 // conduct redirection and execute command.
-int	exec_command(t_ast *node, char **env, int execute, int last_exit_status)
+int	exec_command(t_ast *node, t_env *env_list, int execute, int last_exit_status)
 {
 	int		redir_ret;
 	char	*path;

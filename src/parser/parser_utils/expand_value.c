@@ -18,7 +18,7 @@ char	*expand_value(t_token *token)
 		word = malloc(sizeof(char) * (word_len + 1));
 		if (!word)
 			return (NULL);
-		strlcpy(word, token->value, word_len + 1);
+		strncpy(word, token->value, word_len + 1);
 	}
 	else
 	{
@@ -39,7 +39,7 @@ char	*expand_value(t_token *token)
 					return (NULL);
 				}
 				bzero(var, sizeof(char) * (i - start + 1));
-				strlcpy(var, doller + start + 1, i - start);
+				strncpy(var, doller + start + 1, i - start);
 				entry = getenv(var);
 				if (entry != NULL)
 					cat_word(&word, entry, strlen(entry));

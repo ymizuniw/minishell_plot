@@ -1,14 +1,12 @@
 #include "../includes/minishell.h"
 
-int	shell_loop(char **envp)
+int	shell_loop(char **env)
 {
 	char		*line;
 	t_token		*tokens;
 	t_ast		*ast;
-	char		**env;
-
-	env = NULL;
-	// cpy_env(&env, envp);
+	t_shell 	shell;
+	init_env_from_envp(&shell,env);
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -19,9 +17,9 @@ int	shell_loop(char **envp)
 		}
 		if (*line)
 			add_history(line);
-		tokens = lexer(line); // format analysis.
-		ast = parser(tokens); // abstract structure tree.
-		t_result *res = executor(ast, env);  // Commented out since executor not implemented
+		tokens = lexer(line);
+		ast = parser(tokens);
+		t_result *res = executor(ast, &shell);
 		free(line);
 		if (tokens)
 			free_token_list(tokens);
@@ -30,15 +28,14 @@ int	shell_loop(char **envp)
 		if (res)
 			free_result(res);
 	}
-	if (env)
-		free_double_array(env);
+	free_env_list(shell.env_list);
 	return (0);
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	(void)argc;  // Suppress unused parameter warning
-	(void)argv;  // Suppress unused parameter warning
+	(void)argc;
+	(void)argv;
 	shell_loop(env);
 	return (0);
 }

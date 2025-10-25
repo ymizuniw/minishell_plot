@@ -4,7 +4,7 @@
 char *ext_unit(char *src, size_t start, size_t end)
 {
   char *unit = malloc(sizeof(char)*(end-start+2));
-  strlcpy(unit, &src[start], end-start+2);
+  strncpy(unit, &src[start], end-start+2);
   return (unit);
 }
 
@@ -13,7 +13,7 @@ int join_value(char **res, char *value, size_t size1, size_t size2)
   *res = realloc(*res, sizeof(char)*(size1 + size2 + 1));
   if (res==NULL)
     return (0);
-  strlcpy(*res, value, size2+1);
+  strncpy(*res, value, size2+1);
   return (1);
 }
 

@@ -17,11 +17,11 @@ void	cat_word(char **word, char *entry, size_t entry_len)
 	}
 	if (*word)
 	{
-		strlcpy(new, *word, word_len + 1);
+		strncpy(new, *word, word_len + 1);
 		free(*word);
 	}
 	else
 		new[0] = '\0';
-	strlcpy(new + word_len, entry, entry_len + 1);
+	strncpy(new + word_len, entry, entry_len + 1);
 	*word = new;
 }

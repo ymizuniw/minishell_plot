@@ -1,6 +1,6 @@
 #include "../../includes/minishell_types.h"
 
-static void init_env_from_envp(t_shell *shell, char **envp)
+void init_env_from_envp(t_shell *shell, char **envp)
 {
     int i = 0;
     
@@ -15,7 +15,7 @@ static void init_env_from_envp(t_shell *shell, char **envp)
     }
 }
 
-static void free_env_list(t_env *env_list)
+void free_env_list(t_env *env_list)
 {
     t_env *current;
     t_env *next;
