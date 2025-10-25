@@ -35,7 +35,7 @@ void	print_err_args(void)
 	write(2, msg, strlen(msg));
 }
 
-void	exit_cmd(char **cmd)
+void	ft_exit(char **cmd)
 {
 	int	exit_code;
 

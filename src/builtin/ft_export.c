@@ -27,7 +27,7 @@ static void handle_export_arg(t_shell *shell, char *arg)
     if (!is_valid_varname(key))
     {
         write(2, "export: `", 9);
-        write(2, arg, ft_strlen(arg));
+        write(2, arg, strlen(arg));
         write(2, "': not a valid identifier\n", 26);
         free(key);
         return;
@@ -61,7 +61,7 @@ static void sort_env_array(t_env **arr, int count)
 		j = 0;
 		while (j < count - i - 1)
 		{
-			if (ft_strcmp(arr[j]->key, arr[j + 1]->key) > 0)
+			if (strcmp(arr[j]->key, arr[j + 1]->key) > 0)
 			{
 				tmp = arr[j];
 				arr[j] = arr[j + 1];
@@ -146,7 +146,7 @@ static void print_exported_vars(t_env *env_list, int fd)
 	free(sorted);
 }
 
-void export_cmd(t_shell *shell, char **cmd, int fd)
+void ft_export(t_shell *shell, char **cmd, int fd)
 {
     int i;
     

@@ -1,6 +1,25 @@
 #include "../../includes/minishell.h"
 
-void pwd_cmd(t_shell *shell, int fd)
+void	ft_putchar_fd(char c, int fd)
+{
+	write(fd, &c, 1);
+}
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	size_t	i;
+
+	i = 0;
+	if (s == NULL)
+		return ;
+	while (s[i])
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+}
+
+void ft_pwd(t_shell *shell, int fd)
 {
     char *cwd;
     (void)shell;

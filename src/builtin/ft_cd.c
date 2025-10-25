@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-void cd_cmd(char **cmd, t_shell *shell, int fd)
+void ft_cd(char **cmd, t_shell *shell, int fd)
 {
     char *target_dir;
     char *new_pwd;

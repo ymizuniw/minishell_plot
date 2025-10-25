@@ -18,7 +18,7 @@ static bool	is_n_option(const char *arg)
 	return (true);
 }
 
-void	echo_cmd(char **cmd)
+void	ft_echo(char **cmd)
 {
 	bool	newline;
 	int		i;
