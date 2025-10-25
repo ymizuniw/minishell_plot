@@ -5,7 +5,7 @@
 # include <readline/readline.h>
 # include <stdio.h>//printf()
 # include <stdlib.h>//malloc()
-# include <string.h>//strlcpy()->rem
+# include <string.h>//strncpy()->rem
 # include <unistd.h>//write()
 # include <stdbool.h>
 # include <ctype.h>//isspace()->rem

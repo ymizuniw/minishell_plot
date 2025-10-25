@@ -3,6 +3,10 @@
 
 #include "minishell_types.h"
 
+//initialize and free env list
+void    init_env_from_envp(t_shell *shell, char **envp);
+void    free_env_list(t_env *env_list);
+
 char	*get_pwd(void);
 int		count_token(char **tokens);
 int		is_valid_varname(const char *var);
