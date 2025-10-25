@@ -4,7 +4,6 @@
 int	exec_command(t_ast *node, t_env *env_list, int execute, int last_exit_status)
 {
 	int		redir_ret;
-	// char	*path;
 	(void)env_list;
 	int		execve_ret;
 
