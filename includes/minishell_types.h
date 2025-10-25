@@ -42,6 +42,8 @@ typedef struct s_env
 
 typedef struct s_shell
 {
+	bool	interactive;
+	int 	last_exit_status;
 	t_env	*env_list;
 	char	*pwd;
 }	t_shell;

@@ -14,6 +14,7 @@ static void signal_handler(int signum)
 	}
 	else return ;
 }
+
 int	signal_initializer(sig_atomic_t g_recept_signal)
 {
 	struct sigaction sact;
