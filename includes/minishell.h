@@ -2,7 +2,8 @@
 # define MINISHELL_H
 
 # include "minishell_types.h"
-# include "env.h"
+# include "env_management.h"
+# include "builtin.h"
 # include "data_management.h"
 # include "lexer.h"
 # include "parser.h"
