@@ -6,6 +6,11 @@ CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 INC = includes
 
+#for later rename.
+# lex_util_
+# pse_util_
+# exe_util_
+
 # DIRECTORIES
 SRC_DIR = src
 BUILTIN_DIR = $(SRC_DIR)/builtin

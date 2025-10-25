@@ -66,11 +66,3 @@
 // //it will return 127 or 126? not found or command failure?
 
 // // Bash scripts often begin with #! /bin/bash (assuming that Bash has been installed in /bin), since this ensures that Bash will be used to interpret the script, even if it is executed under another shell. It’s a common idiom to use env to find bash even if it’s been installed in another directory: #!/usr/bin/env bash will find the first occurrence of bash in $PATH.
-
-// //environment
-// // Various process IDs, including those of background jobs (see Lists of Commands), the value of $$, and the value of $PPID.
-// // When a simple command other than a builtin or shell function is to be executed, it is invoked in a separate execution environment that consists of the following. Unless otherwise noted, the values are inherited from the shell.
-// // The shell’s open files, plus any modifications and additions specified by redirections to the command.
-// // The current working directory.
-// // The file creation mode mask.
-// // Shell variables and functions marked for export, along with variables exported for the command, passed in the environment (see Environment).

@@ -3,7 +3,31 @@
        and execute.  Bash behaves as if the following command were executed:
               if [ -n "$BASH_ENV" ]; then . "$BASH_ENV"; fi
        but the value of the PATH variable is not used to search for the file name.
+       BASH_ENV
+              If this parameter is set when bash is executing a shell script, its value is interpreted as a filename
+              containing commands to initialize the shell, as in ~/.bashrc.  The value of BASH_ENV is subjected to
+              parameter expansion, command substitution, and arithmetic expansion before being interpreted as a file name.
+              PATH is not used to search for the resultant file name.
 ///
+
+       PATH   The search path for commands.  It is a colon-separated list of directories in which the shell looks for
+              commands (see COMMAND EXECUTION below).  A zero-length (null) directory name in the value of PATH indicates
+              the current directory.  A null directory name may appear as two adjacent colons, or as an initial or
+              trailing colon.  The default path is system-dependent, and is set by the administrator who installs bash.  A
+              common value is ``/usr/gnu/bin:/usr/local/bin:/usr/ucb:/bin:/usr/bin''.
+///
+
+ SHELL  The full pathname to the shell is kept in this environment variable.  If it is not set when the shell starts, bash assigns to it the full pathname of the current user's login shell.
+
+//
+ TMPDIR If set, Bash uses its value as the name of a directory in which Bash creates temporary files for the shell's use.
+//
+
+//
+*      Matches any string, including the null string.
+//
+
+
 
 3.1.1 Shell Operation
 The following is a brief description of the shell’s operation when it reads and executes a command. Basically, the shell does the following:
