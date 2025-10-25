@@ -14,15 +14,13 @@ static void signal_handler(int signum)
 	}
 	else return ;
 }
-
 int	signal_initializer(sig_atomic_t g_recept_signal)
 {
 	struct sigaction sact;
 	sigemptyset(&sact.sa_mask);
 	sact.sa_flags = 0;
 	sact.sa_handler = SIG_IGN;
-
-	sigaction(SIGUSR2, &sact, NULL);
+	
 	
 }
 

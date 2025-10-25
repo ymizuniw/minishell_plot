@@ -9,7 +9,6 @@
 # include "parser.h"
 # include "executor.h"
 # include "signal_management.h"
-# include <signal.h>
 
 // main.c
 t_token				*lexer(const char *input);
