@@ -2,9 +2,11 @@
 # define MINISHELL_H
 
 # include "minishell_types.h"
+# include "env.h"
 # include "data_management.h"
-# include "parser.h"
 # include "lexer.h"
+# include "parser.h"
+# include "executor.h"
 # include "signal_management.h"
 
 // main.c

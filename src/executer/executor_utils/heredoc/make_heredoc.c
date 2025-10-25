@@ -35,13 +35,14 @@ char *heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
     {
       while (&doller[end_idx]<&line[line_len])
       {
-        char *unit = ext_unit(doller, start, end_idx);
+        char *unit = ext_unit(doller, start_idx, end_idx);
         if (unit==NULL)
           break ;
-        char *var = ft_getenv(unit);
+        // char *var = ft_getenv(unit);
+        char *var = getenv(unit);
         if (var != NULL)
         {
-          if (join_value(res, unit, strlen(*res), strlen(var)))
+          if (join_value(&res, unit, strlen(res), strlen(var)))
             return (NULL);
           i += end_idx;
           break ;
@@ -78,7 +79,7 @@ int get_document(t_redir *hd, char **document, size_t *document_len)
       line_len = strlen(line);
     char *value = heredoc_expansion(line, hd->delim_quoted, line_len);
     size_t value_len = strlen(value);
-    if (join_value(*document, value, *document_len, value_len)<0)
+    if (join_value(document, value, *document_len, value_len)<0)
       return (-1);
     *document_len += value_len;
     free(line);
@@ -98,7 +99,10 @@ ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len
 
 int get_tmp_fd(char *src, size_t size, char **filename)
 {
-  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, filename);
+  unsigned int num;
+  void *ptr = &num;
+  num = (unsigned long)ptr;
+  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, (unsigned int)num, filename);
   if (tmp_fd<0)
     return(-1);
   ssize_t wb = write(tmp_fd, src, size);
