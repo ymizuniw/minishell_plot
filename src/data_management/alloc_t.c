@@ -25,3 +25,8 @@ t_pipeline *alloc_pipeline(void)
 {
     return ((t_pipeline *)malloc(sizeof(t_pipeline)));
 }
+
+t_result *alloc_result(void)
+{
+    return ((t_result *)xmalloc(sizeof(t_result)));
+}

@@ -20,7 +20,9 @@ int	exec_command(t_ast *node, char **env, int execute, int last_exit_status)
 		return (last_exit_status);
 	if (!node->cmd->argv || !node->cmd->argv[0])
 		return (0);
-	execve_ret = search_and_exec();
+	// execve_ret = search_and_exec();
+	printf("command executed.\n");
+	exit(0);
 	if (execve_ret < 0)
 		return (1);
 }

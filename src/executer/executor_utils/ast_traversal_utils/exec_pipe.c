@@ -41,7 +41,7 @@ int	exec_pipe(t_ast *node, char **env, bool execute, int last_exit_status)
 		close(pip[0]);
 		dup2(pip[1], STDOUT_FILENO);
 		close(pip[1]);
-		exit(ast_traversal(node->left, env, execute));
+		exit(ast_traversal(node->left, env, execute, last_exit_status));
 	}
 	right_pid = fork();
 	if (right_pid < 0)
@@ -58,7 +58,7 @@ int	exec_pipe(t_ast *node, char **env, bool execute, int last_exit_status)
 		close(pip[1]);
 		dup2(pip[0], STDIN_FILENO);
 		close(pip[0]);
-		exit(ast_traversal(node->right, env,execute));
+		exit(ast_traversal(node->right, env,execute, last_exit_status));
 	}
 	close(pip[0]);
 	close(pip[1]);

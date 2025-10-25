@@ -99,10 +99,7 @@ ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len
 
 int get_tmp_fd(char *src, size_t size, char **filename)
 {
-  unsigned int num;
-  void *ptr = &num;
-  num = (unsigned long)ptr;
-  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, (unsigned int)num, filename);
+  int tmp_fd = ft_mkstmpfd(HERE_TEMPLATE, filename);
   if (tmp_fd<0)
     return(-1);
   ssize_t wb = write(tmp_fd, src, size);

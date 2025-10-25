@@ -65,3 +65,8 @@ void free_cmd_structure(t_cmd *p)
         free_redir_list(p->redir);
     free(p);
 }
+
+void free_result(t_result *p)
+{
+    xfree(p);
+}

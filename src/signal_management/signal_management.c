@@ -2,7 +2,7 @@
 
 volatile sig_atomic_t g_recept_signal = 0;
 
-static void signal_handler(int signum)
+static void sigint_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
@@ -20,7 +20,7 @@ int	signal_initializer(int *g_set)
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
-	sa.sa_handler = sigint_event;
+	sa.sa_handler = sigint_handler;
 	if (sigaction(SIGINT, &sa, NULL))
 	{
 		perror("minishell: sigaction");

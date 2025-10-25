@@ -11,6 +11,6 @@ void *xmalloc(size_t size)
 void *xcalloc(size_t size)
 {
     void *p = xmalloc(size);
-    memset(p, size, 0);
+    memset(p, 0, size);
     return (0);
 }

@@ -1,7 +1,7 @@
 #include "../../includes/minishell.h"
 
 //"$", '$', $"var", $'var', $<space>, $<eof>
-int is_doller_token(char *p,  size_t *idx_p)
+int is_doller_token(const char *p,  size_t *idx_p)
 {
 	size_t idx = 0;
 	char quote = is_quote(p[idx]);
