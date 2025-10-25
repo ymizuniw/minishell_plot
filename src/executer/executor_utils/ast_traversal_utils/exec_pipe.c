@@ -39,7 +39,7 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 		close(pip[0]);
 		dup2(pip[1], STDOUT_FILENO);
 		close(pip[1]);
-		exit(ast_traversal(node->left, shell, execute));
+		return (ast_traversal(node->left, shell, execute));
 	}
 	right_pid = fork();
 	if (right_pid < 0)
@@ -56,11 +56,11 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 		close(pip[1]);
 		dup2(pip[0], STDIN_FILENO);
 		close(pip[0]);
-		exit(ast_traversal(node->right, shell, execute));
+		return (ast_traversal(node->right, shell, execute));
 	}
 	close(pip[0]);
 	close(pip[1]);
-	handle_child(shell->last_exit_status, left_pid);
-	handle_child(shell->last_exit_status, right_pid);
+	handle_child($shell->last_exit_status, left_pid);
+	handle_child($shell->last_exit_status, right_pid);
 	return (0);
 }

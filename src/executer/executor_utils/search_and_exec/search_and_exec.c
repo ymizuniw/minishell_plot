@@ -1,5 +1,13 @@
 // #include "../../../../includes/minishell.h"
 
+//int exec_path()
+//{
+//  set_env(env_list, external_command)//add external_command to env_list, as follows: "_=absolute_path_of_command".
+//  execve();
+//  below here, execve() failed, then remove previously set external_command from env_list.
+//  unset_env(env_list, external_command)
+//}
+
 // int search_and_exec(char *cmd, char **env)
 // {
 //     /*Shell function is not required, maybe.

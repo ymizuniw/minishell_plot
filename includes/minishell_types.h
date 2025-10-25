@@ -45,6 +45,7 @@ typedef struct s_shell
 	bool	interactive;
 	int 	last_exit_status;
 	t_env	*env_list;
+	// t_command_hash *cmd_hash;
 	char	*pwd;
 }	t_shell;
 

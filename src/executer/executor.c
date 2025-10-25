@@ -3,8 +3,8 @@
 t_result *executor(t_ast *ast, t_shell *shell)
 {
 	t_result *res = alloc_result();
-	int last_exit_status = ast_traversal(ast, shell->env_list, true, 0);
+	ast_traversal(ast, shell->env_list, true, 0);
 	res->root = ast;
-	res->exit_code = last_exit_status;
+	res->exit_code = shell->last_exit_status;
 	return (res);
 }

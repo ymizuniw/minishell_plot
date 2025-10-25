@@ -1,12 +1,9 @@
 $PPID
 
 Builtin commands that are invoked as part of a
-       pipeline are also executed in a subshell environment.  Changes made to the subshell environment cannot affect the
-       shell's execution environment.
+       pipeline are also executed in a subshell environment.  Changes made to the subshell environment cannot affect the shell's execution environment.
 
-When bash invokes an external command, the variable _ is set to the full file name of the command and passed to
-       that command in its environment.
-
+When bash invokes an external command, the variable _ is set to the full file name of the command and passed to that command in its environment.
 
 //shell builtin
 Shell builtin commands return a status of 0 (true) if successful, and non-zero (false) if an error occurs while
