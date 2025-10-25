@@ -125,21 +125,13 @@ typedef struct s_cmd
 	t_redir			*redir;
 }					t_cmd;
 
-typedef struct s_pipeline
-{
-	bool	in_pipeline;
-	int in_fd;
-	int out_fd;
-	int err_fd;
-} t_pipeline;
-
 typedef struct s_ast
 {
 	struct s_ast	*parent;
 	struct s_ast	*subtree;
 	struct s_ast	*left;
 	t_node_type		type;
-	t_pipeline		*pipeline;
+	bool			in_pipeline;
 	t_cmd			*cmd;
 	struct s_ast	*right;
 }					t_ast;

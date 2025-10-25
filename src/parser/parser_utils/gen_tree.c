@@ -48,14 +48,7 @@ t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 		node->type = NODE_CMD;
 	node->parent = ast;
 	if (pipeline == 1)
-	{
-		node->pipeline = malloc(sizeof(t_pipeline));
-		if (node->pipeline)
-		{
-			bzero(node->pipeline, sizeof(t_pipeline));
-			node->pipeline->in_pipeline = true;
-		}
-	}
+		node->in_pipeline = true;
 	if (is_operator(token->type))
 	{
 		node = swap_and_set_right_node(node, ast);
