@@ -1,11 +1,11 @@
 #include "../../../../includes/minishell.h"
 
 //generate a random num
-unsigned int ft_rand(unsigned int a)
+unsigned int ft_rand(unsigned int seed)
 {
-    // unsigned int a = 1003;
+    unsigned int a = 1003;
     unsigned int m = 2147483647;
-    unsigned int seed = (a * seed) % m;
+    seed = (a * seed) % m;
     unsigned int random = seed / m;
     return (random);
 }

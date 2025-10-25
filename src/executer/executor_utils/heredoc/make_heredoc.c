@@ -22,12 +22,12 @@ char *heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
 {
   size_t i=0;
   char *start = line;
-  char *end  = start;
+  // char *end  = start;
   char *res = NULL;
-  size_t res_len = 0;
+  // size_t res_len = 0;
   size_t start_idx = 1;
   size_t end_idx = 1;
-  
+  (void)in_quote;
   while (i<line_len)
   {
     char *doller = strchr(start, '$');
@@ -92,7 +92,7 @@ ssize_t heredoc_write_to_fd(int herepipe[2], char *document, size_t document_len
 {
   ssize_t wb = 0;
   wb = write(herepipe[1], document, document_len);
-  if (wb!=document_len)
+  if (wb!=(ssize_t)document_len)
     return (0);
   return (wb);
 }
@@ -103,7 +103,7 @@ int get_tmp_fd(char *src, size_t size, char **filename)
   if (tmp_fd<0)
     return(-1);
   ssize_t wb = write(tmp_fd, src, size);
-  if (wb!=size)
+  if (wb!=(ssize_t)size)
   {
     close(tmp_fd);
     return (-1);
@@ -113,10 +113,10 @@ int get_tmp_fd(char *src, size_t size, char **filename)
 
 int make_heredoc(t_redir *hd)
 {
-  char *delim = hd->filename;
-  size_t delim_len = strlen(delim);
+  // char *delim = hd->filename;
+  // size_t delim_len = strlen(delim);
   char *line = NULL;
-  size_t line_len = 0;
+  // size_t line_len = 0;
   char *document=NULL;
   size_t document_len = 0;
   char *filename=NULL;

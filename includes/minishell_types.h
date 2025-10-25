@@ -1,6 +1,7 @@
 #ifndef MINISHELL_TYPES_H
 #define MINISHELL_TYPES_H
 
+# define _POSIX_SOURCE
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>//printf()

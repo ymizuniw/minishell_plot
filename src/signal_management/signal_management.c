@@ -2,7 +2,7 @@
 
 volatile sig_atomic_t g_recept_signal = 0;
 
-static void sigint_handler(int signum)
+static void signal_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
@@ -12,29 +12,18 @@ static void sigint_handler(int signum)
 		rl_replace_line("", 0);
 		rl_redisplay();		
 	}
+	else return ;
 }
 
-int	signal_initializer(int *g_set)
+int	signal_initializer(sig_atomic_t g_recept_signal)
 {
-	struct sigaction sa;
+	struct sigaction sact;
+	sigemptyset(&sact.sa_mask);
+	sact.sa_flags = 0;
+	sact.sa_handler = SIG_IGN;
 
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	sa.sa_handler = sigint_handler;
-	if (sigaction(SIGINT, &sa, NULL))
-	{
-		perror("minishell: sigaction");
-		return (-1);
-	}
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sa.sa_handler = SIG_IGN;
-	if (sigaction(SIGQUIT, &sa, NULL))
-	{
-		perror("minishell: sigaction");
-		return (-1);
-	}
-	return (1);
+	sigaction(SIGUSR2, &sact, NULL);
+	
 }
 
 int handle_child(int *last_exit_status, pid_t pid)
