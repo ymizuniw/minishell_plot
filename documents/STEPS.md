@@ -27,7 +27,7 @@
 *      Matches any string, including the null string.
 //
 
-
+how about IFS?
 
 3.1.1 Shell Operation
 The following is a brief description of the shell’s operation when it reads and executes a command. Basically, the shell does the following:

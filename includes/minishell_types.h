@@ -5,6 +5,7 @@
 #  define _POSIX_C_SOURCE 200809L
 # endif
 # include <ctype.h> //isspace()->rem
+# include <dirent.h>
 # include <fcntl.h> //open()
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -14,9 +15,8 @@
 # include <stdlib.h>  //malloc()
 # include <string.h>  //strncpy()->rem
 # include <strings.h> //bzero()
-# include <unistd.h>  //write()
 # include <sys/wait.h>
-# include <dirent.h>
+# include <unistd.h> //write()
 
 // heredoc pipe capacity from system default size.
 # define HERE_PIPE_SIZE 4096

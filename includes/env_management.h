@@ -1,14 +1,14 @@
 #ifndef ENV_MANAGE_H
-#define ENV_MANAGE_H
+# define ENV_MANAGE_H
 
-#include "minishell_types.h"
+# include "minishell_types.h"
 
 void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 
-//initialize and free env list
-void    init_env_from_envp(t_shell *shell, char **envp);
-void    free_env_list(t_env *env_list);
+// initialize and free env list
+void	init_env_from_envp(t_shell *shell, char **envp);
+void	free_env_list(t_env *env_list);
 
 char	*get_pwd(void);
 int		count_token(char **tokens);

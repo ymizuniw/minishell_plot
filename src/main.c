@@ -1,9 +1,11 @@
 #include "../includes/minishell.h"
 
-char *ft_readline(char const *prompt, bool interactive)
+char	*ft_readline(char const *prompt, bool interactive)
 {
-	char *line = NULL;
-	if (interactive==true)
+	char	*line;
+
+	line = NULL;
+	if (interactive == true)
 	{
 		line = readline(prompt);
 		return (line);
@@ -14,10 +16,14 @@ char *ft_readline(char const *prompt, bool interactive)
 
 int	shell_loop(t_shell *shell)
 {
-	char		*line=NULL;
-	t_token		*tokens=NULL;
-	t_ast		*ast=NULL;
+	char		*line;
+	t_token		*tokens;
+	t_ast		*ast;
+	t_result	*res;
 
+	line = NULL;
+	tokens = NULL;
+	ast = NULL;
 	while (1)
 	{
 		line = ft_readline("minishell$ ", shell->interactive);
@@ -30,7 +36,7 @@ int	shell_loop(t_shell *shell)
 			add_history(line);
 		tokens = lexer(line);
 		ast = parser(tokens);
-		t_result *res = executor(ast, shell);
+		res = executor(ast, shell);
 		xfree(line);
 		if (tokens)
 			free_token_list(tokens);
@@ -44,15 +50,15 @@ int	shell_loop(t_shell *shell)
 
 int	main(int argc, char **argv, char **env)
 {
+	t_shell	shell;
+
 	(void)argc;
 	(void)argv;
-	t_shell shell;
-
-	bzero(&shell, sizeof(t_shell));
-	if(isatty(STDIN_FILENO)==1)
+	memset(&shell, 0, sizeof(t_shell));
+	if (isatty(STDIN_FILENO) == 1)
 		shell.interactive = true;
 	signal_initializer(shell.interactive);
-	init_env_from_envp(&shell,env);
+	init_env_from_envp(&shell, env);
 	shell_loop(&shell);
 	free_env_list(shell.env_list);
 	return (0);

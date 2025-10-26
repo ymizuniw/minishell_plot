@@ -1,16 +1,20 @@
 #include "../../includes/minishell.h"
 
-void *xmalloc(size_t size)
+void	*xmalloc(size_t size)
 {
-    void *p = (void *)malloc(size);
-    if (p==NULL)
-        perror("malloc: ");
-    return (p);
+	void	*p;
+
+	p = (void *)malloc(size);
+	if (p == NULL)
+		perror("malloc: ");
+	return (p);
 }
 
-void *xcalloc(size_t size)
+void	*xcalloc(size_t size)
 {
-    void *p = xmalloc(size);
-    memset(p, 0, size);
-    return (0);
+	void	*p;
+
+	p = xmalloc(size);
+	memset(p, 0, size);
+	return (0);
 }

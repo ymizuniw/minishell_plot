@@ -26,18 +26,19 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
 	t_ast	*node;
 	t_token	*token;
 	t_token	*next_token;
+	t_ast	*root;
 
-	//validation for NULL input
+	// validation for NULL input
 	if (!tail_token || !*tail_token)
 		return (NULL);
-	//initialize token ptr and new node.
+	// initialize token ptr and new node.
 	token = *tail_token;
 	next_token = NULL;
 	node = alloc_node();
 	if (!node)
 		return (NULL);
-	bzero(node, sizeof(t_ast));
-	//classify the type of node based on the token type.
+	memset(node, 0, sizeof(t_ast));
+	// classify the type of node based on the token type.
 	if (token->type == TK_AND_IF)
 		node->type = NODE_AND;
 	else if (token->type == TK_OR_IF)
@@ -49,16 +50,17 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
 	node->parent = parent;
 	if (is_operator(token->type))
 	{
-		if (token->type==TK_AND_IF || TK_OR_IF)
+		if (token->type == TK_AND_IF || TK_OR_IF)
 		{
-			//move to the root the current tree and swap the node.
-			//the more left token it is, the more priority it has.
-			//parent is 
-			t_ast *root=parent;
-			while (root!=NULL)
-				root=root->parent;
-			//set the cur as the right branch of the current logical operator node.
-			//root's parent will be node, and the root will be right node of the logical operator.
+			// move to the root the current tree and swap the node.
+			// the more left token it is, the more priority it has.
+			// parent is
+			root = parent;
+			while (root != NULL)
+				root = root->parent;
+			// set the cur as the right branch of the current logical operator node.
+			// root's parent will be node,
+			// and the root will be right node of the logical operator.
 			node = swap_and_set_right_node(node, root);
 		}
 		else
@@ -102,7 +104,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
 		node->cmd = alloc_cmd();
 		if (!node->cmd)
 			return (NULL);
-		bzero(node->cmd, sizeof(t_cmd));
+		memset(node->cmd, 0, sizeof(t_cmd));
 		node->cmd->redir = parse_redirection(node->cmd->redir, tail_token);
 		set_argv(node->cmd->argv, tail_token, 0);
 		node->cmd->argv[0] = NULL;

@@ -19,7 +19,7 @@ t_redir	*parse_redirection(t_redir *redir, t_token **tail_token)
 	cur_redir = alloc_redir();
 	if (!cur_redir)
 		return (redir);
-	bzero(cur_redir, sizeof(t_redir));
+	memset(cur_redir, 0, sizeof(t_redir));
 	if (syntax_check(next) != 1)
 	{
 		xfree(cur_redir);

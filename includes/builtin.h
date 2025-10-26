@@ -1,10 +1,10 @@
 #ifndef BUILTIN_H
-#define BUILTIN_H
+# define BUILTIN_H
 
-#include "minishell.h"
+# include "minishell_types.h"
 
 bool	is_builtin(const char *cmd);
-char    *get_pwd(void);
+char	*get_pwd(void);
 
 void	ft_builtin(t_shell *shell, char **cmd);
 void	ft_echo(char **cmd);

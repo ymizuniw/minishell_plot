@@ -38,7 +38,7 @@ char	*expand_value(t_token *token)
 					xfree(word);
 					return (NULL);
 				}
-				bzero(var, sizeof(char) * (i - start + 1));
+				memset(var, 0, sizeof(char) * (i - start + 1));
 				strncpy(var, doller + start + 1, i - start);
 				entry = getenv(var);
 				if (entry != NULL)

@@ -1,22 +1,23 @@
 #include "../../includes/minishell.h"
 
-volatile sig_atomic_t g_signum = 0;
+volatile sig_atomic_t	g_signum = 0;
 
-static void signal_handler(int signum)
+static void	signal_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
 		g_signum = SIGINT;
 		rl_on_new_line();
 		rl_replace_line("", 0);
-		rl_redisplay();		
+		rl_redisplay();
 	}
 }
 
-//just before execve, rest it default sigaction.
-static int set_sig_dfl(void)
+// just before execve, rest it default sigaction.
+static int	set_sig_dfl(void)
 {
-	struct sigaction sact;
+	struct sigaction	sact;
+
 	sigemptyset(&sact.sa_mask);
 	sact.sa_flags = 0;
 	sact.sa_handler = SIG_DFL;
@@ -28,9 +29,9 @@ static int set_sig_dfl(void)
 
 int	signal_initializer(bool interactive)
 {
-	struct sigaction sact;
-	
-	if (interactive==true)
+	struct sigaction	sact;
+
+	if (interactive == true)
 	{
 		sigemptyset(&sact.sa_mask);
 		sact.sa_flags = 0;
@@ -43,27 +44,31 @@ int	signal_initializer(bool interactive)
 		return (0);
 	}
 	set_sig_dfl();
-	return(0);
+	return (0);
 }
 
-//when bash is in interactive mode, SIGTERM are ignored. SIGINT is handled, and SIGQUIT is ignored in all cases.
-//if asyncronous command is under execution, SIGTERM and SIGINT are also ignored.
-int handle_child(int *last_exit_status, pid_t pid)
+// when bash is in interactive mode, SIGTERM are ignored. SIGINT is handled,
+	and SIGQUIT is ignored in all cases.
+// if asyncronous command is under execution,
+	SIGTERM and SIGINT are also ignored.
+int	handle_child(int *last_exit_status, pid_t pid)
 {
-	int local_status = 0;
-	if (waitpid(pid, &local_status, 0)==-1)
+	int	local_status;
+
+	local_status = 0;
+	if (waitpid(pid, &local_status, 0) == -1)
 	{
 		perror("waitpid");
 		*last_exit_status = 1;
-		return -1;
+		return (-1);
 	}
 	if (WIFSIGNALED(local_status))
 	{
 		*last_exit_status = WEXITSTATUS(local_status);
-		if (WTERMSIG(local_status)==SIGQUIT)
+		if (WTERMSIG(local_status) == SIGQUIT)
 			write(STDERR_FILENO, "Quit (core dumped)\n", 19);
 		else if (WTERMSIG(local_status) == SIGINT)
 			write(STDOUT_FILENO, "\n", 1);
 	}
-	return 0;
+	return (0);
 }
