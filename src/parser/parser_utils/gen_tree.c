@@ -19,16 +19,9 @@ t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 	return (new_parent);
 }
 
-/*
-Name: gen_tree
-Args: 
-	t_ast *ast : 
-Purpose: generate Abstract Syntax Tree with the priorities of operators and pipe, and word tokens. This is not recursive because it will confuse developpers. and the token is already
-			rearranged in reverse orders to their appearance in first input. This enable gen_tree() to sraightly construct a tree parsing from head of token list(tail of input) to
-			tail(head of input).
-Return: new node pointer if it is allocated newly, NULL if it failed.
-*/
-t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
+// generate a tree of command.
+// manage corrent token by having the ptr's address.
+t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 {
 	t_ast	*node;
 	t_token	*token;

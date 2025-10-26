@@ -60,6 +60,7 @@ int expand_wildcard(char const*str, t_shell *shell)
     t_wildcard *new;
     DIR *dirp = {0};
     struct dirent *dent = {0};
+    
     dirp = opendir(shell->pwd);
     if (dirp==NULL)
     {
