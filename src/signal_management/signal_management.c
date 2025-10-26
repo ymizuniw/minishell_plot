@@ -20,9 +20,9 @@ int set_sig_dfl(void)
 	sigemptyset(&sact.sa_mask);
 	sact.sa_flags = 0;
 	sact.sa_handler = SIG_DFL;
-	sigaction(SIGTERM, &sact NULL);
-	sigaction(SIGQUIT, &sact NULL);
-	sigaction(SIGINT, &sact NULL);
+	sigaction(SIGTERM, &sact, NULL);
+	sigaction(SIGQUIT, &sact, NULL);
+	sigaction(SIGINT, &sact, NULL);
 	return (0);
 }
 

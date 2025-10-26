@@ -96,6 +96,8 @@ t_token	*lexer(const char *input)
 	{
 		bzero(new, sizeof(t_token));
 		new->type = TK_EOF;
+		new->value = strdup("");
+		new->next=NULL;
 		append_tokens(token_head, new);
 	}
 	return (token_head);

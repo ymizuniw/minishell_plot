@@ -50,8 +50,8 @@ int	main(int argc, char **argv, char **env)
 
 	bzero(&shell, sizeof(t_shell));
 	if(isatty(STDIN_FILENO)==1)
-		shell->interactive = true;
-	signal_initializer(shell->interactive)
+		shell.interactive = true;
+	signal_initializer(shell->interactive);
 	init_env_from_envp(&shell,env);
 	shell_loop(&shell);
 	free_env_list(shell.env_list);
