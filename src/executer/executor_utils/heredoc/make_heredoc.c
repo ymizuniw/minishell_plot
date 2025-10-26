@@ -22,12 +22,11 @@ char *heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
 {
   size_t i=0;
   char *start = line;
-  // char *end  = start;
   char *res = NULL;
-  // size_t res_len = 0;
   size_t start_idx = 1;
   size_t end_idx = 1;
   (void)in_quote;
+
   while (i<line_len)
   {
     char *doller = strchr(start, '$');
@@ -39,7 +38,7 @@ char *heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
         if (unit==NULL)
           break ;
         // char *var = ft_getenv(unit);
-        char *var = getenv(unit);
+        char *var = getenv(unit);//temporary.
         if (var != NULL)
         {
           if (join_value(&res, unit, strlen(res), strlen(var)))

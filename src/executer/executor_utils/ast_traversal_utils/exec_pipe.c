@@ -9,13 +9,6 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 	pid_t	left_pid;
 	pid_t	right_pid;
 
-	if (execute == false)
-	{
-		//this is for redirections those are conducted even if the commands won't be executed.
-		ast_traversal(node->left, shell, execute);
-		ast_traversal(node->right, shell, execute);
-		return (0);
-	}
 	ret = pipe(pip);
 	if (ret < 0)
 	{

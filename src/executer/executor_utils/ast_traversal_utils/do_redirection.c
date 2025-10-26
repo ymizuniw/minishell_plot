@@ -46,10 +46,3 @@ int	do_redirection(t_ast *node)
 	}
 	return (1);
 }
-
-//   if ((temp->rflags & REDIR_VARASSIGN) && error < 0)
-//     filename = allocname = savestring (temp->redirector.filename->word);
-//   else if ((temp->rflags & REDIR_VARASSIGN) == 0 && temp->redirector.dest < 0)
-//     /* This can happen when read_token_word encounters overflow, like in
-//        exec 4294967297>x */
-//     filename = _("file descriptor out of range");

@@ -67,16 +67,3 @@ int handle_child(int *last_exit_status, pid_t pid)
 	}
 	return 0;
 }
-
-//Reference for child signal exit value.
-// void		status_child(void)
-// {
-// 	if (WIFEXITED(g_pid))
-// 		g_status = WEXITSTATUS(g_pid);
-// 	if (WIFSIGNALED(g_pid))
-// 	{
-// 		g_status = WTERMSIG(g_pid);
-// 		if (g_status != 131)
-// 			g_status += 128;
-// 	}
-// }

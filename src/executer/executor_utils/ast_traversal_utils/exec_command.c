@@ -16,12 +16,8 @@ int	exec_command(t_ast *node, t_env *env_list, int execute, int last_exit_status
 			perror(node->cmd->redir->filename);
 		return (1);
 	}
-	//if execute == false, then search_and_exec() won't be conducted.
-	if (execute==false)
-		return (1);
 	if (!node->cmd->argv || !node->cmd->argv[0])
 		return (1);
 	// search_and_exec();
-	printf("command not executed.\n");//debug.
 	exit(EXIT_FAILURE);
 }
