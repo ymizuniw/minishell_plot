@@ -15,7 +15,8 @@
 # include <string.h>  //strncpy()->rem
 # include <strings.h> //bzero()
 # include <unistd.h>  //write()
-# include <wait.h>
+# include <sys/wait.h>
+# include <dirent.h>
 
 // heredoc pipe capacity from system default size.
 # define HERE_PIPE_SIZE 4096
