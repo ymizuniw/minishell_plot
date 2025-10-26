@@ -67,11 +67,12 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
 			//move to the root the current tree and swap the node.
 			//the more left token it is, the more priority it has.
 			//parent is 
-			t_ast *cur=parent;
-			while (cur!=NULL)
-				cur=cur->parent;
+			t_ast *root=parent;
+			while (root!=NULL)
+				root=root->parent;
 			//set the cur as the right branch of the current logical operator node.
-			node = swap_and_set_right_node(node, cur);
+			//root's parent will be node, and the root will be right node of the logical operator.
+			node = swap_and_set_right_node(node, root);
 		}
 		else
 			node = swap_and_set_right_node(node, parent);
