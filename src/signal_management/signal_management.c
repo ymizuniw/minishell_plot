@@ -14,7 +14,7 @@ static void signal_handler(int signum)
 }
 
 //just before execve, rest it default sigaction.
-int set_sig_dfl(void)
+static int set_sig_dfl(void)
 {
 	struct sigaction sact;
 	sigemptyset(&sact.sa_mask);

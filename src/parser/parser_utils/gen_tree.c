@@ -21,7 +21,7 @@ t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 
 // generate a tree of command.
 // manage corrent token by having the ptr's address.
-t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
+t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
 {
 	t_ast	*node;
 	t_token	*token;
@@ -43,16 +43,10 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
 	else if (token->type == TK_OR_IF)
 		node->type = NODE_OR;
 	else if (token->type == TK_PIPE)
-	{
-		//if the command 
 		node->type = NODE_PIPE;
-		pipeline = 1;
-	}
 	else
 		node->type = NODE_CMD;
 	node->parent = parent;
-	if (pipeline == 1)
-		node->in_pipeline = true;
 	if (is_operator(token->type))
 	{
 		if (token->type==TK_AND_IF || TK_OR_IF)
@@ -71,7 +65,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
 			node = swap_and_set_right_node(node, parent);
 		*tail_token = token->next;
 		next_token = *tail_token;
-		node->left = gen_tree(node, &next_token, subshell, pipeline);
+		node->left = gen_tree(node, &next_token, subshell);
 		if (node->left)
 			node->left->parent = node;
 		*tail_token = next_token;
@@ -84,7 +78,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
 			return (NULL);
 		*tail_token = token->next;
 		next_token = *tail_token;
-		node->subtree = gen_tree(NULL, &next_token, 1, pipeline);
+		node->subtree = gen_tree(NULL, &next_token, 1);
 		if (node->subtree == NULL)
 			return (NULL);
 		*tail_token = next_token;

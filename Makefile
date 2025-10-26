@@ -1,6 +1,6 @@
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -D_DEFAULT_SOURCE
 # -fsanitize=address
 # -g
 LDFLAGS = -lreadline
@@ -105,6 +105,10 @@ SRCS = $(MAIN_SRC) \
 
 OBJS = $(SRCS:.c=.o)
 
+# Core objects without main.c (used for tests)
+CORE_SRCS := $(filter-out $(MAIN_SRC),$(SRCS))
+CORE_OBJS := $(CORE_SRCS:.c=.o)
+
 # COMPILATION RULES
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INC) -c $< -o $@
@@ -122,4 +126,29 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+# TESTS
+TEST_DIR := tests
+TEST_BIN_DIR := $(TEST_DIR)/bin
+TEST_SRCS := $(shell find $(TEST_DIR) -name "*_test.c" -o -name "*smoke_test.c")
+TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(TEST_BIN_DIR)/%,$(TEST_SRCS))
+
+$(TEST_BIN_DIR)/%: $(TEST_DIR)/%.c $(CORE_OBJS)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -I$(INC) $< $(CORE_OBJS) $(LDFLAGS) -o $@
+
+# Simple smoke tests we added
+SMOKE_SRCS := \
+	$(TEST_DIR)/executer/ast_traversal_test.c \
+	$(TEST_DIR)/executer/exec_pipe_smoke_test.c \
+	$(TEST_DIR)/executer/heredoc/ft_mkstmp_test.c \
+	$(TEST_DIR)/env_management/env_list_test.c \
+	$(TEST_DIR)/parser/parser_utils/gen_tree_smoke_test.c
+SMOKE_BINS := $(patsubst $(TEST_DIR)/%.c,$(TEST_BIN_DIR)/%,$(SMOKE_SRCS))
+
+.PHONY: all clean fclean re tests smoketests
+
+tests: $(TEST_BINS)
+	@echo "Built $(words $(TEST_BINS)) test binaries into $(TEST_BIN_DIR)"
+
+smoketests: $(SMOKE_BINS)
+	@echo "Built $(words $(SMOKE_BINS)) smoke test binaries into $(TEST_BIN_DIR)"

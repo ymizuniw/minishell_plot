@@ -24,5 +24,5 @@ int	ast_traversal(t_ast *node, t_shell *shell, bool execute)
 		exec_subshell(node, shell, execute);
 	else
 		exec_command(node, shell, execute);
-	return 0;
+	return (0);
 }

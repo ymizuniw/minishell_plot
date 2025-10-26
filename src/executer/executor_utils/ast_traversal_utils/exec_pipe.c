@@ -2,8 +2,6 @@
 
 int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 {
-	int		right_status;
-	int		left_status;
 	int		pip[2];
 	int		ret;
 	pid_t	left_pid;

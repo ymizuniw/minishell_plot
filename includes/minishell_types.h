@@ -135,7 +135,6 @@ typedef struct s_ast
 	struct s_ast	*subtree;
 	struct s_ast	*left;
 	t_node_type		type;
-	bool			in_pipeline;
 	t_cmd			*cmd;
 	struct s_ast	*right;
 }					t_ast;

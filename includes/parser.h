@@ -4,7 +4,7 @@
 # include "minishell_types.h"
 
 void	set_argv(char **argv, t_token **start_token, size_t i);
-t_ast	*gen_tree(t_ast *ast, t_token **token_ptr, int subshell, int pipeline);
+t_ast	*gen_tree(t_ast *ast, t_token **token_ptr, int subshell);
 
 int		check_parenthesis(t_token *token);
 int		syntax_check(t_token *token);

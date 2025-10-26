@@ -4,16 +4,17 @@
 
 void	test_signal_initializer(void)
 {
-	int	g_set;
-
-	g_set = 0;
-	signal_initializer(&g_set);
-	printf("signal_initializer test completed\n");
-	printf("g_set value after initialization: %d\n", g_set);
+	printf("signal_initializer test\n");
+	int ret = signal_initializer(true);
+	assert(ret == 0);
+	ret = signal_initializer(false);
+	assert(ret == 0);
+	printf("signal_initializer tests completed\n");
 }
 
 int	main(void)
 {
 	test_signal_initializer();
+	printf("ok\n");
 	return (0);
 }
