@@ -15,7 +15,7 @@ char	*expand_value(t_token *token)
 	word = NULL;
 	if (token->in_dquote || token->in_squote)
 	{
-		word = malloc(sizeof(char) * (word_len + 1));
+		word = xmalloc(sizeof(char) * (word_len + 1));
 		if (!word)
 			return (NULL);
 		strncpy(word, token->value, word_len + 1);
@@ -32,10 +32,10 @@ char	*expand_value(t_token *token)
 				i++;
 				while (doller[i] && !isspace(doller[i]) && doller[i] != '$')
 					i++;
-				var = malloc(sizeof(char) * (i - start + 1));
+				var = xmalloc(sizeof(char) * (i - start + 1));
 				if (!var)
 				{
-					free(word);
+					xfree(word);
 					return (NULL);
 				}
 				bzero(var, sizeof(char) * (i - start + 1));
@@ -43,7 +43,7 @@ char	*expand_value(t_token *token)
 				entry = getenv(var);
 				if (entry != NULL)
 					cat_word(&word, entry, strlen(entry));
-				free(var);
+				xfree(var);
 				if (doller[i] == '$')
 					doller = &doller[i];
 				else

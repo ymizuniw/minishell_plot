@@ -22,14 +22,14 @@ t_redir	*parse_redirection(t_redir *redir, t_token **tail_token)
 	bzero(cur_redir, sizeof(t_redir));
 	if (syntax_check(next) != 1)
 	{
-		free(cur_redir);
+		xfree(cur_redir);
 		return (NULL);
 	}
 	if (next->type == TK_REDIRECT_IN)
 	{
 		if (next->next == NULL)
 		{
-			free(cur_redir);
+			xfree(cur_redir);
 			return (NULL);
 		}
 		file_name = expand_value(next->next);
@@ -40,7 +40,7 @@ t_redir	*parse_redirection(t_redir *redir, t_token **tail_token)
 	{
 		if (next->next == NULL)
 		{
-			free(cur_redir);
+			xfree(cur_redir);
 			return (NULL);
 		}
 		file_name = expand_value(next->next);
@@ -51,7 +51,7 @@ t_redir	*parse_redirection(t_redir *redir, t_token **tail_token)
 	{
 		if (next->next == NULL)
 		{
-			free(cur_redir);
+			xfree(cur_redir);
 			return (NULL);
 		}
 		cur_redir->type = REDIR_HEREDOC;
@@ -63,7 +63,7 @@ t_redir	*parse_redirection(t_redir *redir, t_token **tail_token)
 	{
 		if (next->next == NULL)
 		{
-			free(cur_redir);
+			xfree(cur_redir);
 			return (NULL);
 		}
 		file_name = expand_value(next->next);

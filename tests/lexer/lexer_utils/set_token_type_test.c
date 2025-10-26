@@ -16,7 +16,7 @@ void	test_set_token_type(void)
 		bzero(token, sizeof(t_token));
 		set_token_type(token, input, &tmp_idx);
 		printf("set_token_type test completed\n");
-		free(token);
+		xfree(token);
 	}
 }
 

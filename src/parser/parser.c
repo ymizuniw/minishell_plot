@@ -9,6 +9,6 @@ t_ast	*parser(t_token *token_head)
 		return (NULL);
 	root = NULL;
 	token = token_head->next;
-	root = gen_tree(NULL, &token, 0, 0);
+	root = gen_tree(NULL, &token, 0);
 	return (root);
 }

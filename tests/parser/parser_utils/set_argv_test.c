@@ -23,8 +23,8 @@ void	test_set_argv(void)
 	printf("argv[0]=%s\n", argv[0] ? argv[0] : "(null)");
 	assert(argv[0] != NULL);
 	free_token_list(head);
-	for (size_t k=0;k<4;k++) free(argv[k]);
-	free(argv);
+	for (size_t k=0;k<4;k++) xfree(argv[k]);
+	xfree(argv);
 }
 
 int	main(void)

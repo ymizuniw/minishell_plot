@@ -11,7 +11,7 @@ void	test_word_cat(void)
 	size_t	end_idx;
 	size_t	result;
 
-	word = malloc(100);
+	word = xmalloc(100);
 	strcpy(word, "hello");
 	word_len = strlen(word);
 	input = " world";
@@ -20,7 +20,7 @@ void	test_word_cat(void)
 	result = word_cat(&word, word_len, input, start_idx, end_idx);
 	printf("word_cat test result: %zu\n", result);
 	printf("Concatenated word: %s\n", word);
-	free(word);
+	xfree(word);
 }
 
 int	main(void)

@@ -17,7 +17,7 @@ void	test_expand_value(void)
 		if (result)
 		{
 			printf("Expanded value: %s\n", result);
-			free(result);
+			xfree(result);
 		}
 		free_token_list(token);
 	}

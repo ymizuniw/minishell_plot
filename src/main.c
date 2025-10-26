@@ -8,7 +8,7 @@ char *ft_readline(char const *prompt, bool interactive)
 		line = readline(prompt);
 		return (line);
 	}
-	line = get_next_line(0);
+	// line = get_next_line(0);
 	return (line);
 }
 
@@ -30,8 +30,8 @@ int	shell_loop(t_shell *shell)
 			add_history(line);
 		tokens = lexer(line);
 		ast = parser(tokens);
-		t_result *res = executor(ast, &shell);
-		free(line);
+		t_result *res = executor(ast, shell);
+		xfree(line);
 		if (tokens)
 			free_token_list(tokens);
 		if (ast)

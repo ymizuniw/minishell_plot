@@ -16,7 +16,7 @@ void	test_set_quote_flag(void)
 		bzero(token, sizeof(t_token));
 		set_quote_flag(token, input, quote_open);
 		printf("set_quote_flag test completed\n");
-		free(token);
+		xfree(token);
 	}
 }
 

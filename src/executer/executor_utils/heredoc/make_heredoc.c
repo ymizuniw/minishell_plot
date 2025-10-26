@@ -3,7 +3,7 @@
 
 char *ext_unit(char *src, size_t start, size_t end)
 {
-  char *unit = malloc(sizeof(char)*(end-start+2));
+  char *unit = xmalloc(sizeof(char)*(end-start+2));
   strncpy(unit, &src[start], end-start+2);
   return (unit);
 }
@@ -81,8 +81,8 @@ int get_document(t_redir *hd, char **document, size_t *document_len)
     if (join_value(document, value, *document_len, value_len)<0)
       return (-1);
     *document_len += value_len;
-    free(line);
-    free(value);
+    xfree(line);
+    xfree(value);
   }
   return (-1);
 }
@@ -125,7 +125,7 @@ int make_heredoc(t_redir *hd)
     fd = open("dev/null", O_RDONLY);
     if (fd<0)
       perror("open: ");
-    free(document);
+    xfree(document);
     return (fd);
   }
   if (document_len + 1 <= HERE_PIPE_SIZE)
@@ -135,7 +135,7 @@ int make_heredoc(t_redir *hd)
     if (ret<0)
     {
       perror("pipe: ");
-      free(document);
+      xfree(document);
     }
     ssize_t wb = heredoc_write_to_fd(herepipe, document, document_len);
     close(herepipe[1]);
@@ -153,8 +153,8 @@ int make_heredoc(t_redir *hd)
     int tmp_fd = get_tmp_fd(document, document_len, &filename);
     if (tmp_fd<0)
     {
-      free(line);
-      free(document);
+      xfree(line);
+      xfree(document);
       return (-1);
     }
     int fd = open(filename, O_RDONLY);
@@ -163,7 +163,7 @@ int make_heredoc(t_redir *hd)
       perror("open: ");
       close(tmp_fd);
       unlink(filename);
-      free(filename);
+      xfree(filename);
       return (-1);
     }
     close(tmp_fd);

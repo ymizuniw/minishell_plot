@@ -55,7 +55,7 @@ int mark_wc_to_expand(char const *str, t_wildcard *wc)
 
 int expand_wildcard(char const*str, t_shell *shell)
 {
-    t_wildcard *head = malloc(sizeof(t_wildcard));
+    t_wildcard *head = xmalloc(sizeof(t_wildcard));
     bzero(head, sizeof(t_wildcard));
     t_wildcard *new;
     DIR *dirp = {0};
@@ -75,7 +75,7 @@ int expand_wildcard(char const*str, t_shell *shell)
             perror ("readdir: ");
             return (-1);
         }
-        new = malloc(sizeof(t_wildcard));
+        new = xmalloc(sizeof(t_wildcard));
         new->expand=false;
         new->i=0;
         strncpy(new->name, dent->d_name, dent->d_namlen);

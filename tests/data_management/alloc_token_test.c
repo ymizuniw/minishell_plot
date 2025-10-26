@@ -9,7 +9,7 @@ void	test_alloc_token(void)
 	token = alloc_token();
 	assert(token != NULL);
 	printf("alloc_token test passed\n");
-	free(token);
+	xfree(token);
 }
 
 int	main(void)

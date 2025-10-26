@@ -29,14 +29,14 @@ static void handle_export_arg(t_shell *shell, char *arg)
         write(2, "export: `", 9);
         write(2, arg, strlen(arg));
         write(2, "': not a valid identifier\n", 26);
-        free(key);
+        xfree(key);
         return;
     }
     value = extract_value(arg);
     if (value)
     {
         set_variable(shell, key, value, 1);
-        free(value);
+        xfree(value);
     }
     else
     {
@@ -46,7 +46,7 @@ static void handle_export_arg(t_shell *shell, char *arg)
         else
             set_variable(shell, key, "", 1);
     }   
-    free(key);
+    xfree(key);
 }
 
 static void sort_env_array(t_env **arr, int count)
@@ -95,7 +95,7 @@ static t_env **env_list_to_array(t_env *env_list, int count)
 	t_env *current;
 	int i;
 
-	array = malloc(sizeof(t_env *) * count);
+	array = xmalloc(sizeof(t_env *) * count);
 	if (!array)
 		return (NULL);
 	i = 0;
@@ -143,7 +143,7 @@ static void print_exported_vars(t_env *env_list, int fd)
 		return;
 	sort_env_array(sorted, count);
 	print_sorted_env(sorted, count, fd);
-	free(sorted);
+	xfree(sorted);
 }
 
 void ft_export(t_shell *shell, char **cmd, int fd)

@@ -15,12 +15,12 @@ char *get_pwd(void)
 	size = INITIAL_PWD_BUF_SIZE;
 	while (size <= MAX_PWD_BUF_SIZE)
 	{
-		buf = malloc(size);
+		buf = xmalloc(size);
 		if (!buf)
 			return (NULL);
 		if (getcwd(buf, size))
 			return (buf);
-		free(buf);
+		xfree(buf);
 		if (errno != ERANGE)
 			return (NULL);
 		size *= 2;

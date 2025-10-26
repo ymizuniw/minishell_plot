@@ -3,22 +3,22 @@
 // these may well have bzero?
 t_ast	*alloc_node(void)
 {
-	return (t_ast *)malloc(sizeof(t_ast));
+	return (t_ast *)xmalloc(sizeof(t_ast));
 }
 
 t_cmd	*alloc_cmd(void)
 {
-	return (t_cmd *)malloc(sizeof(t_cmd));
+	return (t_cmd *)xmalloc(sizeof(t_cmd));
 }
 
 t_token	*alloc_token(void)
 {
-	return ((t_token *)malloc(sizeof(t_token)));
+	return ((t_token *)xmalloc(sizeof(t_token)));
 }
 
 t_redir	*alloc_redir(void)
 {
-	return ((t_redir *)malloc(sizeof(t_redir)));
+	return ((t_redir *)xmalloc(sizeof(t_redir)));
 }
 
 t_result	*alloc_result(void)

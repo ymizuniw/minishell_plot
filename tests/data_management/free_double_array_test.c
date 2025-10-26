@@ -6,7 +6,7 @@ void	test_free_double_array(void)
 {
 	char	**array;
 
-	array = malloc(sizeof(char *) * 3);
+	array = xmalloc(sizeof(char *) * 3);
 	array[0] = strdup("test1");
 	array[1] = strdup("test2");
 	array[2] = NULL;

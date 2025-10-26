@@ -11,7 +11,7 @@ void free_ast_tree(t_ast *p)
         free_cmd_structure(p->cmd);
     if (p->subtree!=NULL)
         free_subshell_tree(p->subtree);
-    free(p);
+    xfree(p);
 }
 
 void free_subshell_tree(t_ast *p)
@@ -24,8 +24,8 @@ void free_token_list(t_token *p)
     if (p->next!=NULL)
         free_token_list(p->next);
     if (p->type!=TK_WORD)
-        free(p->value);
-    free(p);
+        xfree(p->value);
+    xfree(p);
 }
 
 void free_double_array_contents(char **p, char *p_content)
@@ -34,7 +34,7 @@ void free_double_array_contents(char **p, char *p_content)
     int i = 0;
     while (p[i] != NULL)
     {
-        free(p[i]);
+        xfree(p[i]);
         i++;
     }
 }
@@ -44,7 +44,7 @@ void free_double_array(char **p)
     if (p != NULL)
     {
         free_double_array_contents(p, NULL);
-        free(p);
+        xfree(p);
     }
 }
 
@@ -53,8 +53,8 @@ void free_redir_list(t_redir *p)
     if (p->next!=NULL)
         free_redir_list(p->next);
     if (p->filename!=NULL)
-        free(p->filename);
-    free(p);
+        xfree(p->filename);
+    xfree(p);
 }
 
 void free_cmd_structure(t_cmd *p)
@@ -63,7 +63,7 @@ void free_cmd_structure(t_cmd *p)
         free_double_array(p->argv);
     if (p->redir != NULL)
         free_redir_list(p->redir);
-    free(p);
+    xfree(p);
 }
 
 void free_result(t_result *p)

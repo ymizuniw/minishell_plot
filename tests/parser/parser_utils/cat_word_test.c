@@ -14,7 +14,7 @@ void	test_cat_word(void)
 	cat_word(&word, entry_buf, entry_len);
 	printf("cat_word result: %s\n", word);
 	assert(strcmp(word, "hello_world") == 0);
-	free(word);
+	xfree(word);
 }
 
 int	main(void)

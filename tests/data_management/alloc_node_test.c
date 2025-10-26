@@ -9,7 +9,7 @@ void	test_alloc_node(void)
 	node = alloc_node();
 	assert(node != NULL);
 	printf("alloc_node test passed\n");
-	free(node);
+	xfree(node);
 }
 
 int	main(void)

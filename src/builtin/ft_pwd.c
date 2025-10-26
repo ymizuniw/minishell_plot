@@ -33,5 +33,5 @@ void ft_pwd(t_shell *shell, int fd)
     }
     ft_putstr_fd(cwd, fd);
     ft_putchar_fd('\n', fd);
-    free(cwd);
+    xfree(cwd);
 }

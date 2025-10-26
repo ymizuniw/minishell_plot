@@ -9,7 +9,7 @@ void	test_alloc_cmd(void)
 	cmd = alloc_cmd();
 	assert(cmd != NULL);
 	printf("alloc_cmd test passed\n");
-	free(cmd);
+	xfree(cmd);
 }
 
 int	main(void)

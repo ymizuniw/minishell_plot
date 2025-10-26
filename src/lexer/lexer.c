@@ -83,7 +83,7 @@ t_token	*lexer(const char *input)
 				consumed = word_cat(&word, 0, (char *)input, input_len, idx);
 				if (consumed == 0)
 				{
-					free(new);
+					xfree(new);
 					free_token_list(token_head);
 					return (NULL);
 				}

@@ -1,4 +1,4 @@
-#include "../../includes/minishell_types.h"
+#include "../../includes/minishell.h"
 
 int count_token(char **envp)
 {
@@ -33,7 +33,7 @@ char *extract_key(const char *cmd)
 
 	while (cmd[len] && cmd[len] != '=')
 		len++;
-	key = malloc(len + 1);
+	key = xmalloc(len + 1);
 	if (!key)
 		return (NULL);
 	strncpy(key, cmd, len);
@@ -59,7 +59,7 @@ void set_variable(t_shell *shell, char *key, char *value, int exported)
     {
         if (strncmp(current->key, key, strlen(key) + 1) == 0)
         {
-            free(current->value);
+            xfree(current->value);
             current->value = strdup(value);
             if (exported)
                 current->exported = 1;
@@ -67,7 +67,7 @@ void set_variable(t_shell *shell, char *key, char *value, int exported)
         }
         current = current->next;
     }
-    t_env *new = malloc(sizeof(t_env));
+    t_env *new = xmalloc(sizeof(t_env));
     if (!new)
         return;
     new->key = strdup(key);

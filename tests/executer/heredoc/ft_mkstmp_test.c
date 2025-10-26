@@ -8,7 +8,7 @@ int main(void)
 	char *name = ft_mkstmp(HERE_TEMPLATE);
 	assert(name != NULL);
 	printf("tmp name: %s\n", name);
-	free(name);
+	xfree(name);
 
 	char *fname = NULL;
 	int fd = ft_mkstmpfd(HERE_TEMPLATE, &fname);
@@ -17,7 +17,7 @@ int main(void)
 	printf("tmp file: %s (fd=%d)\n", fname, fd);
 	close(fd);
 	unlink(fname);
-	free(fname);
+	xfree(fname);
 	printf("ok\n");
 	return 0;
 }

@@ -32,7 +32,7 @@ void ft_cd(char **cmd, t_shell *shell, int fd)
     if (new_pwd)
     {
         set_variable(shell, "PWD", new_pwd, 1);
-        free(shell->pwd);
+        xfree(shell->pwd);
         shell->pwd = new_pwd;
     }
 }

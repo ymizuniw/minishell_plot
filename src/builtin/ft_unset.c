@@ -17,9 +17,9 @@ static void remove_env_var(t_env **env_list, const char *key)
                 *env_list = current->next;
             else
                 prev->next = current->next;
-            free(current->key);
-            free(current->value);
-            free(current);
+            xfree(current->key);
+            xfree(current->value);
+            xfree(current);
             return;
         }
         prev = current;
