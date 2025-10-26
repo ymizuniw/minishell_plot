@@ -1,36 +1,39 @@
 #ifndef MINISHELL_TYPES_H
-#define MINISHELL_TYPES_H
+# define MINISHELL_TYPES_H
 
-# define _POSIX_SOURCE
+# ifndef _POSIX_C_SOURCE
+#  define _POSIX_C_SOURCE 200809L
+# endif
+# include <ctype.h> //isspace()->rem
+# include <fcntl.h> //open()
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>//printf()
-# include <stdlib.h>//malloc()
-# include <string.h>//strncpy()->rem
-# include <unistd.h>//write()
-# include <stdbool.h>
-# include <ctype.h>//isspace()->rem
-# include <fcntl.h>//open()
 # include <signal.h>
+# include <stdbool.h>
+# include <stdio.h>   //printf()
+# include <stdlib.h>  //malloc()
+# include <string.h>  //strncpy()->rem
+# include <strings.h> //bzero()
+# include <unistd.h>  //write()
 # include <wait.h>
 
-//heredoc pipe capacity from system default size.
-#define HERE_PIPE_SIZE 4096
-//HEREDOC TMPFILE'S TEMPLATE
-#define HERE_TEMPLATE  "/tmp/heredoc_tmp_XXXXX"
+// heredoc pipe capacity from system default size.
+# define HERE_PIPE_SIZE 4096
+// HEREDOC TMPFILE'S TEMPLATE
+# define HERE_TEMPLATE "/tmp/heredoc_tmp_XXXXX"
 
-#define SYNTAX_ERR_TEMPLATE "minishell: syntax error near unexpected token `"
-#define SYNTAX_ERR_TEMPLATE_LEN 47
-#define TOKEN_VALUE_NEWLINE "newline"
-#define TOKEN_VALUE_PIPE "|"
-#define TOKEN_VALUE_AND_IF "&&"
-#define TOKEN_VALUE_OR_IF "||"
-#define TOKEN_VALUE_LPAREN "("
-#define TOKEN_VALUE_RPAREN ")"
-#define TOKEN_VALUE_REDIRECT_IN "<"
-#define TOKEN_VALUE_REDIRECT_OUT ">"
-#define TOKEN_VALUE_HEREDOC "<<"
-#define TOKEN_VALUE_APPEND ">>"
+# define SYNTAX_ERR_TEMPLATE "minishell: syntax error near unexpected token `"
+# define SYNTAX_ERR_TEMPLATE_LEN 47
+# define TOKEN_VALUE_NEWLINE "newline"
+# define TOKEN_VALUE_PIPE "|"
+# define TOKEN_VALUE_AND_IF "&&"
+# define TOKEN_VALUE_OR_IF "||"
+# define TOKEN_VALUE_LPAREN "("
+# define TOKEN_VALUE_RPAREN ")"
+# define TOKEN_VALUE_REDIRECT_IN "<"
+# define TOKEN_VALUE_REDIRECT_OUT ">"
+# define TOKEN_VALUE_HEREDOC "<<"
+# define TOKEN_VALUE_APPEND ">>"
 
 typedef struct s_env
 {
@@ -38,16 +41,16 @@ typedef struct s_env
 	char			*value;
 	int				exported;
 	struct s_env	*next;
-}	t_env;
+}					t_env;
 
 typedef struct s_shell
 {
-	bool	interactive;
-	int 	last_exit_status;
-	t_env	*env_list;
+	bool			interactive;
+	int				last_exit_status;
+	t_env			*env_list;
 	// t_command_hash *cmd_hash;
-	char	*pwd;
-}	t_shell;
+	char			*pwd;
+}					t_shell;
 
 typedef enum e_metachar
 {
