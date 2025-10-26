@@ -7,7 +7,7 @@ int	ast_traversal(t_ast *node, t_shell *shell, bool execute)
 	if (node->type == NODE_AND)
 	{
 		ast_traversal(node->left, shell, execute);
-		if (shell->last_exit_status== 0)
+		if (shell->last_exit_status == 0)
 			execute = true;
 		ast_traversal(node->right, shell, execute);
 	}
