@@ -6,7 +6,7 @@ int	do_redirection(t_ast *node)
 	int		fd;
 
 	if (!node || !node->cmd)
-		return (0);
+		return (-1);
 	cur = node->cmd->redir;
 	while (cur != NULL)
 	{
@@ -44,7 +44,7 @@ int	do_redirection(t_ast *node)
 		}
 		cur = cur->next;
 	}
-	return (0);
+	return (1);
 }
 
 //   if ((temp->rflags & REDIR_VARASSIGN) && error < 0)
