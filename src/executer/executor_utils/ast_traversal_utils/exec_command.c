@@ -8,21 +8,20 @@ int	exec_command(t_ast *node, t_env *env_list, int execute, int last_exit_status
 	int		execve_ret;
 
 	if (!node || !node->cmd)
-		return (1);
+		return (-1);
 	redir_ret = do_redirection(node);
 	if (redir_ret < 0)
 	{
 		if (node->cmd->redir && node->cmd->redir->filename)
 			perror(node->cmd->redir->filename);
-		exit(redir_ret);
-	}
-	if (execute==false)
-		return (last_exit_status);
-	if (!node->cmd->argv || !node->cmd->argv[0])
-		return (0);
-	// execve_ret = search_and_exec();
-	printf("command executed.\n");
-	exit(0);
-	if (execve_ret < 0)
 		return (1);
+	}
+	//if execute == false, then search_and_exec() won't be conducted.
+	if (execute==false)
+		return (1);
+	if (!node->cmd->argv || !node->cmd->argv[0])
+		return (1);
+	// search_and_exec();
+	printf("command not executed.\n");//debug.
+	exit(EXIT_FAILURE);
 }

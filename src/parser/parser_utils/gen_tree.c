@@ -19,42 +19,65 @@ t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 	return (new_parent);
 }
 
-// generate a tree of command.
-// manage corrent token by having the ptr's address.
-t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
+/*
+Name: gen_tree
+Args: 
+	t_ast *ast : 
+Purpose: generate Abstract Syntax Tree with the priorities of operators and pipe, and word tokens. This is not recursive because it will confuse developpers. and the token is already
+			rearranged in reverse orders to their appearance in first input. This enable gen_tree() to sraightly construct a tree parsing from head of token list(tail of input) to
+			tail(head of input).
+Return: new node pointer if it is allocated newly, NULL if it failed.
+*/
+t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
 {
 	t_ast	*node;
 	t_token	*token;
 	t_token	*next_token;
 
+	//validation for NULL input
 	if (!tail_token || !*tail_token)
 		return (NULL);
+	//initialize token ptr and new node.
 	token = *tail_token;
 	next_token = NULL;
 	node = alloc_node();
 	if (!node)
 		return (NULL);
 	bzero(node, sizeof(t_ast));
+	//classify the type of node based on the token type.
 	if (token->type == TK_AND_IF)
 		node->type = NODE_AND;
 	else if (token->type == TK_OR_IF)
 		node->type = NODE_OR;
 	else if (token->type == TK_PIPE)
 	{
+		//if the command 
 		node->type = NODE_PIPE;
 		pipeline = 1;
 	}
 	else
 		node->type = NODE_CMD;
-	node->parent = ast;
+	node->parent = parent;
 	if (pipeline == 1)
 		node->in_pipeline = true;
 	if (is_operator(token->type))
 	{
-		node = swap_and_set_right_node(node, ast);
+		if (token->type==TK_AND_IF || TK_OR_IF)
+		{
+			//move to the root the current tree and swap the node.
+			//the more left token it is, the more priority it has.
+			//parent is 
+			t_ast *cur=parent;
+			while (cur!=NULL)
+				cur=cur->parent;
+			//set the cur as the right branch of the current logical operator node.
+			node = swap_and_set_right_node(node, cur);
+		}
+		else
+			node = swap_and_set_right_node(node, parent);
 		*tail_token = token->next;
 		next_token = *tail_token;
-		node->left = gen_tree(NULL, &next_token, subshell, pipeline);
+		node->left = gen_tree(node, &next_token, subshell, pipeline);
 		if (node->left)
 			node->left->parent = node;
 		*tail_token = next_token;
@@ -78,7 +101,7 @@ t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
 		if (subshell == 1)
 		{
 			*tail_token = token->next;
-			return (ast);
+			return (node);
 		}
 		else
 		{

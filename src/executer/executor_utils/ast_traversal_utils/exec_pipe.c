@@ -11,6 +11,7 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 
 	if (execute == false)
 	{
+		//this is for redirections those are conducted even if the commands won't be executed.
 		ast_traversal(node->left, shell, execute);
 		ast_traversal(node->right, shell, execute);
 		return (0);
@@ -21,25 +22,21 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 		perror("pipe");
 		return (1);
 	}
-	// if (node->pipeline)
-	// {
-	// 	node->pipeline->in_fd = pip[0];
-	// 	node->pipeline->out_fd = pip[1];
-	// }
 	left_pid = fork();
 	if (left_pid < 0)
 	{
 		perror("fork");
 		close(pip[0]);
 		close(pip[1]);
-		return (1);
+		return (-1);
 	}
 	if (left_pid == 0)
 	{
 		close(pip[0]);
 		dup2(pip[1], STDOUT_FILENO);
 		close(pip[1]);
-		return (ast_traversal(node->left, shell, execute));
+		ast_traversal(node->left, shell, execute);
+		exit(shell->last_exit_status);
 	}
 	right_pid = fork();
 	if (right_pid < 0)
@@ -49,14 +46,15 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 		close(pip[1]);
 		kill(left_pid, SIGTERM);
 		waitpid(left_pid, NULL, 0);
-		return (1);
+		return (-1);
 	}
 	if (right_pid == 0)
 	{
 		close(pip[1]);
 		dup2(pip[0], STDIN_FILENO);
 		close(pip[0]);
-		return (ast_traversal(node->right, shell, execute));
+		ast_traversal(node->right, shell, execute);
+		exit (shell->last_exit_status);
 	}
 	close(pip[0]);
 	close(pip[1]);
