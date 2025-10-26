@@ -21,7 +21,7 @@ t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 
 // generate a tree of command.
 // manage corrent token by having the ptr's address.
-t_ast	*gen_tree(t_ast *ast, t_token **tail_token, int subshell, int pipeline)
+t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell, int pipeline)
 {
 	t_ast	*node;
 	t_token	*token;
