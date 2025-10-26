@@ -9,7 +9,7 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 	pid_t	left_pid;
 	pid_t	right_pid;
 
-	if (execute==false)
+	if (execute == false)
 	{
 		ast_traversal(node->left, shell, execute);
 		ast_traversal(node->right, shell, execute);
@@ -21,11 +21,11 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 		perror("pipe");
 		return (1);
 	}
-	if (node->pipeline)
-	{
-		node->pipeline->in_fd = pip[0];
-		node->pipeline->out_fd = pip[1];
-	}
+	// if (node->pipeline)
+	// {
+	// 	node->pipeline->in_fd = pip[0];
+	// 	node->pipeline->out_fd = pip[1];
+	// }
 	left_pid = fork();
 	if (left_pid < 0)
 	{
@@ -60,7 +60,7 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 	}
 	close(pip[0]);
 	close(pip[1]);
-	handle_child($shell->last_exit_status, left_pid);
-	handle_child($shell->last_exit_status, right_pid);
+	handle_child(&shell->last_exit_status, left_pid);
+	handle_child(&shell->last_exit_status, right_pid);
 	return (0);
 }

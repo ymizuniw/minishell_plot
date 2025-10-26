@@ -8,7 +8,7 @@ int	exec_subshell(t_ast *node, t_shell *shell, bool execute)
 	pid_t	pid;
 
 	status = 0;
-	if (execute==false)
+	if (execute == false)
 		return (ast_traversal(node->subtree, shell, execute));
 	pid = fork();
 	if (pid < 0)
