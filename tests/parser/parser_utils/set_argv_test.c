@@ -12,7 +12,7 @@ void	test_set_argv(void)
 	argv = calloc(4, sizeof(char*));
 	head = alloc_token();
 	bzero(head, sizeof(t_token));
-	head->type = TK_HEAD;
+	head->type = TK_EOF;
 	cur = alloc_token();
 	bzero(cur, sizeof(t_token));
 	cur->type = TK_WORD;

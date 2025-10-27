@@ -8,7 +8,7 @@ static t_token	*make_tokens_simple_echo(void)
 
 	head = alloc_token();
 	bzero(head, sizeof(t_token));
-	head->type = TK_HEAD;
+	head->type = TK_EOF;
 	// word token
 	t_token	*w = alloc_token();
 

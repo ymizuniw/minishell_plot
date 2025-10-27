@@ -6,7 +6,7 @@ int main(void)
 {
 	printf("=== exec_pipe smoke test ===\n");
 	// tokens: echo hi | echo bye (argv contents not fully executed; just traversal)
-	t_token *head = alloc_token(); bzero(head, sizeof(t_token)); head->type = TK_HEAD; head->size = 5;
+	t_token *head = alloc_token(); bzero(head, sizeof(t_token)); head->type = TK_EOF; head->size = 5;
 	t_token *w1 = alloc_token(); bzero(w1, sizeof(t_token)); w1->type = TK_WORD; w1->value = strdup("echo");
 	t_token *w2 = alloc_token(); bzero(w2, sizeof(t_token)); w2->type = TK_WORD; w2->value = strdup("hi");
 	t_token *pipe = alloc_token(); bzero(pipe, sizeof(t_token)); pipe->type = TK_PIPE; pipe->value = strdup("|");

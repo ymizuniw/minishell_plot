@@ -58,7 +58,7 @@ int	syntax_check(t_token *token)
 	if (token_type == TK_REDIRECT_OUT || token_type == TK_APPEND)
 	{
 		if (token->prev->type != TK_WORD && token->prev->type != TK_NEWLINE
-			&& token->prev->type != TK_HEAD && token->prev->type != TK_AND_IF
+			&& token->prev->type != TK_EOF && token->prev->type != TK_AND_IF
 			&& token->prev->type != TK_OR_IF && token->prev->type != TK_PIPE)
 		{
 			syntax_error(token->prev->type);

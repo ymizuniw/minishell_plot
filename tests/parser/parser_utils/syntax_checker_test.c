@@ -6,7 +6,7 @@ void	test_syntax_checker(void)
 {
 	t_token *head = alloc_token();
 	bzero(head, sizeof(t_token));
-	head->type = TK_HEAD;
+	head->type = TK_EOF;
 	t_token *w = alloc_token();
 	bzero(w, sizeof(t_token));
 	w->type = TK_WORD;
