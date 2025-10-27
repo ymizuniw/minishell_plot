@@ -37,22 +37,25 @@ int	shell_loop(t_shell *shell)
 
 		token_list = lexer(line);
 
+		t_ast **ast_list = NULL;
+		size_t ast_count = 0;
 		t_token *cur = token_list;
-		t_ast **ast_list = realloc(ast_list, sizeof(t_ast *)*token_list->count_newline);//count newline and keep it to token_list head.
-		size_t i = cur->count_newline-1;
-		while (i > 0)
+		while (cur && cur->type != TK_EOF)
 		{
 			ast = parser(&cur);
-			ast_list[i] = ast;
-			i--;
+			if (!ast)
+				continue;
+			ast_list = realloc(ast_list, sizeof(t_ast *) * (ast_count + 1));
+			ast_list[ast_count++] = ast;
+			while (cur && cur->type == TK_NEWLINE)
+				cur = cur->next;
 		}
+		size_t i = 0;
 		while (i < cur->count_newline)
 		{
 			res = executor(ast_list[i], shell);
-			if (ast_list[i])
-				free_ast_tree(ast_list[i]);
-			if (res)
-				free_result(res);
+			free_ast_tree(ast_list[i]);
+			free_result(res);
 			i++;
 		}
 		xfree(line);

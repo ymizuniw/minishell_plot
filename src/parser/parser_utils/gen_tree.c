@@ -54,7 +54,7 @@ t_ast *sort_by_logical_precedence(t_ast *parent)
 	t_ast	*root;
 
 	root = parent;
-	while (root && root->parent && (root->parent->type!=NODE_AND || root->parent->type!=NODE_OR))
+	while (root && root->parent && (root->parent->type!=NODE_AND && root->parent->type!=NODE_OR))
 		root = root->parent;
 	node = swap_and_set_right_node(node, root);
 	if (node==NULL)
@@ -156,7 +156,7 @@ int parse_redirection(t_ast *node, t_token **cur_token, t_redir_type redir_type)
 	t_redir *redir;
 
 	if (!syntax_check(*cur_token))
-		return (NULL);
+		return (-1);
 	if (init_redir(redir, redir_type)<0)
 		return (-1);
 	if ((*cur_token)->prev)
@@ -176,7 +176,7 @@ int parse_redirection(t_ast *node, t_token **cur_token, t_redir_type redir_type)
 void parse_simple_command(t_ast *node, t_token **cur_token, size_t *i)
 {
 	set_argv(&node->cmd->argv, cur_token, *i);
-	*i++;
+	(*i)++;
 	*cur_token = (*cur_token)->prev;
 }
 
@@ -240,6 +240,8 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 	t_token	*token;
 	t_token	*next_token;
 
+	if ((*cur_token)->type == TK_NEWLINE)
+		return (NULL);
 	if (!cur_token || !*cur_token)
 		return (NULL);
 
