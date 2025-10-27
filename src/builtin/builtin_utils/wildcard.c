@@ -96,3 +96,16 @@ int	expand_wildcard(char const *str, t_shell *shell)
 		return (0);
 	return (1);
 }
+
+
+// bash-3.2$ arg = "*"
+// bash: arg: command not found
+// bash-3.2$ arg="*"
+// bash-3.2$ echo $arg
+// documents includes Makefile src tests
+// bash-3.2$ echo ($arg)
+// bash: syntax error near unexpected token `$arg'
+// bash-3.2$ (echo $arg)
+// documents includes Makefile src tests
+// bash-3.2$ echo $arg
+

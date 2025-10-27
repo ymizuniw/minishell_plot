@@ -113,7 +113,6 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		*cur_token = next_token;
 		return (node);
 	}
-
 	else if (token->type == TK_LPAREN)
 	{
 		if (subshell == 1)
@@ -138,7 +137,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		t_token		*cur;
 
 		node->cmd = alloc_cmd();
-		memset(node->cmd, 0, sizeof(t_cmd)); // ✅ fixed sizeof bug
+		memset(node->cmd, 0, sizeof(t_cmd));
 
 		// find the last token before operator
 		command_end = token;
