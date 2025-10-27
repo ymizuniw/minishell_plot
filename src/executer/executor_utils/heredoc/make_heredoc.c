@@ -12,7 +12,7 @@ char	*ext_unit(char *src, size_t start, size_t end)
 	return (unit);
 }
 
-int	join_value(char **res, char *value, size_t size1, size_t size2)
+int	join_value(char **res, const char *value, size_t size1, size_t size2)
 {
 	*res = realloc(*res, sizeof(char) * (size1 + size2 + 1));
 	if (*res == NULL)
@@ -21,7 +21,6 @@ int	join_value(char **res, char *value, size_t size1, size_t size2)
 	(*res)[size1 + size2] = '\0';
 	return (1);
 }
-
 
 //improved ver heredoc_value_expansion.
 char	*heredoc_value_expansion(const char *line, bool in_quote, size_t len)
@@ -50,51 +49,6 @@ char	*heredoc_value_expansion(const char *line, bool in_quote, size_t len)
 	return res;
 }
 
-
-// heredoc mode will expand all environment variables and quotations. It means that it won't recognize quotations.
-char	*heredoc_value_expansion(char *line, bool in_quote, size_t line_len)
-{
-	size_t	i;
-	char	*start;
-	char	*res;
-	size_t	start_idx;
-	size_t	end_idx;
-	char	*doller;
-	char	*unit;
-
-	i = 0;
-	start = line;
-	res = NULL;
-	start_idx = 1;
-	end_idx = 1;
-	(void)in_quote;
-	while (i < line_len)
-	{
-		doller = strchr(start, '$');
-		if (doller != NULL)
-		{
-			while (&doller[end_idx] < &line[line_len])
-			{
-				unit = ext_unit(doller, start_idx, end_idx);
-				if (unit == NULL)
-					break ;
-				// char *var = ft_getenv(unit);
-				char *var = getenv(unit); // temporary.
-				if (var != NULL)
-				{
-					if (join_value(&res, unit, strlen(res), strlen(var)))
-						return (NULL);
-					i += end_idx;
-					break ;
-				}
-				end_idx++;
-			}
-		}
-		start = &start[end_idx] + 1;
-	}
-	return (res);
-}
-
 char	*heredoc_expansion(char *line, bool in_quote, size_t line_len)
 {
 	char	*new;
@@ -108,23 +62,18 @@ char	*heredoc_expansion(char *line, bool in_quote, size_t line_len)
 int	get_document(t_redir *hd, char **document, size_t *document_len)
 {
 	char	*delim;
-	size_t	delim_len;
 	char	*line;
-	size_t	line_len;
 	char	*value;
-	size_t	value_len;
 
 	delim = hd->filename;
-	delim_len = strlen(delim);
 	line = NULL;
-	line_len = 0;
 	while (1)
 	{
 		line = readline("> ");
 		if (strcmp(line, delim) == 0)
 			return (1);
 		if (!line)
-			break; // EOF (Ctrl-D)
+			break;
 		if (strcmp(line, delim) == 0)
 			break;
 		value = heredoc_expansion(line, hd->delim_quoted, strlen(line));
@@ -168,10 +117,7 @@ int	get_tmp_fd(char *src, size_t size, char **filename)
 	return (tmp_fd);
 }
 
-
-
 //refined version
-
 int	make_heredoc(t_redir *hd)
 {
 	char	*document = NULL;
@@ -181,7 +127,6 @@ int	make_heredoc(t_redir *hd)
 
 	if (get_document(hd, &document, &document_len) < 0)
 		return (-1);
-
 	if (document_len == 0)
 	{
 		fd = open("/dev/null", O_RDONLY);
@@ -210,74 +155,4 @@ int	make_heredoc(t_redir *hd)
 		free(filename);
 		return (fd);
 	}
-}
-
-
-int	make_heredoc(t_redir *hd)
-{
-	char	*line;
-	char	*document;
-	size_t	document_len;
-	char	*filename;
-	int		fd;
-	int		herepipe[2];
-	int		ret;
-	ssize_t	wb;
-	int		tmp_fd;
-
-	line = NULL;
-	document = NULL;
-	document_len = 0;
-	filename = NULL;
-	if (get_document(hd, &document, &document_len) < 0)
-		return (-1);
-	if (document_len == 0)
-	{
-		fd = open("/dev/null", O_RDONLY);
-		if (fd < 0)
-			perror("open: ");
-		xfree(document);
-		return (fd);
-	}
-	if (document_len + 1 <= HERE_PIPE_SIZE)
-	{
-		ret = pipe(herepipe);
-		if (ret < 0)
-		{
-			perror("pipe: ");
-			xfree(document);
-		}
-		wb = heredoc_write_to_fd(herepipe, document, document_len);
-		close(herepipe[1]);
-		if (wb == 0)
-		{
-			close(herepipe[0]);
-			unlink(filename);
-			free(filename);
-			return (-1);
-		}
-		return (herepipe[0]);
-	}
-	else
-	{
-		tmp_fd = get_tmp_fd(document, document_len, &filename);
-		if (tmp_fd < 0)
-		{
-			xfree(line);
-			xfree(document);
-			return (-1);
-		}
-		fd = open(filename, O_RDONLY);
-		if (fd < 0)
-		{
-			perror("open: ");
-			close(tmp_fd);
-			unlink(filename);
-			xfree(filename);
-			return (-1);
-		}
-		close(tmp_fd);
-		return (fd);
-	}
-	return (-1);
 }

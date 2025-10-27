@@ -7,15 +7,15 @@ purpose: find patterns that will be printed as one '$', that are "$", '$',
 	$"var", $'var', $<space>, $<eof>
 return : 1 if it is doller token, 0 in other cases.
 */
-int	is_doller_token(const char *p)
+bool	is_doller_token(const char *p)
 {
 	if (p[0]!='$')
-		return (0);
+		return (false);
 	if (p[1] == '\0')
-		return (1);
+		return (true);
 	if (isspace((unsigned char)p[1]))
-		return (1);
+		return (true);
 	if (p[1] == '\'' || p[1] == '\"')
-		return (1);
-	return (0);
+		return (true);
+	return (false);
 }

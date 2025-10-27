@@ -34,7 +34,7 @@ t_token	*lexer(const char *input)
 			}
 			new = alloc_token();
 			memset(new, 0, sizeof(t_token));
-			new->type == TK_NEWLINE;
+			new->type = TK_NEWLINE;
 			new->value = strdup("\n");
 			append_tokens(token_head, new);
 			idx++;

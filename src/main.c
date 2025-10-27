@@ -39,7 +39,7 @@ int	shell_loop(t_shell *shell)
 		t_token *cur = tokens;
 		while (cur && cur->type!=TK_EOF)
 		{
-			if (cur && cur->next!=TK_EOF)
+			if (cur && cur->next->type!=TK_EOF)
 			{
 				cur = cur->next;
 				continue ;
@@ -50,7 +50,7 @@ int	shell_loop(t_shell *shell)
 				free_ast_tree(ast);
 			if (res)
 				free_result(res);
-			if (cur && cur->next !=TK_EOF)
+			if (cur && cur->next->type !=TK_EOF)
 				cur = cur->next;
 		}
 		xfree(line);

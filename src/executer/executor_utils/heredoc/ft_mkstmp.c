@@ -29,15 +29,15 @@ char	*ft_mkstmp(char *template)
 	p = name + len - 1;
 	while (strchr(name, 'X') != NULL)
 	{
-		random = ft_rand(num);
-		if (random == 0) // 🔧 ゼロ除算防止
+		random = ft_rand(&num);
+		if (random == 0)
 			random = 1;
-		idx = (num / random) % (unsigned int)(sizeof(charset) - 1); // 🔧 括弧で明示
+		idx = (num / random) % (unsigned int)(sizeof(charset) - 1);
 		*p = charset[idx];
 		num /= 10;
 		if (num == 0)
 			num = num_keep;
-		p = strchr(name, 'X'); // 🔧 Xの次を正しく探索
+		p = strchr(name, 'X');
 	}
 	return (name);
 }
@@ -50,10 +50,10 @@ int	ft_mkstmpfd(char *template, char **filename)
 	try_limit = 5000;
 	if (template == NULL)
 		return (-1);
-	while (try_limit > 0) // 🔧 無限ループ防止
+	while (try_limit > 0)
 	{
 		*filename = ft_mkstmp(template);
-		fd = open(*filename, O_CREAT | O_WRONLY | O_EXCL, 0600); // 🔧 mode追加 (POSIX)
+		fd = open(*filename, O_CREAT | O_WRONLY | O_EXCL, 0600);
 		if (fd >= 0)
 			return (fd);
 		try_limit--;

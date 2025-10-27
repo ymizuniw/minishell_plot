@@ -13,7 +13,7 @@ int				exec_pipe(t_ast *node, t_shell *shell, bool execute);
 int				exec_subshell(t_ast *node, t_shell *shell, bool execute);
 
 // heredoc utils
-unsigned int	ft_rand(unsigned int seed);
+unsigned int	ft_rand(unsigned int *seed);
 char			*ft_mkstmp(char *template);
 int				ft_mkstmpfd(char *template, char **filename);
 int				make_heredoc(t_redir *hd);
