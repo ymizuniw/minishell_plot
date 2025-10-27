@@ -97,7 +97,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 	// --------------------------------------------------
 	// subshells
 	// --------------------------------------------------
-	else if (token->type == TK_LPAREN)
+	else if (token->type == TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
 		if (syntax_check(token) != 1)
@@ -114,7 +114,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		return (node);
 	}
 
-	else if (token->type == TK_RPAREN)
+	else if (token->type == TK_LPAREN)
 	{
 		if (subshell == 1)
 		{
