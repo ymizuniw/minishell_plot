@@ -83,8 +83,7 @@ typedef enum e_token_type
 	TK_LPAREN,
 	TK_RPAREN,
 	TK_DOLLER,
-	TK_EOF,
-	TK_HEAD
+	TK_EOF
 }					t_token_type;
 
 typedef struct s_token
@@ -112,7 +111,8 @@ typedef enum e_redir_type
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
-	REDIR_HEREDOC
+	REDIR_HEREDOC,
+	REDIR_OTHER
 }					t_redir_type;
 
 typedef struct s_redir

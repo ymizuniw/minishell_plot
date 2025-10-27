@@ -5,6 +5,10 @@ t_token_type	get_token_type(char *input, size_t *idx)
 {
 	if (input[*idx])
 	{
+		if (input[*idx] == '\n')
+		{
+			return(TK_NEWLINE);
+		}
 		if (input[*idx] == '|')
 		{
 			if (input[*idx + 1] && input[*idx + 1] == '|')
@@ -21,11 +25,6 @@ t_token_type	get_token_type(char *input, size_t *idx)
 			{
 				++*idx;
 				return (TK_HEREDOC);
-			}
-			else if (input[*idx + 1] && input[*idx + 1] == '>')
-			{
-				++*idx;
-				return (TK_REDIRECT_IN_AND_OUT);
 			}
 			else
 				return (TK_REDIRECT_IN);

@@ -1,17 +1,10 @@
 #include "../../../../includes/minishell.h"
 
 // generate a random num
-unsigned int	ft_rand(unsigned int seed)
+unsigned int ft_rand(unsigned int *seed)
 {
-	unsigned int	a;
-	unsigned int	m;
-	unsigned int	random;
-
-	a = 1003;
-	m = 2147483647;
-	seed = (a * seed) % m;
-	random = seed / m;
-	return (random);
+	*seed = (*seed * 1103515245u + 12345u) & 0x7fffffff;
+	return (*seed);
 }
 
 char	*ft_mkstmp(char *template)
@@ -37,11 +30,14 @@ char	*ft_mkstmp(char *template)
 	while (strchr(name, 'X') != NULL)
 	{
 		random = ft_rand(num);
-		idx = num / random % (unsigned int)(sizeof(charset) - 1);
+		if (random == 0) // 🔧 ゼロ除算防止
+			random = 1;
+		idx = (num / random) % (unsigned int)(sizeof(charset) - 1); // 🔧 括弧で明示
 		*p = charset[idx];
 		num /= 10;
 		if (num == 0)
 			num = num_keep;
+		p = strchr(name, 'X'); // 🔧 Xの次を正しく探索
 	}
 	return (name);
 }
@@ -54,15 +50,13 @@ int	ft_mkstmpfd(char *template, char **filename)
 	try_limit = 5000;
 	if (template == NULL)
 		return (-1);
-	while (1)
+	while (try_limit > 0) // 🔧 無限ループ防止
 	{
 		*filename = ft_mkstmp(template);
-		fd = open(*filename, O_CREAT | O_WRONLY | O_EXCL);
+		fd = open(*filename, O_CREAT | O_WRONLY | O_EXCL, 0600); // 🔧 mode追加 (POSIX)
 		if (fd >= 0)
 			return (fd);
 		try_limit--;
-		if (try_limit == 0)
-			return (-1);
 	}
 	return (-1);
 }

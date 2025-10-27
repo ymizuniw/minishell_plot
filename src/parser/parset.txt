@@ -1,0 +1,446 @@
+#include "../../../includes/minishell.h"
+
+// concatenate word after $ expansion.
+void	cat_word(char **word, char *entry, size_t entry_len)
+{
+	size_t	word_len;
+	char	*new;
+
+	word_len = 0;
+	if (word && *word)
+		word_len = strlen(*word);
+	new = xmalloc(sizeof(char) * (word_len + entry_len + 1));
+	if (new == NULL)
+	{
+		perror("malloc :");
+		exit(1);
+	}
+	if (*word)
+	{
+		strncpy(new, *word, word_len + 1);
+		xfree(*word);
+	}
+	else
+		new[0] = '\0';
+	strncpy(new + word_len, entry, entry_len + 1);
+	*word = new;
+}
+#include "../../../includes/minishell.h"
+
+// check if parenthesis arrangement is correct.
+int	check_parenthesis(t_token *token)
+{
+	t_token	*cur;
+	int		check;
+
+	if (!token)
+		return (-1);
+	cur = token->prev;
+	while (cur != NULL)
+	{
+		if (cur->type == TK_LPAREN)
+			return (1);
+		if (cur->type == TK_RPAREN)
+		{
+			check = check_parenthesis(cur);
+			if (check < 0)
+				return (-1);
+		}
+		cur = cur->prev;
+	}
+	return (-1);
+}
+#include "../../../includes/minishell.h"
+
+// just expand the value content or apply $ expansion and form a word.
+char	*expand_value(t_token *token)
+{
+	size_t	word_len;
+	char	*word;
+	char	*doller;
+	size_t	i;
+	char	*var;
+	char	*entry;
+	size_t	start;
+
+	word_len = strlen(token->value);
+	word = NULL;
+	if (token->in_dquote || token->in_squote)
+	{
+		word = xmalloc(sizeof(char) * (word_len + 1));
+		if (!word)
+			return (NULL);
+		strncpy(word, token->value, word_len + 1);
+	}
+	else
+	{
+		doller = strchr(token->value, '$');
+		if (doller != NULL)
+		{
+			i = 0;
+			while (doller && doller[i])
+			{
+				start = i;
+				i++;
+				while (doller[i] && !isspace(doller[i]) && doller[i] != '$')
+					i++;
+				var = xmalloc(sizeof(char) * (i - start + 1));
+				if (!var)
+				{
+					xfree(word);
+					return (NULL);
+				}
+				memset(var, 0, sizeof(char) * (i - start + 1));
+				strncpy(var, doller + start + 1, i - start);
+				entry = getenv(var);
+				if (entry != NULL)
+					cat_word(&word, entry, strlen(entry));
+				xfree(var);
+				if (doller[i] == '$')
+					doller = &doller[i];
+				else
+					doller = NULL;
+			}
+		}
+		else
+		{
+			word = strdup(token->value);
+		}
+	}
+	return (word);
+}
+#include "../../../includes/minishell.h"
+
+static int	is_operator(t_token_type type)
+{
+	if (type == TK_NEWLINE || type == TK_PIPE || type == TK_AND_IF
+		|| type == TK_OR_IF || type == TK_LPAREN || type == TK_RPAREN)
+		return (1);
+	return (0);
+}
+
+t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
+{
+	if (!new_parent)
+		return (old_parent);
+	if (!old_parent)
+		return (new_parent);
+	new_parent->right = old_parent;
+	old_parent->parent = new_parent;
+	return (new_parent);
+}
+
+// generate a tree of command.
+// manage corrent token by having the ptr's address.
+t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
+{
+	t_ast	*node;
+	t_token	*token;
+	t_token	*next_token;
+	t_ast	*root;
+
+	// validation for NULL input
+	if (!tail_token || !*tail_token)
+		return (NULL);
+	// initialize token ptr and new node.
+	token = *tail_token;
+	next_token = NULL;
+	node = alloc_node();
+	if (!node)
+		return (NULL);
+	memset(node, 0, sizeof(t_ast));
+	// classify the type of node based on the token type.
+	if (token->type == TK_AND_IF)
+		node->type = NODE_AND;
+	else if (token->type == TK_OR_IF)
+		node->type = NODE_OR;
+	else if (token->type == TK_PIPE)
+		node->type = NODE_PIPE;
+	else
+		node->type = NODE_CMD;
+	node->parent = parent;
+	if (is_operator(token->type))
+	{
+		if (token->type == TK_AND_IF || TK_OR_IF)
+		{
+			// move to the root the current tree and swap the node.
+			// the more left token it is, the more priority it has.
+			// parent is
+			root = parent;
+			while (root != NULL)
+				root = root->parent;
+			// set the cur as the right branch of the current logical operator node.
+			// root's parent will be node,
+			// and the root will be right node of the logical operator.
+			node = swap_and_set_right_node(node, root);
+		}
+		else
+			node = swap_and_set_right_node(node, parent);
+		*tail_token = token->next;
+		next_token = *tail_token;
+		node->left = gen_tree(node, &next_token, subshell);
+		if (node->left)
+			node->left->parent = node;
+		*tail_token = next_token;
+		return (node);
+	}
+	else if (token->type == TK_LPAREN)
+	{
+		node->type = NODE_SUBSHELL;
+		if (syntax_check(token) != 1)
+			return (NULL);
+		*tail_token = token->next;
+		next_token = *tail_token;
+		node->subtree = gen_tree(NULL, &next_token, 1);
+		if (node->subtree == NULL)
+			return (NULL);
+		*tail_token = next_token;
+		return (node);
+	}
+	else if (token->type == TK_RPAREN)
+	{
+		if (subshell == 1)
+		{
+			*tail_token = token->next;
+			return (node);
+		}
+		else
+		{
+			syntax_error(TK_RPAREN);
+			return (NULL);
+		}
+	}
+	else if (token->type == TK_WORD || token->type == TK_DOLLER)
+	{
+		node->cmd = alloc_cmd();
+		if (!node->cmd)
+			return (NULL);
+		memset(node->cmd, 0, sizeof(t_cmd));
+		node->cmd->redir = parse_redirection(node->cmd->redir, tail_token);
+		set_argv(node->cmd->argv, tail_token, 0);
+		node->cmd->argv[0] = NULL;
+	}
+	return (node);
+}
+#include "../../../includes/minishell.h"
+
+// create a list of redirection. tail_token is cpy of tail_token of caller.
+t_redir	*parse_redirection(t_redir *redir, t_token **tail_token)
+{
+	t_redir	*cur_redir;
+	t_redir	*head;
+	t_token	*token;
+	char	*file_name;
+	t_token	*next;
+
+	if (!tail_token || !*tail_token)
+		return (redir);
+	token = *tail_token;
+	next = token->next;
+	if (!next || (next->type != TK_REDIRECT_IN && next->type != TK_REDIRECT_OUT
+			&& next->type != TK_HEREDOC && next->type != TK_APPEND))
+		return (redir);
+	cur_redir = alloc_redir();
+	if (!cur_redir)
+		return (redir);
+	memset(cur_redir, 0, sizeof(t_redir));
+	if (syntax_check(next) != 1)
+	{
+		xfree(cur_redir);
+		return (NULL);
+	}
+	if (next->type == TK_REDIRECT_IN)
+	{
+		if (next->next == NULL)
+		{
+			xfree(cur_redir);
+			return (NULL);
+		}
+		file_name = expand_value(next->next);
+		cur_redir->type = REDIR_IN;
+		cur_redir->filename = file_name;
+	}
+	else if (next->type == TK_REDIRECT_OUT)
+	{
+		if (next->next == NULL)
+		{
+			xfree(cur_redir);
+			return (NULL);
+		}
+		file_name = expand_value(next->next);
+		cur_redir->type = REDIR_OUT;
+		cur_redir->filename = file_name;
+	}
+	else if (next->type == TK_HEREDOC)
+	{
+		if (next->next == NULL)
+		{
+			xfree(cur_redir);
+			return (NULL);
+		}
+		cur_redir->type = REDIR_HEREDOC;
+		cur_redir->filename = next->next->value;
+		if (next->next->in_dquote || next->next->in_squote)
+			cur_redir->delim_quoted = true;
+	}
+	else if (next->type == TK_APPEND)
+	{
+		if (next->next == NULL)
+		{
+			xfree(cur_redir);
+			return (NULL);
+		}
+		file_name = expand_value(next->next);
+		cur_redir->type = REDIR_APPEND;
+		cur_redir->filename = file_name;
+	}
+	if (redir == NULL)
+		head = cur_redir;
+	else
+	{
+		redir->next = cur_redir;
+		head = redir;
+	}
+	*tail_token = next->next->next;
+	if (*tail_token && ((*tail_token)->type == TK_WORD
+			|| (*tail_token)->type == TK_DOLLER))
+		return (parse_redirection(head, tail_token));
+	return (head);
+}
+#include "../../../includes/minishell.h"
+
+// expand the value of the token and set to cmd list's argv.
+void	set_argv(char **argv, t_token **start_token, size_t i)
+{
+	t_token	*token;
+	char	**new_argv;
+
+	if (!argv || !start_token || !*start_token)
+		return ;
+	token = *start_token;
+	if (token->type != TK_WORD && token->type != TK_DOLLER)
+		return ;
+	new_argv = realloc(argv, sizeof(char *) * (i + 2));
+	if (new_argv == NULL)
+	{
+		perror("realloc");
+		return ;
+	}
+	argv = new_argv;
+	if (token->type == TK_DOLLER)
+		argv[i] = strdup("$");
+	else
+		argv[i] = expand_value(token);
+	argv[i + 1] = NULL;
+	if (token->next && token->next->type != TK_REDIRECT_IN
+		&& token->next->type != TK_REDIRECT_OUT
+		&& token->next->type != TK_HEREDOC && token->next->type != TK_APPEND
+		&& (token->next->type == TK_WORD || token->next->type == TK_DOLLER))
+	{
+		*start_token = token->next;
+		set_argv(argv, start_token, i + 1);
+	}
+}
+#include "../../../includes/minishell.h"
+
+// check the syntax of given token is correct.
+int	syntax_check(t_token *token)
+{
+	t_token_type	token_type;
+
+	if (!token || !token->prev)
+		return (0);
+	token_type = token->type;
+	if (token_type == TK_LPAREN)
+		return (1);
+	if (token_type == TK_RPAREN)
+		return (check_parenthesis(token));
+	if (token_type == TK_REDIRECT_IN)
+	{
+		if (token->prev->type == TK_HEAD)
+			return (0);
+		if (token->prev->type == TK_NEWLINE)
+		{
+			syntax_error(TK_NEWLINE);
+			return (0);
+		}
+	}
+	if (token_type == TK_HEREDOC)
+	{
+		if (token->prev->type != TK_WORD && token->prev->type != TK_NEWLINE
+			&& token->prev->type != TK_HEAD)
+		{
+			syntax_error(token->prev->type);
+			return (0);
+		}
+	}
+	if (token_type == TK_REDIRECT_OUT || token_type == TK_APPEND
+		|| token_type == TK_REDIRECT_IN_AND_OUT)
+	{
+		if (token->prev->type != TK_WORD && token->prev->type != TK_NEWLINE
+			&& token->prev->type != TK_HEAD)
+		{
+			syntax_error(token->prev->type);
+			return (0);
+		}
+	}
+	return (1);
+}
+#include "../../../includes/minishell.h"
+
+void	syntax_error(t_token_type type)
+{
+	char	*token;
+
+	if (type == TK_NEWLINE)
+		token = TOKEN_VALUE_NEWLINE;
+	else if (type == TK_PIPE)
+		token = TOKEN_VALUE_PIPE;
+	else if (type == TK_AND_IF)
+		token = TOKEN_VALUE_AND_IF;
+	else if (type == TK_OR_IF)
+		token = TOKEN_VALUE_OR_IF;
+	else if (type == TK_LPAREN)
+		token = TOKEN_VALUE_LPAREN;
+	else if (type == TK_RPAREN)
+		token = TOKEN_VALUE_RPAREN;
+	else if (type == TK_REDIRECT_IN)
+		token = TOKEN_VALUE_REDIRECT_IN;
+	else if (type == TK_REDIRECT_OUT)
+		token = TOKEN_VALUE_REDIRECT_OUT;
+	else if (type == TK_HEREDOC)
+		token = TOKEN_VALUE_HEREDOC;
+	else if (type == TK_APPEND)
+		token = TOKEN_VALUE_APPEND;
+	write(2, SYNTAX_ERR_TEMPLATE, SYNTAX_ERR_TEMPLATE_LEN);
+	write(2, token, strlen(token));
+	write(2, "`\n", 2);
+}
+#include "../../includes/minishell.h"
+
+t_ast	*parser(t_token *token_head)
+{
+	t_token	*token;
+	t_ast	*root;
+
+	if (!token_head)
+		return (NULL);
+	root = NULL;
+	// move to the first meaningful token
+	token = token_head->next;
+	while (token && (token->type == TK_HEAD || token->type == TK_NEWLINE))
+		token = token->next;
+	if (!token || token->type == TK_EOF)
+		return (NULL);
+	root = gen_tree(NULL, &token, 0);
+	// ensure we consumed trailing newlines; anything else is syntax error
+	while (token && token->type == TK_NEWLINE)
+		token = token->next;
+	if (token && token->type != TK_EOF)
+	{
+		syntax_error(token->type);
+		free_ast_tree(root);
+		return (NULL);
+	}
+	return (root);
+}

@@ -26,7 +26,8 @@ size_t	word_cat(char **word, size_t word_len, char *input, size_t input_len,
 		*word = realloc(*word, sizeof(char) * (word_len + new_len + 1));
 		if (!*word)
 			return (0);
-		strncpy(*word + word_len, &input[idx], new_len + 1);
+		strncpy(*word + word_len, &input[idx], new_len);
+		(*word)[new_len]='\0';
 		idx += new_len;
 		consumed_len = new_len;
 	}
@@ -43,6 +44,7 @@ size_t	word_cat(char **word, size_t word_len, char *input, size_t input_len,
 		if (!*word)
 			return (0);
 		strncpy(*word + word_len, tmp_ptr, new_len + 1);
+		(*word)[word_len + new_len] = '\0';
 		consumed_len = new_len;
 	}
 	if (idx < input_len && (is_quote(input[idx])

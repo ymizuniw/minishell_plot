@@ -1,41 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-name	:is_doller_token
-args	:const char *input, size_t *current_idx_p
-purpose: find patterns that will be printed as one '$', that are "$", '$',
-	$"var", $'var', $<space>, $<eof>
-return : 1 if it is doller token, 0 in other cases.
-*/
-int	is_doller_token(const char *p, size_t *idx_p)
-{
-	size_t	idx;
-	char	quote;
-
-	idx = 0;
-	quote = is_quote(p[idx]);
-	if (quote != '\0')
-	{
-		while (isspace(p[idx]))
-			idx++;
-		if (p[idx] == '\0' || (p[idx] && p[idx] != '$'))
-		{
-			*idx_p += idx;
-			return (0);
-		}
-		while (isspace(p[idx]))
-			idx++;
-		if (quote == p[idx])
-		{
-			*idx_p += idx;
-			return (0);
-		}
-		*idx_p += idx;
-		return (0);
-	}
-	return (0);
-}
-
 t_token	*lexer(const char *input)
 {
 	size_t		idx;
@@ -57,6 +21,25 @@ t_token	*lexer(const char *input)
 	memset(token_head, 0, sizeof(t_token));
 	while (idx < input_len)
 	{
+		if (input[idx]=='\n')
+		{
+			if (idx>0)
+			{
+				char prev = input[idx-1];
+				if (prev=='|' || prev == '&' || prev == '(')
+				{
+					idx++;
+					continue ;
+				}
+			}
+			new = alloc_token();
+			memset(new, 0, sizeof(t_token));
+			new->type == TK_NEWLINE;
+			new->value = strdup("\n");
+			append_tokens(token_head, new);
+			idx++;
+			continue ;
+		}
 		if (isspace((unsigned char)input[idx]))
 		{
 			idx++;
@@ -73,7 +56,7 @@ t_token	*lexer(const char *input)
 		}
 		else
 		{
-			if (is_doller_token(&input[idx], &idx))
+			if (is_doller_token(&input[idx]))
 			{
 				new->type = TK_DOLLER;
 				new->value = strdup("$");
@@ -90,8 +73,8 @@ t_token	*lexer(const char *input)
 					free_token_list(token_head);
 					return (NULL);
 				}
-				if (is_quote(input[idx]))
-					set_quote_flag(new, (char *)input, is_quote(input[idx]));
+				// if (is_quote(input[idx]))
+				// 	set_quote_flag(new, (char *)input, is_quote(input[idx]));
 				idx += consumed;
 				new->type = TK_WORD;
 				new->value = word;
@@ -104,7 +87,8 @@ t_token	*lexer(const char *input)
 	if (new)
 	{
 		new->type = TK_EOF;
-		new->value = strdup("");
+		if (!new->value)
+			new->value = strdup("");
 		new->next = NULL;
 		append_tokens(token_head, new);
 	}

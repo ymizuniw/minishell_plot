@@ -22,6 +22,6 @@ void	cat_word(char **word, char *entry, size_t entry_len)
 	}
 	else
 		new[0] = '\0';
-	strncpy(new + word_len, entry, entry_len + 1);
+	strcpy(new + word_len, entry);
 	*word = new;
 }

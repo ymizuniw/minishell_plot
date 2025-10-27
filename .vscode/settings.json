@@ -2,6 +2,7 @@
     "files.associations": {
         "*.h": "c",
         "minishell.h": "c",
-        "random": "c"
+        "random": "c",
+        "lexer": "c"
     }
 }

@@ -1,6 +1,6 @@
 #include "../../../includes/minishell.h"
 
-// append_token should add front to parse from last token.
+//head is a dummy head. tokens will be appended front.
 void	append_tokens(t_token *head, t_token *new)
 {
 	if (!head || !new)

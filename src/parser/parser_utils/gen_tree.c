@@ -3,9 +3,22 @@
 static int	is_operator(t_token_type type)
 {
 	if (type == TK_NEWLINE || type == TK_PIPE || type == TK_AND_IF
-		|| type == TK_OR_IF || type == TK_LPAREN || type == TK_RPAREN)
+		|| type == TK_OR_IF)
 		return (1);
 	return (0);
+}
+
+t_redir_type	get_redir_type(t_token_type token_type)
+{
+	if (token_type == TK_REDIRECT_IN)
+		return (REDIR_IN);
+	if (token_type == TK_REDIRECT_OUT)
+		return (REDIR_OUT);
+	if (token_type == TK_HEREDOC)
+		return (REDIR_HEREDOC);
+	if (token_type == TK_APPEND)
+		return (REDIR_APPEND);
+	return (REDIR_OTHER);
 }
 
 t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
@@ -19,26 +32,30 @@ t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 	return (new_parent);
 }
 
+// -----------------------------------------------------------------------------
 // generate a tree of command.
-// manage corrent token by having the ptr's address.
-t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
+// -----------------------------------------------------------------------------
+t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 {
 	t_ast	*node;
 	t_token	*token;
 	t_token	*next_token;
 	t_ast	*root;
 
-	// validation for NULL input
-	if (!tail_token || !*tail_token)
+	if (!cur_token || !*cur_token)
 		return (NULL);
-	// initialize token ptr and new node.
-	token = *tail_token;
+
+	token = *cur_token;
 	next_token = NULL;
+
 	node = alloc_node();
 	if (!node)
 		return (NULL);
 	memset(node, 0, sizeof(t_ast));
-	// classify the type of node based on the token type.
+
+	// --------------------------------------------------
+	// classify the type of node based on token type
+	// --------------------------------------------------
 	if (token->type == TK_AND_IF)
 		node->type = NODE_AND;
 	else if (token->type == TK_OR_IF)
@@ -47,50 +64,61 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
 		node->type = NODE_PIPE;
 	else
 		node->type = NODE_CMD;
+
 	node->parent = parent;
+
+	// --------------------------------------------------
+	// operator case: &&, ||, |
+	// --------------------------------------------------
 	if (is_operator(token->type))
 	{
-		if (token->type == TK_AND_IF || TK_OR_IF)
+		if (token->type == TK_AND_IF || token->type == TK_OR_IF)
 		{
-			// move to the root the current tree and swap the node.
-			// the more left token it is, the more priority it has.
-			// parent is
 			root = parent;
-			while (root != NULL)
+			while (root && root->parent)
 				root = root->parent;
-			// set the cur as the right branch of the current logical operator node.
-			// root's parent will be node,
-			// and the root will be right node of the logical operator.
 			node = swap_and_set_right_node(node, root);
 		}
 		else
 			node = swap_and_set_right_node(node, parent);
-		*tail_token = token->next;
-		next_token = *tail_token;
+
+		if (token && token->next)
+		{
+			*cur_token = token->next;
+			next_token = *cur_token;
+		}
 		node->left = gen_tree(node, &next_token, subshell);
 		if (node->left)
 			node->left->parent = node;
-		*tail_token = next_token;
+		*cur_token = next_token;
 		return (node);
 	}
+
+	// --------------------------------------------------
+	// subshells
+	// --------------------------------------------------
 	else if (token->type == TK_LPAREN)
 	{
 		node->type = NODE_SUBSHELL;
 		if (syntax_check(token) != 1)
 			return (NULL);
-		*tail_token = token->next;
-		next_token = *tail_token;
+		*cur_token = token->next;
+		next_token = *cur_token;
 		node->subtree = gen_tree(NULL, &next_token, 1);
-		if (node->subtree == NULL)
+		if (!node->subtree)
+		{
+			free(node);
 			return (NULL);
-		*tail_token = next_token;
+		}
+		*cur_token = next_token;
 		return (node);
 	}
+
 	else if (token->type == TK_RPAREN)
 	{
 		if (subshell == 1)
 		{
-			*tail_token = token->next;
+			*cur_token = token->next;
 			return (node);
 		}
 		else
@@ -99,15 +127,72 @@ t_ast	*gen_tree(t_ast *parent, t_token **tail_token, int subshell)
 			return (NULL);
 		}
 	}
+
+	// --------------------------------------------------
+	// command (WORD / $)
+	// --------------------------------------------------
 	else if (token->type == TK_WORD || token->type == TK_DOLLER)
 	{
+		size_t		i = 0;
+		t_token		*command_end;
+		t_token		*cur;
+
 		node->cmd = alloc_cmd();
-		if (!node->cmd)
-			return (NULL);
-		memset(node->cmd, 0, sizeof(t_cmd));
-		node->cmd->redir = parse_redirection(node->cmd->redir, tail_token);
-		set_argv(node->cmd->argv, tail_token, 0);
-		node->cmd->argv[0] = NULL;
+		memset(node->cmd, 0, sizeof(t_cmd)); // ✅ fixed sizeof bug
+
+		// find the last token before operator
+		command_end = token;
+		while (command_end->next && !is_operator(command_end->next->type))
+			command_end = command_end->next;
+
+		cur = token;
+		while (cur && cur != command_end->next)
+		{
+			t_redir_type type = get_redir_type(cur->type);
+
+			// -----------------------------
+			// handle redirections
+			// -----------------------------
+			if (type != REDIR_OTHER)
+			{
+				if (!syntax_check(cur))
+					return (NULL);
+
+				t_redir *redir = alloc_redir();
+				memset(redir, 0, sizeof(t_redir));
+				redir->type = type;
+
+				if (cur->next)
+					redir->filename = strdup(cur->next->value);
+
+				// append to list
+				if (!node->cmd->redir)
+					node->cmd->redir = redir;
+				else
+				{
+					t_redir *tmp = node->cmd->redir;
+					while (tmp->next)
+						tmp = tmp->next;
+					tmp->next = redir;
+				}
+
+				cur = cur->next ? cur->next->next : NULL;
+				continue ;
+			}
+
+			// -----------------------------
+			// handle argv words
+			// -----------------------------
+			if (cur->type == TK_WORD || cur->type == TK_DOLLER)
+			{
+				set_argv(&node->cmd->argv, cur, i);
+				i++;
+				cur = cur->next;
+				continue ;
+			}
+			cur = cur->next;
+		}
+		*cur_token = command_end->next;
 	}
 	return (node);
 }
