@@ -7,9 +7,6 @@ if (fd<0)
   return (NULL);
 }
 
-
-
-
 struct dirent {
         __uint32_t d_fileno;            /* エントリのファイル番号 */
         __uint16_t d_reclen;            /* このレコードの長さ */

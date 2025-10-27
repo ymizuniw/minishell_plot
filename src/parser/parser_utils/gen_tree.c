@@ -70,6 +70,8 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 	// --------------------------------------------------
 	// operator case: &&, ||, |
 	// --------------------------------------------------
+	//set parent node as right node of the operator. Also, if it is a logical operator token,
+	//set the root node of the current operator's right node.
 	if (is_operator(token->type))
 	{
 		if (token->type == TK_AND_IF || token->type == TK_OR_IF)
@@ -97,6 +99,8 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 	// --------------------------------------------------
 	// subshells
 	// --------------------------------------------------
+	//if right parenthesis comes, it is the start of the subshell. do syntax check and generate subshell tree from the node->subtree.
+	//set subshell flag to 1.
 	else if (token->type == TK_RPAREN)
 	{
 		node->type = NODE_SUBSHELL;
@@ -113,6 +117,7 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		*cur_token = next_token;
 		return (node);
 	}
+	//if left parenthesis comes, it is the end of the subshell, or invalid token. 
 	else if (token->type == TK_LPAREN)
 	{
 		if (subshell == 1)
@@ -130,6 +135,8 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 	// --------------------------------------------------
 	// command (WORD / $)
 	// --------------------------------------------------
+	//if word token or doller token comes, parse redirection and command. to process them in order, proceed token to the end of the command_list,
+	//and 
 	else if (token->type == TK_WORD || token->type == TK_DOLLER)
 	{
 		size_t		i = 0;
