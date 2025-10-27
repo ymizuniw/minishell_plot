@@ -90,7 +90,7 @@ int handle_word(t_token *token_head, char const *input, size_t input_len, size_t
 	new->type = TK_WORD;
 	new->value = word;
 	new->next = NULL;
-	append_tokens(token_head, new);	
+	append_tokens(token_head, new);	//prepend_tokens is better naming, maybe.
 	return (1);
 }
 
@@ -118,7 +118,10 @@ int handle_eof(t_token *token_head)
 	if (!new->value)
 		new->value = strdup("");
 	new->next = NULL;
-	append_tokens(token_head, new);
+	while (token_head->next)
+		token_head = token_head->next;
+	token_head->next = new;
+	new->prev = token_head;
 	return (1);
 }
 
@@ -155,22 +158,26 @@ t_token	*lexer(const char *input)
 {
 	size_t		idx;
 	size_t		input_len;
+	t_token 	*dummy_head;
 	t_token		*token_head;
 	t_metachar	meta;
 	size_t		consumed;
 
+	if (init_token(&dummy_head)<0)
+		return (NULL);
+	dummy_head->type = TK_HEAD;
 	idx = 0;
 	input_len = strlen(input);
 	while (idx < input_len)
 	{
-		if (handle_internal_separator(token_head, input, &idx)<0)
+		if (handle_internal_separator(dummy_head, input, &idx)<0)
 			return (NULL);
 		if (idx >= input_len)
 			break ;
-		if (handle_operators_and_words(token_head, input, input_len, &idx)<0)
+		if (handle_operators_and_words(dummy_head, input, input_len, &idx)<0)
 			return (NULL);
 	}
-	if (handle_eof(token_head)<0)
+	if (handle_eof(dummy_head)<0)
 		return(NULL);
-	return (token_head);
+	return (dummy_head);
 }

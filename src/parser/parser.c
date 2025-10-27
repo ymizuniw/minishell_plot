@@ -1,14 +1,14 @@
 #include "../../includes/minishell.h"
 
-t_ast	*parser(t_token **token_head)
+t_ast	*parser(t_token *dummy_head)
 {
 	t_token	*token;
 	t_ast	*root;
 
-	if (!token_head)
+	if (!dummy_head)
 		return (NULL);
 	root = NULL;
-	token = (*token_head)->next;
+	token =  dummy_head->next;
 	if (!token)
 		return (NULL);
 	root = gen_tree(NULL, &token, 0);
@@ -19,6 +19,6 @@ t_ast	*parser(t_token **token_head)
 	}
 	while (token && token->type == TK_NEWLINE)
 		token = token->next;
-	*token_head = token;
+	dummy_head= token;
 	return (root);
 }

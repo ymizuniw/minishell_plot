@@ -70,6 +70,7 @@ typedef enum e_metachar
 // token_type classifies which type the token belongs to.
 typedef enum e_token_type
 {
+	TK_HEAD,
 	TK_NEWLINE,
 	TK_WORD,
 	TK_PIPE,
