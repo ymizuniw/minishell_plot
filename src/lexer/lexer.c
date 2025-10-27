@@ -126,6 +126,7 @@ int handle_internal_separator(t_token *token_head, char const *input, size_t *id
 {
 	if (input[*idx]=='\n')
 	{
+		token_head->count_newline++;
 		if (handle_newline(token_head, input, idx)<0)
 			return (-1);
 	}

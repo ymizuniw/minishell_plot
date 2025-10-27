@@ -89,6 +89,7 @@ typedef enum e_token_type
 typedef struct s_token
 {
 	size_t size; // for dummy head to keep the len of the list.
+	size_t count_newline;
 	struct s_token	*prev;
 	t_token_type	type;
 	bool			in_squote;
