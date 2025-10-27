@@ -35,15 +35,27 @@ int	shell_loop(t_shell *shell)
 		if (shell->interactive && *line)
 			add_history(line);
 		tokens = lexer(line);
-		ast = parser(tokens);
-		res = executor(ast, shell);
+
+		t_token *cur = tokens;
+		while (cur && cur->type!=TK_EOF)
+		{
+			if (cur && cur->next!=TK_EOF)
+			{
+				cur = cur->next;
+				continue ;
+			}
+			ast = parser(&cur);
+			res = executor(ast, shell);
+			if (ast)
+				free_ast_tree(ast);
+			if (res)
+				free_result(res);
+			if (cur && cur->next !=TK_EOF)
+				cur = cur->next;
+		}
 		xfree(line);
 		if (tokens)
 			free_token_list(tokens);
-		if (ast)
-			free_ast_tree(ast);
-		if (res)
-			free_result(res);
 	}
 	return (0);
 }

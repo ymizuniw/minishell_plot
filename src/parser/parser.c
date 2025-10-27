@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-t_ast	*parser(t_token *token_head)
+t_ast	*parser(t_token **token_head)
 {
 	t_token	*token;
 	t_ast	*root;
@@ -8,14 +8,19 @@ t_ast	*parser(t_token *token_head)
 	if (!token_head)
 		return (NULL);
 	root = NULL;
-	token = token_head->next;
-	while (token && (token->type == TK_HEAD || token->type == TK_NEWLINE))
-		token = token->next;
+	token = (*token_head)->next;
+	// while (token && (token->type == TK_NEWLINE))
+	// 	token = token->next;
 	if (!token || token->type == TK_EOF)
 		return (NULL);
 	root = gen_tree(NULL, &token, 0);
 	if (!root)
+	{
+		while (token && token->type != TK_NEWLINE && token->type != TK_EOF)
+			token = token->next;
+		*token_head = token;
 		return (NULL);
+	}
 	while (token && token->type == TK_NEWLINE)
 		token = token->next;
 	if (token && token->type != TK_EOF)
@@ -27,6 +32,7 @@ t_ast	*parser(t_token *token_head)
 	}
 	if (!root && token && token->type == TK_EOF)
 		return (NULL);
+	*token_head = token;
 	return (root);
 }
 
