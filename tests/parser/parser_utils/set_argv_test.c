@@ -19,7 +19,7 @@ void	test_set_argv(void)
 	cur->value = strdup("echo");
 	head->next = cur; cur->prev = head;
 	i = 0;
-	set_argv(argv, &cur, i);
+	set_argv(&argv, cur, i);
 	printf("argv[0]=%s\n", argv[0] ? argv[0] : "(null)");
 	assert(argv[0] != NULL);
 	free_token_list(head);

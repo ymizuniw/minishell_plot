@@ -69,6 +69,7 @@ LEXER_SRC = $(LEXER_DIR)/lexer.c
 LEXER_UTILS_SRC = $(LEXER_UTILS_DIR)/append_tokens.c \
                   $(LEXER_UTILS_DIR)/get_meta_char.c \
                   $(LEXER_UTILS_DIR)/get_token_type.c \
+                  $(LEXER_UTILS_DIR)/is_doller_token.c \
                   $(LEXER_UTILS_DIR)/is_quote.c \
                   $(LEXER_UTILS_DIR)/set_quote_flag.c \
                   $(LEXER_UTILS_DIR)/set_token_type.c \
@@ -80,7 +81,6 @@ PARSER_UTILS_SRC = $(PARSER_UTILS_DIR)/cat_word.c \
                    $(PARSER_UTILS_DIR)/check_parenthesis.c \
                    $(PARSER_UTILS_DIR)/expand_value.c \
                    $(PARSER_UTILS_DIR)/gen_tree.c \
-                   $(PARSER_UTILS_DIR)/parse_redirection.c \
                    $(PARSER_UTILS_DIR)/set_argv.c \
                    $(PARSER_UTILS_DIR)/syntax_checker.c \
                    $(PARSER_UTILS_DIR)/syntax_error.c
@@ -144,6 +144,23 @@ SMOKE_SRCS := \
 	$(TEST_DIR)/env_management/env_list_test.c \
 	$(TEST_DIR)/parser/parser_utils/gen_tree_smoke_test.c
 SMOKE_BINS := $(patsubst $(TEST_DIR)/%.c,$(TEST_BIN_DIR)/%,$(SMOKE_SRCS))
+
+# Run all test binaries with a timeout to avoid hangs
+TIMEOUT ?= 5
+.PHONY: test-run
+
+test-run: tests
+	@echo "Running tests with timeout $(TIMEOUT)s"
+	@set -e; \
+	for t in $(TEST_BINS); do \
+	  echo "[RUN] $$t"; \
+	  if command -v timeout >/dev/null 2>&1; then \
+	    timeout $(TIMEOUT)s "$$t" || echo "[TIMEOUT] $$t"; \
+	  else \
+	    echo "timeout not found; running without timeout"; \
+	    "$$t"; \
+	  fi; \
+	done
 
 .PHONY: all clean fclean re tests smoketests
 

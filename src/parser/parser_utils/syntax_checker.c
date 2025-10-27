@@ -1,5 +1,13 @@
 #include "../../../includes/minishell.h"
 
+static int	is_operator(t_token_type type)
+{
+	if (type == TK_NEWLINE || type == TK_PIPE || type == TK_AND_IF
+		|| type == TK_OR_IF)
+		return (1);
+	return (0);
+}
+
 // check the syntax of given token is correct.
 int	syntax_check(t_token *token)
 {

@@ -130,7 +130,16 @@ void	test_parentheses(void)
 	printf("✓ Test 6 passed\n\n");
 }
 
-int	main(void)
+static void run_case(const char *input)
+{
+	t_token *tokens = lexer(input);
+	assert(tokens != NULL);
+	// quick pass to ensure EOF at end
+	t_token *cur = tokens; while (cur->next) cur = cur->next; assert(cur->type == TK_EOF);
+	free_token_list(tokens);
+}
+
+int main(void)
 {
 	printf("=================================\n");
 	printf("    LEXER TEST SUITE\n");
@@ -144,5 +153,12 @@ int	main(void)
 	printf("=================================\n");
 	printf("  ALL TESTS PASSED! ✓\n");
 	printf("=================================\n");
-	return (0);
+	printf("Lexer quick tests\n");
+	run_case("");
+	run_case("echo hello world\n");
+	run_case("ls | grep x && echo ok\n");
+	run_case("(a)||b\n");
+	run_case("echo $USER > out\n");
+	printf("ok\n");
+	return 0;
 }

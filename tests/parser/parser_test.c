@@ -65,11 +65,12 @@ void	test_simple_command(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(tokens);
+	ast = parser(&tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
 		print_ast(ast, 0);
+		free_ast_tree(ast);
 	}
 	else
 	{
@@ -94,7 +95,7 @@ void	test_pipe_command(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(tokens);
+	ast = parser(&tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -103,6 +104,7 @@ void	test_pipe_command(void)
 			printf("✓ Correctly identified as PIPE node\n");
 		else
 			printf("✗ Expected PIPE node, got type %d\n", ast->type);
+		free_ast_tree(ast);
 	}
 	else
 	{
@@ -127,7 +129,7 @@ void	test_redirection(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(tokens);
+	ast = parser(&tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -136,6 +138,7 @@ void	test_redirection(void)
 			printf("✓ Correctly identified as CMD node\n");
 		else
 			printf("✗ Expected CMD node, got type %d\n", ast->type);
+		free_ast_tree(ast);
 	}
 	else
 	{
@@ -160,7 +163,7 @@ void	test_logical_and(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(tokens);
+	ast = parser(&tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -169,6 +172,7 @@ void	test_logical_and(void)
 			printf("✓ Correctly identified as AND node\n");
 		else
 			printf("✗ Expected AND node, got type %d\n", ast->type);
+		free_ast_tree(ast);
 	}
 	else
 	{
@@ -193,7 +197,7 @@ void	test_logical_or(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(tokens);
+	ast = parser(&tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -202,6 +206,7 @@ void	test_logical_or(void)
 			printf("✓ Correctly identified as OR node\n");
 		else
 			printf("✗ Expected OR node, got type %d\n", ast->type);
+		free_ast_tree(ast);
 	}
 	else
 	{
@@ -226,11 +231,12 @@ void	test_complex_pipeline(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(tokens);
+	ast = parser(&tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
 		print_ast(ast, 0);
+		free_ast_tree(ast);
 	}
 	else
 	{

@@ -34,7 +34,16 @@ void	free_double_array_contents(char **p, char *p_content)
 {
 	int	i;
 
-	(void)p_content; // Suppress unused parameter warning
+	if (!p)
+		return ;
+	if (p_content)
+	{
+		// If entries point into a single contiguous block, free it once
+		xfree(p_content);
+		for (i = 0; p[i] != NULL; i++)
+			p[i] = NULL;
+		return ;
+	}
 	i = 0;
 	while (p[i] != NULL)
 	{

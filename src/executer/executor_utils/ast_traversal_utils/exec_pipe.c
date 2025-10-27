@@ -7,6 +7,15 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 	pid_t	left_pid;
 	pid_t	right_pid;
 
+	if (!node)
+		return (0);
+	if (!execute)
+	{
+		// Dry-run mode for tests: do not fork, just traverse
+		ast_traversal(node->left, shell, execute);
+		ast_traversal(node->right, shell, execute);
+		return (0);
+	}
 	ret = pipe(pip);
 	if (ret < 0)
 	{

@@ -1,8 +1,5 @@
 #include "../../../includes/minishell.h"
 
-// improved version
-#include "../../../includes/minishell.h"
-
 // expand the value of the token and set to cmd list's argv.
 void	set_argv(char ***argv, t_token *token, size_t i)
 {
