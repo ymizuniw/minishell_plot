@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-t_ast	*parser(t_token *dummy_head)
+t_ast	*parser(t_token **dummy_head)
 {
 	t_token	*token;
 	t_ast	*root;
