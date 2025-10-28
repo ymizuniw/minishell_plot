@@ -12,7 +12,6 @@ void			set_quote_flag(t_token *token, char *input,
 t_metachar		is_meta_char(int c);
 bool			is_doller_token(const char *);
 void			prepend_tokens(t_token *head, t_token *new);
-size_t			word_cat(char **word, size_t word_len, char *input,
-					size_t input_len, size_t idx);
+size_t	word_cat(char **, size_t, char const*, size_t, size_t);
 
 #endif

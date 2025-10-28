@@ -19,7 +19,7 @@ int main(void)
 	pipe->next = w3; w3->prev = pipe;
 	w3->next = eof; eof->prev = w3;
 
-	t_ast *root = parser(&head);
+	t_ast *root = parser(head);
 	assert(root != NULL);
 	t_shell shell; bzero(&shell, sizeof(shell));
 	int ret = ast_traversal(root, &shell, false);

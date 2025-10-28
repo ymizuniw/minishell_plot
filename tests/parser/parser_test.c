@@ -65,7 +65,7 @@ void	test_simple_command(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(&tokens);
+	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -95,7 +95,7 @@ void	test_pipe_command(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(&tokens);
+	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -129,7 +129,7 @@ void	test_redirection(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(&tokens);
+	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -163,7 +163,7 @@ void	test_logical_and(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(&tokens);
+	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -197,7 +197,7 @@ void	test_logical_or(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(&tokens);
+	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
@@ -231,7 +231,7 @@ void	test_complex_pipeline(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-	ast = parser(&tokens);
+	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");

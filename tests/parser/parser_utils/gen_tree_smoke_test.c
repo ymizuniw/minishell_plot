@@ -8,7 +8,7 @@ int main(void)
 	const char *input = "echo hi && (ls | wc)";
 	t_token *toks = lexer(input);
 	assert(toks != NULL);
-	t_ast *root = parser(&toks);
+	t_ast *root = parser(toks);
 	assert(root != NULL);
 	free_token_list(toks);
 	free_ast_tree(root);
