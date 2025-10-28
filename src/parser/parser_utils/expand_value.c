@@ -42,7 +42,6 @@ int search_doller_and_expand(char **word, char const *value, size_t word_len_no_
 	char	*word;
 	char	*doller;
 
-
 	doller = strchr(value, '$');
 	if (doller != NULL)
 	{
