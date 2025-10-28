@@ -78,8 +78,7 @@ t_ast  *sort_and_gen_node(t_ast *parent, t_token **cur_token, t_token *next_toke
 {
 	t_token *token = *cur_token;
 	t_ast *node;
-	printf("token value: %s\n", token->value);
-	printf("token type: %d\n", token->type);
+
 	if (init_node(&node, parent, token->type)<0)
 		return (NULL);
 	if (token->type == TK_AND_IF || token->type == TK_OR_IF)
@@ -140,7 +139,6 @@ t_ast *subshell_close(t_ast *parent, t_token **cur_token, int subshell)
 }
 
 //parse_command_list
-//
 
 int init_redir(t_redir **redir, t_redir_type redir_type)
 {
@@ -234,6 +232,7 @@ t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 	return (node);
 }
 
+size_t count = 0;
 // -----------------------------------------------------------------------------
 // generate a tree of command.
 // -----------------------------------------------------------------------------
@@ -254,7 +253,10 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 	// --------------------------------------------------
 	//set parent node as right node of the operator. Also, if it is a logical operator token,
 	//set the root node of the current operator's right node.
-	if (is_operator(token->type))
+	count++;
+	printf("count: %zu\n", count);
+	printf("token->type: %d\n", token->type);
+	if (is_operator(token->type) && printf("is_operator!"))
 		return (sort_and_gen_node(parent, cur_token, next_token, subshell));
 
 	// --------------------------------------------------

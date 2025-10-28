@@ -95,6 +95,17 @@ void	test_pipe_command(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
+		//TOKEN_TYPE VALIDATION
+		// t_token *cur = tokens->next;
+		// while (cur)
+		// {
+		// 	printf("token->type: %d\n", cur->type);
+		// 	if (cur->next)
+		// 		cur = cur->next;
+		// 	else
+		// 		break ;
+		// }
+
 	ast = parser(tokens);
 	if (ast)
 	{
