@@ -5,7 +5,8 @@ int handle_no_expansion(char **word, char const *value, size_t word_len_no_expan
 	word = xmalloc(sizeof(char) * (word_len_no_expansion + 1));
 	if (!word)
 		return (-1);
-	strncpy(*word, value, word_len_no_expansion + 1);
+	strncpy(*word, value, word_len_no_expansion);
+	*word[word_len_no_expansion] = '\0';
 	return (1);
 }
 

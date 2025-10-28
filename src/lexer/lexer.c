@@ -12,6 +12,7 @@ int init_token(t_token **token_head)
 	return (1);
 }
 
+//handle the newline token
 int handle_newline(t_token *token_head, const char *input, size_t *idx)
 {
 	t_token		*new;
@@ -38,6 +39,7 @@ int handle_newline(t_token *token_head, const char *input, size_t *idx)
 	return (1);
 }
 
+//handle meta_char token.
 int handle_meta_char(t_token *token_head, const char *input, size_t *idx)
 {
 	t_token *new;
@@ -50,6 +52,7 @@ int handle_meta_char(t_token *token_head, const char *input, size_t *idx)
 	return (1);
 }
 
+//handle doller token.
 int handle_doller(t_token *token_head, size_t *idx)
 {
 	t_token *new;
@@ -66,6 +69,7 @@ int handle_doller(t_token *token_head, size_t *idx)
 	return (1);
 }
 
+//handle word token.
 int handle_word(t_token *token_head, char const *input, size_t input_len, size_t *idx)
 {
 	t_token *new;
@@ -73,9 +77,9 @@ int handle_word(t_token *token_head, char const *input, size_t input_len, size_t
 	if (!new)
 		return (-1);
 	memset(new, 0, sizeof(t_token));
-	
 	char	*word;
 	size_t consumed = 0;
+
 	word = NULL;
 	consumed = word_cat(&word, 0, (char *)input, input_len, *idx);
 	if (consumed == 0)
@@ -94,6 +98,7 @@ int handle_word(t_token *token_head, char const *input, size_t input_len, size_t
 	return (1);
 }
 
+//entry point for handle_word/handle_doller token.
 int handle_word_and_doller(t_token *token_head,char const *input,  size_t input_len, size_t *idx)
 {
 	if (is_doller_token(&input[*idx]))
@@ -109,14 +114,14 @@ int handle_word_and_doller(t_token *token_head,char const *input,  size_t input_
 	return (1);
 }
 
+//handle eof token.
 int handle_eof(t_token *token_head)
 {
 	t_token *new = alloc_token();
 	if (!new)
 		return (-1);
 	new->type = TK_EOF;
-	if (!new->value)
-		new->value = strdup("");
+	new->value = strdup("");
 	new->next = NULL;
 	while (token_head->next)
 		token_head = token_head->next;
@@ -125,6 +130,7 @@ int handle_eof(t_token *token_head)
 	return (1);
 }
 
+//handle newline and isspace charactors to skip them correctly.
 int handle_internal_separator(t_token *token_head, char const *input, size_t *idx)
 {
 	if (input[*idx]=='\n')
@@ -138,9 +144,11 @@ int handle_internal_separator(t_token *token_head, char const *input, size_t *id
 	return (1);	
 }
 
+//entry point for handle_operators/handle_words.
 int handle_operators_and_words(t_token *token_head, char const *input, size_t input_len, size_t *idx)
 {
 	t_metachar	meta = is_meta_char(input[*idx]);
+
 	if (meta != MT_OTHER)
 	{
 		if (handle_meta_char(token_head, input, idx)<0)

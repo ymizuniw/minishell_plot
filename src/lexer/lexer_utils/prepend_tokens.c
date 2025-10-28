@@ -3,20 +3,16 @@
 // head is a dummy head. append new at the tail (FIFO)
 void	prepend_tokens(t_token *head, t_token *new)
 {
+	t_token *cur_first = NULL;
+
 	if (!head || !new)
 		return;
-	new->next = NULL;
-	if (!head->next)
-	{
-		head->next = new;
-		new->prev = head;
-		head->size++;
-		return;
-	}
-	t_token *cur = head->next;
-	while (cur->next)
-		cur = cur->next;
-	cur->next = new;
-	new->prev = cur;
+	if (head->next)
+		 cur_first = head->next;
+	if (cur_first!=NULL)
+		cur_first->prev = new;
+	head->next = new;
+	new->next = cur_first;
+	new->prev = head;
 	head->size++;
 }

@@ -78,7 +78,8 @@ t_ast  *sort_and_gen_node(t_ast *parent, t_token **cur_token, t_token *next_toke
 {
 	t_token *token = *cur_token;
 	t_ast *node;
-
+	printf("token value: %s\n", token->value);
+	printf("token type: %d\n", token->type);
 	if (init_node(&node, parent, token->type)<0)
 		return (NULL);
 	if (token->type == TK_AND_IF || token->type == TK_OR_IF)
@@ -176,7 +177,7 @@ int parse_redirection(t_ast *node, t_token **cur_token, t_redir_type redir_type)
 
 void parse_simple_command(t_ast *node, t_token **cur_token, size_t *i)
 {
-	set_argv(&node->cmd->argv, *cur_token, *i);
+	set_argv(node->cmd->argv, *cur_token, *i);
 	(*i)++;
 	*cur_token = (*cur_token)->prev;
 }
@@ -192,9 +193,10 @@ int init_command_node(t_ast *parent, t_ast **node, t_token_type token_type)
 	return (1);
 }
 
-int parse_redir_and_command(t_ast *node, t_token *cur, t_token **cur_token, size_t *i)
+int parse_redir_and_command(t_ast *node, t_token *cur)
 {
-	while (cur && cur!=*cur_token)
+	size_t i = 0;
+	while (cur && cur->type != TK_EOF)
 	{
 		t_redir_type type = get_redir_type(cur->type);
 		if (type != REDIR_OTHER)
@@ -205,7 +207,7 @@ int parse_redir_and_command(t_ast *node, t_token *cur, t_token **cur_token, size
 		}
 		if (cur->type == TK_WORD || cur->type == TK_DOLLER)
 		{
-			parse_simple_command(node, &cur, i);
+			parse_simple_command(node, &cur, &i);
 			continue ;
 		}
 		cur = cur->prev;
@@ -215,7 +217,6 @@ int parse_redir_and_command(t_ast *node, t_token *cur, t_token **cur_token, size
 
 t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 {
-	size_t		i = 0;
 	t_token		*command_start;
 	t_token		*cur = *cur_token;
 	t_ast 		*node;
@@ -227,12 +228,11 @@ t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 	while (command_start->next && !is_operator(command_start->next->type))
 		command_start = command_start->next;
 	cur = command_start;
-	if (parse_redir_and_command(node, cur, cur_token, &i)<0)
+	if (parse_redir_and_command(node, cur)<0)
 		return (NULL);
 	*cur_token = command_start->next;//meta token pointer.
 	return (node);
 }
-
 
 // -----------------------------------------------------------------------------
 // generate a tree of command.
@@ -246,7 +246,6 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		return (NULL);
 	if (!cur_token || !*cur_token)
 		return (NULL);
-
 	token = *cur_token;
 	next_token = NULL;
 
