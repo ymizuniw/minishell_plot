@@ -5,11 +5,11 @@ int handle_no_expansion(char **word, char const *value, size_t word_len_no_expan
 	word = xmalloc(sizeof(char) * (word_len_no_expansion + 1));
 	if (!word)
 		return (-1);
-	strncpy(word, token->value, word_len_no_expansion + 1);
+	strncpy(*word, value, word_len_no_expansion + 1);
 	return (1);
 }
 
-int handle_doller_expansion(char const **word, char const *value, char *doller)
+int handle_doller_expansion(char **word, char *doller)
 {
 	size_t	i;
 	char	*var;
@@ -28,7 +28,7 @@ int handle_doller_expansion(char const **word, char const *value, char *doller)
 			return (-1);
 		memset(var, 0, sizeof(char)*(i-start+1));
 		strncpy(var, doller + 1, i - start);//copy after doller to var of the length of i - start.
-		entry = genenv(var);//search env var from env_list. this will be changed for local env list.
+		entry = getenv(var);//search env var from env_list. this will be changed for local env list.
 		if (entry!=NULL)//if entry found,
 			cat_word(word, entry, strlen(entry));
 		xfree(var);
@@ -39,13 +39,12 @@ int handle_doller_expansion(char const **word, char const *value, char *doller)
 
 int search_doller_and_expand(char **word, char const *value, size_t word_len_no_expansion)
 {
-	char	*word;
 	char	*doller;
 
 	doller = strchr(value, '$');
 	if (doller != NULL)
 	{
-		if (handle_doller_expansion(word, value, doller)<0)
+		if (handle_doller_expansion(word, doller)<0)
 			return (-1);
 	}
 	else
@@ -72,7 +71,7 @@ char	*expand_value(t_token *token)
 	}
 	else
 	{
-		if (search_doller_and_expand(&word, token->value, word_len_no_expansion)<0)
+		if (search_doller_and_expand(&word, (const char *)(token->value), word_len_no_expansion)<0)
 			return (NULL);
 	}
 	return (word);

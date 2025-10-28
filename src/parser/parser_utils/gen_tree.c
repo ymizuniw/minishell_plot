@@ -57,7 +57,9 @@ t_ast *sort_by_logical_precedence(t_ast *parent, t_ast *node)
 		root = root->parent;
 	node = swap_and_set_right_node(node, root);
 	if (node==NULL)
-		assert(node==NULL);
+	{
+		printf("swap_and_set_right_node failed\n");
+	}
 	return (node);
 }
 
@@ -99,7 +101,7 @@ t_ast  *gen_subshell_tree(t_ast *parent, t_token **cur_token, t_token *next_toke
 {
 	t_token *token = *cur_token;
 	t_ast *node;
-
+	(void)subshell;
 	if (init_node(&node, parent, token->type)<0)
 		return (NULL);
 	if (syntax_check(token) != 1)
@@ -144,7 +146,7 @@ int init_redir(t_redir **redir, t_redir_type redir_type)
 	*redir = alloc_redir();
 	if (*redir==NULL)
 		return (-1);
-	memset(redir,sizeof(t_redir), 0);
+	memset(redir, 0, sizeof(t_redir));
 	(*redir)->type = redir_type;
 	return (1);
 }
@@ -169,11 +171,12 @@ int parse_redirection(t_ast *node, t_token **cur_token, t_redir_type redir_type)
 		tmp->next = redir;
 	}
 	*cur_token = (*cur_token)->prev ? (*cur_token)->prev->prev : NULL;
+	return (1);
 }
 
 void parse_simple_command(t_ast *node, t_token **cur_token, size_t *i)
 {
-	set_argv(&node->cmd->argv, cur_token, *i);
+	set_argv(&node->cmd->argv, *cur_token, *i);
 	(*i)++;
 	*cur_token = (*cur_token)->prev;
 }
@@ -216,6 +219,7 @@ t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 	t_token		*command_start;
 	t_token		*cur = *cur_token;
 	t_ast 		*node;
+	(void)subshell;
 
 	if (init_command_node(parent, &node, cur->type)<0)
 		return (NULL);

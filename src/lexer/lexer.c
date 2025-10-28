@@ -21,7 +21,7 @@ int handle_newline(t_token *token_head, const char *input, size_t *idx)
 		char prev = input[*idx-1];
 		if (prev=='|' || prev == '&' || prev == '(')
 		{
-			*idx++;
+			(*idx)++;
 			return (1);
 		}
 	}
@@ -34,7 +34,7 @@ int handle_newline(t_token *token_head, const char *input, size_t *idx)
 	if (!new->value)
 		return (-1);
 	prepend_tokens(token_head, new);
-	*idx++;
+	(*idx)++;
 	return (1);
 }
 
@@ -50,7 +50,7 @@ int handle_meta_char(t_token *token_head, const char *input, size_t *idx)
 	return (1);
 }
 
-int handle_doller(t_token *token_head, char const *input, size_t *idx)
+int handle_doller(t_token *token_head, size_t *idx)
 {
 	t_token *new;
 	new = alloc_token();
@@ -62,7 +62,7 @@ int handle_doller(t_token *token_head, char const *input, size_t *idx)
 	if (!new->value)
 		return (-1);
 	prepend_tokens(token_head, new);
-	*idx++;
+	(*idx)++;
 	return (1);
 }
 
@@ -98,7 +98,7 @@ int handle_word_and_doller(t_token *token_head,char const *input,  size_t input_
 {
 	if (is_doller_token(&input[*idx]))
 	{
-		if (handle_doller(token_head, input, idx)<0)
+		if (handle_doller(token_head, idx)<0)
 			return (-1);
 	}
 	else
@@ -134,7 +134,7 @@ int handle_internal_separator(t_token *token_head, char const *input, size_t *id
 			return (-1);
 	}
 	if (input[*idx] && isspace((unsigned char)input[*idx]))
-		*idx++;
+		(*idx)++;
 	return (1);	
 }
 
@@ -148,7 +148,7 @@ int handle_operators_and_words(t_token *token_head, char const *input, size_t in
 	}
 	else
 	{
-		if (handle_word_and_doller(token_head, input_len, input, idx)<0)
+		if (handle_word_and_doller(token_head,  input, input_len,idx)<0)
 			return (-1);
 	}
 	return (1);
@@ -159,9 +159,6 @@ t_token	*lexer(const char *input)
 	size_t		idx;
 	size_t		input_len;
 	t_token 	*dummy_head;
-	t_token		*token_head;
-	t_metachar	meta;
-	size_t		consumed;
 
 	if (init_token(&dummy_head)<0)
 		return (NULL);

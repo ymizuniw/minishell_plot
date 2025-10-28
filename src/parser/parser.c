@@ -14,7 +14,6 @@ t_ast	*parser(t_token *dummy_head)
 	root = gen_tree(NULL, &token, 0);
 	if (!root)
 	{
-		assert(root==NULL);
 		return (NULL);
 	}
 	while (token && token->type == TK_NEWLINE)
