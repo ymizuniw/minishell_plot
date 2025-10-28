@@ -66,7 +66,7 @@ SEARCH_EXEC_SRC = $(SEARCH_EXEC_DIR)/search_and_exec.c
 
 LEXER_SRC = $(LEXER_DIR)/lexer.c
 
-LEXER_UTILS_SRC = $(LEXER_UTILS_DIR)/append_tokens.c \
+LEXER_UTILS_SRC = $(LEXER_UTILS_DIR)/prepend_tokens.c \
                   $(LEXER_UTILS_DIR)/get_meta_char.c \
                   $(LEXER_UTILS_DIR)/get_token_type.c \
                   $(LEXER_UTILS_DIR)/is_doller_token.c \
