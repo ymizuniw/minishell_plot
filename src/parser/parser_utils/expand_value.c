@@ -2,10 +2,13 @@
 
 int handle_no_expansion(char **word, char const *value, size_t word_len_no_expansion)
 {
+	// printf("word: %s\n", *word);
+	// printf("value: %s\n", value);
+	// printf("word_len_no_expansion: %zu\n", word_len_no_expansion);
 	*word = xmalloc(sizeof(char) * (word_len_no_expansion + 1));
 	if (!*word)
 		return (-1);
-	strncpy(*word, value, word_len_no_expansion);
+	memcpy(*word, value, word_len_no_expansion);
 	(*word)[word_len_no_expansion] = '\0';
 	return (1);
 }
@@ -50,6 +53,7 @@ int search_doller_and_expand(char **word, char const *value, size_t word_len_no_
 	}
 	else
 	{
+		// printf("handle_no_expansion() called\n");
 		if (handle_no_expansion(word, value, word_len_no_expansion)<0)
 			return (-1);
 	}
@@ -62,7 +66,6 @@ char	*expand_value(t_token *token)
 	size_t	word_len_no_expansion;
 	char *word;
 
-	//initialize
 	word_len_no_expansion = strlen(token->value);
 	word = NULL;
 	if (token->in_squote || token->type == TK_DOLLER)
@@ -72,8 +75,10 @@ char	*expand_value(t_token *token)
 	}
 	else
 	{
+		// printf("search_doller_and_expand() called\n");
 		if (search_doller_and_expand(&word, (const char *)(token->value), word_len_no_expansion)<0)
 			return (NULL);
+		// printf("word: %s\n", word);
 	}
 	return (word);
 }

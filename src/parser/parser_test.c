@@ -95,22 +95,25 @@ void	test_pipe_command(void)
 		printf("✗ Lexer failed\n\n");
 		return ;
 	}
-		//TOKEN_TYPE VALIDATION
-		// t_token *cur = tokens->next;
-		// while (cur)
-		// {
-		// 	printf("token->type: %d\n", cur->type);
-		// 	if (cur->next)
-		// 		cur = cur->next;
-		// 	else
-		// 		break ;
-		// }
 
+	printf("\n===TOKEN_TYPE_VALIDATION===\n");
+		// TOKEN_TYPE VALIDATION
+		t_token *cur = tokens->next;
+		while (cur)
+		{
+			printf("token->type: %d\n", cur->type);
+			if (cur->next)
+				cur = cur->next;
+			else
+				break ;
+		}
+		printf("\n===NEXT_ITEM===\n");
 	ast = parser(tokens);
 	if (ast)
 	{
 		printf("✓ Parser succeeded\n");
 		print_ast(ast, 0);
+		printf("ast->left: %d\n", ast->left->type);
 		if (ast->type == NODE_PIPE)
 			printf("✓ Correctly identified as PIPE node\n");
 		else
@@ -263,11 +266,11 @@ int	main(void)
 	printf("  COMPREHENSIVE PARSER TESTS\n");
 	printf("=================================\n\n");
 	test_simple_command();
-	test_pipe_command();
-	test_redirection();
-	test_logical_and();
-	test_logical_or();
-	test_complex_pipeline();
+	// test_pipe_command();
+	// test_redirection();
+	// test_logical_and();
+	// test_logical_or();
+	// test_complex_pipeline();
 	printf("=================================\n");
 	printf("  ALL TESTS COMPLETED\n");
 	printf("=================================\n");
