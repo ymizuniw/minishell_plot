@@ -4,8 +4,8 @@
 int	exec_command(t_ast *node, t_shell *shell, int execute)
 {
 	int	redir_ret;
-	(void)shell;
 
+	(void)shell;
 	if (!node || !node->cmd)
 		return (-1);
 	if (!execute)
@@ -13,6 +13,7 @@ int	exec_command(t_ast *node, t_shell *shell, int execute)
 	redir_ret = do_redirection(node);
 	if (redir_ret < 0)
 	{
+		// expand variables.
 		if (node->cmd->redir && node->cmd->redir->filename)
 			perror(node->cmd->redir->filename);
 		return (1);
