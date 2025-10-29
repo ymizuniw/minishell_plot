@@ -45,7 +45,7 @@ void	free_double_array_contents(char **p, char *p_content)
 		return ;
 	}
 	i = 0;
-	while (p[i] != NULL)
+	while (p!=NULL && p[i] != NULL)
 	{
 		xfree(p[i]);
 		i++;

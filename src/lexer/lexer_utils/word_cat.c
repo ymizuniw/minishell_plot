@@ -15,6 +15,7 @@ int handle_quotation(char **word, size_t word_len, char const*input, size_t *idx
 	if (input[*idx]==input[*idx+1])
 	{
 		//"" case.
+		*idx += 2;
 		return (1);
 	}
 	add_len = quote_close - &input[*idx] - 1;//"a"
