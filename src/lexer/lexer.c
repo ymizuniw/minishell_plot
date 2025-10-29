@@ -42,12 +42,15 @@ int handle_newline(t_token *token_head, const char *input, size_t *idx)
 //handle meta_char token.
 int handle_meta_char(t_token *token_head, const char *input, size_t *idx)
 {
+	printf("handle_meata_char() is called\n");
+	printf("input: %s\n", &input[*idx]);
 	t_token *new;
 	new = alloc_token();
 	if (!new)
 		return (-1);
 	memset(new, 0, sizeof(t_token));
 	new->type = get_token_type((char *)input, idx);
+	printf("token_type: %d\n", new->type);
 	prepend_tokens(token_head, new);
 	return (1);
 }
@@ -78,19 +81,23 @@ int handle_word(t_token *token_head, char const *input, size_t input_len, size_t
 		return (-1);
 	memset(new, 0, sizeof(t_token));
 	char	*word;
-	size_t consumed = 0;
+	// size_t consumed = 0;
 
+	// printf("idx before word_cat(): %zu\n", *idx);
 	word = NULL;
-	consumed = word_cat(&word, 0, (char *)input, input_len, *idx);
-	if (consumed == 0)
-	{
-		xfree(new);
-		free_token_list(token_head);
-		return (-1);
-	}
+	word_cat(&word, 0, (char *)input, input_len, idx);
+	// consumed = word_cat(&word, 0, (char *)input, input_len, idx);
+	// if (consumed == 0)
+	// {
+	// 	xfree(new);
+	// 	free_token_list(token_head);
+	// 	return (-1);
+	// }
 	// if (is_quote(input[idx]))
 	// 	set_quote_flag(new, (char *)input, is_quote(input[idx]));
-	*idx += consumed;
+	// printf("consumed idx after word_cat(): %zu\n", consumed);
+	// *idx += consumed + 1;
+	// printf("idx afeter word_cat(): %zu\n", *idx);
 	new->type = TK_WORD;
 	new->value = word;
 	new->next = NULL;
@@ -133,6 +140,7 @@ int handle_eof(t_token *token_head)
 //handle newline and isspace charactors to skip them correctly.
 int handle_internal_separator(t_token *token_head, char const *input, size_t *idx)
 {
+	printf("handle_internal_separator() called\n");
 	if (input[*idx]=='\n')
 	{
 		token_head->count_newline++;
@@ -149,8 +157,11 @@ int handle_operators_and_words(t_token *token_head, char const *input, size_t in
 {
 	t_metachar	meta = is_meta_char(input[*idx]);
 
+	printf("meta_char: %d\n", meta);//')'->4, '('->3.
+	printf("handle_operators_and_words() called\n");
 	if (meta != MT_OTHER)
 	{
+		printf("token type '('? : %d\n", input[*idx]);
 		if (handle_meta_char(token_head, input, idx)<0)
 			return (-1);
 	}
@@ -173,9 +184,12 @@ t_token	*lexer(const char *input)
 	dummy_head->type = TK_HEAD;
 	idx = 0;
 	input_len = strlen(input);
+	printf("input_len: %zu\n", input_len);
+	printf("input: %s\n", input);
 	while (idx < input_len)
 	{
-		if (handle_internal_separator(dummy_head, input, &idx)<0)
+		printf("idx: %zu\n", idx);
+		if (isspace((unsigned char)input[idx]) && handle_internal_separator(dummy_head, input, &idx)<0)
 			return (NULL);
 		if (idx >= input_len)
 			break ;
