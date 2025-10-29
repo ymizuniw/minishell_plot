@@ -12,14 +12,19 @@ int handle_quotation(char **word, size_t word_len, char const*input, size_t *idx
 		//syntax_error.
 		return (-1);
 	}
-	add_len = quote_close - &input[*idx];
+	if (input[*idx]==input[*idx+1])
+	{
+		//"" case.
+		return (1);
+	}
+	add_len = quote_close - &input[*idx] - 1;//"a"
 	*word = realloc(*word, sizeof(char) * (word_len + add_len + 1));
 	if (!*word)
 		return (0);
-	strncpy(*word + word_len, &input[*idx], add_len);
-	(*word)[add_len]='\0';
-	*idx += add_len;//right to apply ptr move quantity to *idx.
-	*consumed_len = add_len;
+	strncpy(*word + word_len, &input[*idx+1], add_len);
+	(*word)[word_len + add_len]='\0';
+	*idx += add_len+2;//right to apply ptr move quantity to *idx.
+	*consumed_len = add_len + 2;
 	return (1);
 }
 
@@ -34,7 +39,7 @@ int handle_plain(char **word, size_t word_len, char const *input, size_t input_l
 		&& is_meta_char(input[*idx]) == MT_OTHER && !is_quote(input[*idx]))
 		(*idx)++;//here idx is proceeded, so consumed_len is no need, is it?
 	// (*idx)--;
-	printf("input next: %s\n", &input[*idx]);
+	// printf("input next: %s\n", &input[*idx]);
 	add_len = &input[*idx] - tmp_ptr;
 	if (add_len == 0)
 		return (-1);
