@@ -2,53 +2,107 @@
 #include <assert.h>
 #include <stdio.h>
 
-// Helper function to print AST structure
-void	print_ast(t_ast *ast, int depth)
-{
-	int	i;
+#include <stdbool.h>
 
-	if (!ast)
-		return ;
-	for (i = 0; i < depth; i++)
-		printf("  ");
-	printf("Node type: %d", ast->type);
-	if (ast->type == NODE_CMD && ast->cmd)
-	{
-		printf(" (CMD)");
-		if (ast->cmd->argv && ast->cmd->argv[0])
-			printf(" - argv[0]: %s", ast->cmd->argv[0]);
-	}
-	else if (ast->type == NODE_PIPE)
-		printf(" (PIPE)");
-	else if (ast->type == NODE_AND)
-		printf(" (AND)");
-	else if (ast->type == NODE_OR)
-		printf(" (OR)");
-	else if (ast->type == NODE_SUBSHELL)
-		printf(" (SUBSHELL)");
-	printf("\n");
-	if (ast->left)
-	{
-		for (i = 0; i < depth; i++)
-			printf("  ");
-		printf("Left:\n");
-		print_ast(ast->left, depth + 1);
-	}
-	if (ast->right)
-	{
-		for (i = 0; i < depth; i++)
-			printf("  ");
-		printf("Right:\n");
-		print_ast(ast->right, depth + 1);
-	}
-	if (ast->subtree)
-	{
-		for (i = 0; i < depth; i++)
-			printf("  ");
-		printf("Subtree:\n");
-		print_ast(ast->subtree, depth + 1);
-	}
+void print_ast_safe(t_ast *ast, int depth, t_ast **visited, size_t visited_count)
+{
+    if (!ast)
+        return;
+    // Detect already visited node
+    for (size_t i = 0; i < visited_count; i++)
+        if (visited[i] == ast) {
+            for (int j = 0; j < depth; j++)
+                printf("  ");
+            printf("[Cycle detected -> node %p type %d]\n", (void*)ast, ast->type);
+            return;
+        }
+    visited[visited_count++] = ast;
+
+    for (int i = 0; i < depth; i++)
+        printf("  ");
+    printf("Node type: %d", ast->type);
+    if (ast->type == NODE_CMD && ast->cmd && ast->cmd->argv)
+        printf(" (CMD) - argv[0]: %s", ast->cmd->argv[0]);
+    else if (ast->type == NODE_PIPE)
+        printf(" (PIPE)");
+    else if (ast->type == NODE_AND)
+        printf(" (AND)");
+    else if (ast->type == NODE_OR)
+        printf(" (OR)");
+    else if (ast->type == NODE_SUBSHELL)
+        printf(" (SUBSHELL)");
+    printf("\n");
+
+    if (ast->left) {
+        for (int i = 0; i < depth; i++) printf("  ");
+        printf("Left:\n");
+        print_ast_safe(ast->left, depth + 1, visited, visited_count);
+    }
+    if (ast->right) {
+        for (int i = 0; i < depth; i++) printf("  ");
+        printf("Right:\n");
+        print_ast_safe(ast->right, depth + 1, visited, visited_count);
+    }
+    if (ast->subtree) {
+        for (int i = 0; i < depth; i++) printf("  ");
+        printf("Subtree:\n");
+        print_ast_safe(ast->subtree, depth + 1, visited, visited_count);
+    }
 }
+
+void print_ast(t_ast *ast, int depth)
+{
+    t_ast *visited[1024]; // generous limit
+    print_ast_safe(ast, depth, visited, 0);
+}
+
+// // Helper function to print AST structure
+// void	print_ast(t_ast *ast, int depth)
+// {
+// 	int	i;
+
+// 	if (!ast)
+// 		return ;
+// 	for (i = 0; i < depth; i++)
+// 		printf("  ");
+// 	printf("Node type: %d", ast->type);
+// 	if (ast->type == NODE_CMD && ast->cmd)
+// 	{
+// 		printf(" (CMD)");
+// 		if (ast->cmd->argv && ast->cmd->argv[0])
+// 			printf(" - argv[0]: %s", ast->cmd->argv[0]);
+// 	}
+// 	else if (ast->type == NODE_PIPE)
+// 		printf(" (PIPE)");
+// 	else if (ast->type == NODE_AND)
+// 		printf(" (AND)");
+// 	else if (ast->type == NODE_OR)
+// 		printf(" (OR)");
+// 	else if (ast->type == NODE_SUBSHELL)
+// 		printf(" (SUBSHELL)");
+// 	printf("\n");
+// 	if (ast->left)
+// 	{
+// 		for (i = 0; i < depth; i++)
+// 			printf("  ");
+// 		printf("Left:\n");
+// 		print_ast(ast->left, depth + 1);
+// 	}
+// 	if (ast->right)
+// 	{
+// 		for (i = 0; i < depth; i++)
+// 			printf("  ");
+// 		printf("Right:\n");
+// 		print_ast(ast->right, depth + 1);
+// 	}
+// 	if (ast->subtree)
+// 	{
+// 		for (i = 0; i < depth; i++)
+// 			printf("  ");
+// 		printf("Subtree:\n");
+// 		print_ast(ast->subtree, depth + 1);
+// 	}
+// }
 
 void	test_simple_command(void)
 {
@@ -96,18 +150,18 @@ void	test_pipe_command(void)
 		return ;
 	}
 
-	printf("\n===TOKEN_TYPE_VALIDATION===\n");
-		// TOKEN_TYPE VALIDATION
-		t_token *cur = tokens->next;
-		while (cur)
-		{
-			printf("token->type: %d\n", cur->type);
-			if (cur->next)
-				cur = cur->next;
-			else
-				break ;
-		}
-		printf("\n===NEXT_ITEM===\n");
+	// printf("\n===TOKEN_TYPE_VALIDATION===\n");
+	// 	// TOKEN_TYPE VALIDATION
+	// 	t_token *cur = tokens->next;
+	// 	while (cur)
+	// 	{
+	// 		printf("token->type: %d\n", cur->type);
+	// 		if (cur->next)
+	// 			cur = cur->next;
+	// 		else
+	// 			break ;
+	// 	}
+	// 	printf("\n===NEXT_ITEM===\n");
 	ast = parser(tokens);
 	if (ast)
 	{
@@ -265,8 +319,8 @@ int	main(void)
 	printf("=================================\n");
 	printf("  COMPREHENSIVE PARSER TESTS\n");
 	printf("=================================\n\n");
-	test_simple_command();
-	// test_pipe_command();
+	// test_simple_command();
+	test_pipe_command();
 	// test_redirection();
 	// test_logical_and();
 	// test_logical_or();

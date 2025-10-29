@@ -1,5 +1,29 @@
 #include "../../../includes/minishell.h"
 
+// void print_ast_info(t_ast *p)
+// {
+// 	printf("type: ");
+// 	if (p->type == NODE_AND)
+// 		printf("AND\n");
+// 	else if (p->type == NODE_OR)
+// 		printf("OR\n");
+// 	else if (p->type == NODE_PIPE)
+// 		printf("PIPE\n");
+// 	else if (p->type == NODE_SUBSHELL)
+// 		printf("SUBSHELL\n");
+// 	else if (p->type == NODE_CMD)
+// 		printf("CMD\n");
+// 	printf("parent:");
+// 	if (p->parent!=NULL)
+// 		printf("exists\n");
+// 	else
+// 		printf("not exist\n");
+// 	// if (p->left)
+// 	// 	print_ast_info(p->left);
+// 	// else if (p->right)
+// 	// 	print_ast_info(p->right);
+// }
+
 static int	is_operator(t_token_type type)
 {
 	if (type == TK_NEWLINE || type == TK_PIPE || type == TK_AND_IF
@@ -29,6 +53,7 @@ t_ast	*swap_and_set_right_node(t_ast *new_parent, t_ast *old_parent)
 		return (new_parent);
 	new_parent->right = old_parent;
 	old_parent->parent = new_parent;
+	// print_ast_info(new_parent);
 	return (new_parent);
 }
 
@@ -89,9 +114,11 @@ t_ast  *sort_and_gen_node(t_ast *parent, t_token **cur_token, t_token *next_toke
 		next_token = token->next;
 		*cur_token = next_token;
 	}
+	else
+		return (node);
 	node->left = gen_tree(node, &next_token, subshell);
-	if (node->left)
-		node->left->parent = node;
+	// if (node->left)
+	// 	node->left->parent = node;
 	*cur_token = next_token;
 	return (node);
 }
@@ -215,28 +242,8 @@ int parse_redir_and_command(t_ast *node, t_token *tmp, t_token *cur_token)
 	return(1);
 }
 
-void print_ast_info(t_ast *p)
-{
-	// printf("p->left:");
-	// if (p->left!=NULL)
-	// 	print_ast_info(p->left);
-	printf("type: ");
-	if (p->type == NODE_AND)
-		printf("AND\n");
-	else if (p->type == NODE_OR)
-		printf("OR\n");
-	else if (p->type == NODE_PIPE)
-		printf("PIPE\n");
-	else if (p->type == NODE_SUBSHELL)
-		printf("SUBSHELL\n");
-	else if (p->type == NODE_CMD)
-		printf("CMD\n");
-	printf("parent:");
-	if (p->parent!=NULL)
-		printf("exists\n");
-	else
-		printf("not exist\n");
-}
+
+size_t count = 0;
 
 t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 {
@@ -244,6 +251,8 @@ t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 	t_token		*tmp;
 	t_ast 		*node;
 
+	count++;
+	printf("count : %zu\n", count);
 	printf("token_value: %s\n", (*cur_token)->value);
 	if (init_command_node(parent, &node, (*cur_token)->type)<0)
 		return (NULL);
@@ -256,8 +265,10 @@ t_ast *parse_command_list(t_ast *parent, t_token **cur_token, int subshell)
 	if (parse_redir_and_command(node, tmp, *cur_token)<0)
 		return (NULL);
 	*cur_token = command_start->next;
-	print_ast_info(node);
+	// print_ast_info(node);
 	node->left = gen_tree(node, cur_token, subshell);
+	// while (node && node->parent && node != node->parent)
+	// 	node = node->parent;
 	return (node);
 }
 
@@ -272,7 +283,6 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		return (NULL);
 	token = *cur_token;
 	next_token = NULL;
-
 	t_ast *node;
 	if (is_operator(token->type))
 		node = sort_and_gen_node(parent, cur_token, next_token, subshell);
@@ -284,7 +294,8 @@ t_ast	*gen_tree(t_ast *parent, t_token **cur_token, int subshell)
 		node = parse_command_list(parent, cur_token, subshell);
 	else
 		node = NULL;
-	// while (node && node->parent)
+	// print_ast_info(node);
+	// while (node && node->parent && node != node->parent)
 	// 	node = node->parent;
 	return (node);
 }
