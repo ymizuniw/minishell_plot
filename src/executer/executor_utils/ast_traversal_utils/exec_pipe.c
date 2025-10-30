@@ -54,7 +54,7 @@ int	exec_pipe(t_ast *node, t_shell *shell, bool execute)
 		dup2(pip[0], STDIN_FILENO);
 		close(pip[0]);
 		ast_traversal(node->right, shell, execute);
-		exit (shell->last_exit_status);
+		exit(shell->last_exit_status);
 	}
 	close(pip[0]);
 	close(pip[1]);

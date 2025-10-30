@@ -14,25 +14,31 @@ char	*ft_readline(char const *prompt, bool interactive)
 	return (line);
 }
 
-int parse_and_exec(t_token *token_list, t_shell *shell)
+int	parse_and_exec(t_token *token_list, t_shell *shell)
 {
-	t_ast **ast_list = NULL;
-	t_ast *ast= NULL;
-	t_result *res = NULL;
-	size_t ast_count = 0;
-	t_token *cur = token_list;
+	t_ast		**ast_list;
+	t_ast		*ast;
+	t_result	*res;
+	size_t		ast_count;
+	t_token		*cur;
+	size_t		i;
 
+	ast_list = NULL;
+	ast = NULL;
+	res = NULL;
+	ast_count = 0;
+	cur = token_list;
 	while (cur && cur->type != TK_EOF)
 	{
 		ast = parser(cur);
 		if (!ast)
-			continue;
+			continue ;
 		ast_list = realloc(ast_list, sizeof(t_ast *) * (ast_count + 1));
 		ast_list[ast_count++] = ast;
 		while (cur && cur->type == TK_NEWLINE)
 			cur = cur->next;
 	}
-	size_t i = 0;
+	i = 0;
 	while (i < cur->count_newline)
 	{
 		res = executor(ast_list[i], shell);
@@ -46,13 +52,13 @@ int parse_and_exec(t_token *token_list, t_shell *shell)
 
 int	shell_loop(t_shell *shell)
 {
-	char		*line;
-	t_token		*token_list;
-	t_ast		*ast;
+	char	*line;
+	t_token	*token_list;
 
+	// t_ast		*ast;
 	line = NULL;
 	token_list = NULL;
-	ast = NULL;
+	// ast = NULL;
 	while (1)
 	{
 		line = ft_readline("minishell$ ", shell->interactive);
