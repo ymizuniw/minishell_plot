@@ -39,6 +39,8 @@ int	parse_redirection(t_redir **redir_head, t_token_type token_type,
 	t_redir	*new_redir;
 	t_redir	*redir;
 
+	if (!redir_head || !filename_token)
+		return (-1);
 	redir = *redir_head;
 	new_redir = alloc_redir();
 	if (!new_redir)
@@ -61,6 +63,8 @@ int	parse_redirection(t_redir **redir_head, t_token_type token_type,
 	else
 		new_redir->type = REDIR_APPEND;
 	new_redir->filename = strdup(filename_token->value);
+	if (!new_redir->filename)
+		return (-1);
 	if (new_redir->type == REDIR_HEREDOC)
 	{
 		if (filename_token->in_dquote || filename_token->in_squote)
@@ -79,21 +83,13 @@ int	parse_redirection(t_redir **redir_head, t_token_type token_type,
 int	parse_simple_command(t_argv **argv_head, t_token *command_token)
 {
 	t_argv	*new_argv;
-	t_argv	*argv;
 
-	argv = *argv_head;
+	if (!argv_head || !command_token)
+		return (-1);
 	new_argv = alloc_argv();
 	if (!new_argv)
 		return (-1);
 	memset(new_argv, 0, sizeof(t_argv));
-	if (*argv_head == NULL)
-		*argv_head = new_argv;
-	else
-	{
-		while (argv->next)
-			argv = argv->next;
-		argv->next = new_argv;
-	}
 	new_argv->word = strdup(command_token->value);
 	if (!new_argv->word)
 	{
@@ -103,6 +99,9 @@ int	parse_simple_command(t_argv **argv_head, t_token *command_token)
 	// TK_DOLLER is single '$' print token.
 	if (command_token->in_squote == false && command_token->type != TK_DOLLER)
 		new_argv->to_expand = true;
+	// Prepend to list (since tokens are in reverse order from lexer)
+	new_argv->next = *argv_head;
+	*argv_head = new_argv;
 	return (1);
 }
 
@@ -111,22 +110,21 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 	t_token	*tmp;
 	int		parse_success;
 
+	if (!cmd || !cur_token || !*cur_token)
+		return (-1);
 	parse_success = 0;
 	tmp = *cur_token;
-	printf("[parse_command_list] start cur=%p type=%d\n", (void *)tmp,
-		tmp ? (int)tmp->type : -1);
-	while (tmp->next && token_is_command(tmp->next->type))
-		tmp = tmp->next;
-	//ex. not_command_token->token1(argv[3]) -> token2(argv[2]) ->token3(argv[1]) ->token4(argv0) -> not_cmd_token
-	//tmp == token4
-	*cur_token = tmp;
+	// Forward reading: process current and following commands
 	while (token_is_command(tmp->type) || token_is_redirection(tmp->type))
 	{
 		if (token_is_redirection(tmp->type))
 		{
+			// Redirection: next token is the filename
+			if (!tmp->next)
+				return (-1);
 			parse_success = parse_redirection(&cmd->redir, tmp->type,
-					tmp->prev);
-			tmp = tmp->prev;
+					tmp->next);
+			tmp = tmp->next; // Skip the filename token
 		}
 		else
 			parse_success = parse_simple_command((t_argv **)&cmd->argv, tmp);
@@ -135,13 +133,13 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 			printf("parse %s failed\n", tmp->value);
 			return (-1);
 		}
-		tmp = tmp->prev;
+		tmp = tmp->next; // Move forward
+		if (!tmp)
+			break ;
 	}
-	// After parsing the contiguous command/redirect sequence, expose the
-	// next token for the caller so it can continue from the correct position
-	// *cur_token = tmp; this is wrong?
-	printf("[parse_command_list] end next cur=%p type=%d\n", (void *)*cur_token,
-		*cur_token ? (int)(*cur_token)->type : -1);
+	// After parsing,
+		tmp points to the first non-command token (operator/EOF/etc)
+	*cur_token = tmp;
 	return (1);
 }
 
@@ -177,6 +175,8 @@ t_ast	*swap_with_parent(t_ast **parent, t_token **cur_token)
 {
 	t_ast	*node;
 
+	if (!parent || !cur_token || !*cur_token)
+		return (NULL);
 	node = alloc_node();
 	if (!node)
 		return (NULL);
@@ -187,9 +187,15 @@ t_ast	*swap_with_parent(t_ast **parent, t_token **cur_token)
 		node->type = NODE_OR;
 	else if ((*cur_token)->type == TK_PIPE)
 		node->type = NODE_PIPE;
-	node->right = *parent;
-	node->parent = (*parent)->parent;
-	(*parent)->parent = node;
+	// Forward reading: attach previous tree as LEFT child
+	if (*parent)
+	{
+		node->left = *parent;
+		node->parent = (*parent)->parent;
+		(*parent)->parent = node;
+	}
+	// Move to next token (right side of operator)
+	*cur_token = (*cur_token)->next;
 	return (node);
 }
 
@@ -198,6 +204,8 @@ t_ast	*gen_subshell_node(t_ast *parent, t_token **cur_token)
 	t_ast	*node;
 	t_ast	*subroot;
 
+	if (!cur_token)
+		return (NULL);
 	node = alloc_node();
 	if (!node)
 		return (NULL);
@@ -213,7 +221,10 @@ t_ast	*gen_subshell_node(t_ast *parent, t_token **cur_token)
 t_ast	*gen_command_node(t_ast *parent, t_token **cur_token)
 {
 	t_ast	*node;
+	int		result;
 
+	if (!cur_token)
+		return (NULL);
 	node = alloc_node();
 	if (!node)
 		return (NULL);
@@ -222,9 +233,18 @@ t_ast	*gen_command_node(t_ast *parent, t_token **cur_token)
 	node->type = NODE_CMD;
 	node->cmd = alloc_cmd();
 	if (!node->cmd)
+	{
+		free(node);
 		return (NULL);
+	}
 	memset(node->cmd, 0, sizeof(t_cmd));
-	parse_command_list(node->cmd, cur_token);
+	result = parse_command_list(node->cmd, cur_token);
+	if (result == -1)
+	{
+		free(node->cmd);
+		free(node);
+		return (NULL);
+	}
 	return (node);
 }
 
@@ -248,35 +268,65 @@ int	syntax_check(t_token *token)
 
 void	fgen_tree(t_ast **parent, t_token **cur_token)
 {
-	t_ast	*left;
 	t_ast	*node;
+	t_ast	*op_node;
 
-	if (!*cur_token || token_is_newline_or_eof((*cur_token)->type))
+	if (!parent || !cur_token || !*cur_token
+		|| token_is_newline_or_eof((*cur_token)->type)
+		|| (*cur_token)->type == TK_HEAD)
 		return ;
-	// printf("[fgen_tree] enter cur=%p type=%d parent=%p\n", (void *)*cur_token,
-	// 	(int)(*cur_token)->type, (void *)*parent);
-	left = NULL;
+	// Build current node based on token type
 	node = NULL;
-	if (token_is_operator((*cur_token)->type))
-		node = swap_with_parent(parent, cur_token);
+	if (token_is_command((*cur_token)->type))
+		node = gen_command_node(*parent, cur_token);
 	else if (token_is_subshell_close((*cur_token)->type)
 		&& syntax_check(*cur_token))
 		node = gen_subshell_node(*parent, cur_token);
-	else if (token_is_command((*cur_token)->type))
-		node = gen_command_node(*parent, cur_token);
 	else
 		node = gen_eof_newline_node(*parent, cur_token);
-	if (node == NULL)
+	if (!node)
 		return ;
-	*parent = node;
-	// if (!*cur_token || token_is_newline_or_eof((*cur_token)->type))
-	// 	return ;	
-	t_token *next_token = (*cur_token)->next;
-	fgen_tree(&left, &next_token);
-	if (left)
+	// Check if next token is an operator
+	if (*cur_token && token_is_operator((*cur_token)->type))
 	{
-		node->left = left;
-		left->parent = node;
+		// Create operator node and make current node its left child
+		op_node = swap_with_parent(&node, cur_token);
+		if (!op_node)
+		{
+			*parent = node;
+			return ;
+		}
+		// Now recurse to build the right side
+		fgen_tree(&op_node->right, cur_token);
+		if (op_node->right)
+			op_node->right->parent = op_node;
+		*parent = op_node;
 	}
-	*cur_token = next_token;
+	else
+	{
+		// No operator, just return the node
+		*parent = node;
+	}
+}
+
+t_ast	*parse(t_token *token_head)
+{
+	t_ast	*root;
+	t_token	*cur;
+
+	root = NULL;
+	if (!token_head || token_head->type != TK_HEAD)
+		return (NULL);
+	cur = token_head->next; // Start from first token after HEAD
+	if (!cur || cur->type == TK_EOF)
+		return (NULL); // Empty input
+	fgen_tree(&root, &cur);
+	// Verify we consumed everything (should be at EOF or HEAD)
+	if (cur && cur->type != TK_EOF && cur->type != TK_HEAD)
+	{
+		// Parse error: didn't consume all tokens
+		// TODO: free_ast(root) when free function is implemented
+		return (NULL);
+	}
+	return (root);
 }

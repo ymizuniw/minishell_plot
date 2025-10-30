@@ -20,6 +20,7 @@ t_ast				*gen_subshell_node(t_ast *parent, t_token **cur_token);
 t_ast				*gen_command_node(t_ast *parent, t_token **cur_token);
 t_ast				*gen_eof_newline_node(t_ast *parent, t_token **cur_token);
 void				fgen_tree(t_ast **parent, t_token **cur_token);
+t_ast				*parse(t_token *token_head);
 
 // Helpers to free structures built by the alt parser (argv is a t_argv list)
 static void	free_argv_list(t_argv *head)
@@ -192,7 +193,6 @@ void	test_fgen_tree_simple_command_and_consumption(void)
 	t_token		*echo;
 	t_token		*hello;
 	t_token		*eof;
-	t_token		*cur;
 	t_ast		*root;
 	t_argv		*arg;
 	int			nodes;
@@ -200,26 +200,23 @@ void	test_fgen_tree_simple_command_and_consumption(void)
 	int			count;
 
 	printf("=== Test A: fgen_tree simple command + consumption ===\n");
-	// Build reverse-ordered tokens: HEAD -> echo -> hello -> EOF
+	// Build tokens in LEXER ORDER (reversed): HEAD -> hello -> echo -> EOF
+	// This matches how the lexer creates tokens (prepends, so last word first)
 	head = create_token(TK_HEAD, NULL, NULL, NULL);
-	echo = create_token(TK_WORD, "echo", head, NULL);
-	head->next = echo;
-	hello = create_token(TK_WORD, "hello", echo, NULL);
-	echo->next = hello;
-	eof = create_token(TK_EOF, NULL, hello, NULL);
-	hello->next = eof;
-	// Start from the last command token in the reverse list (hello)
-	cur = hello;
-	root = NULL;
-	printf("  debug: before fgen_tree cur=%p type=%d\n", (void *)cur,
-		cur ? (int)cur->type : -1);
-	fgen_tree(&root, &cur);
-	printf("  debug: after fgen_tree cur=%p type=%d root=%p\n", (void *)cur,
-		cur ? (int)cur->type : -1, (void *)root);
+	hello = create_token(TK_WORD, "hello", head, NULL);
+	head->next = hello;
+	echo = create_token(TK_WORD, "echo", hello, NULL);
+	hello->next = echo;
+	eof = create_token(TK_EOF, NULL, echo, NULL);
+	echo->next = eof;
+	// Use parse() which reads forward from HEAD->next
+	root = parse(head);
+	printf("  debug: after parse() root=%p\n", (void *)root);
 	// Node built
 	assert(root != NULL);
 	assert(root->cmd != NULL);
 	// argv is stored as t_argv list in this alt path
+	// Parser reads forward and prepends, correcting the order
 	{
 		count = 0;
 		arg = (t_argv *)root->cmd->argv;
@@ -231,16 +228,15 @@ void	test_fgen_tree_simple_command_and_consumption(void)
 			arg = arg->next;
 		}
 		assert(count == 2);
-		assert(words[0] && strcmp(words[0], "hello") == 0);
-		assert(words[1] && strcmp(words[1], "echo") == 0);
+		// With lexer order + forward reading + prepending = correct order
+		assert(words[0] && strcmp(words[0], "echo") == 0);
+		assert(words[1] && strcmp(words[1], "hello") == 0);
 	}
 	// Print AST and validate connections
 	printf("-- AST dump --\n");
 	print_ast(root, 0);
 	nodes = validate_ast_connections(root);
 	assert(nodes >= 1);
-	// cur_token consumed to the first non-command token to the left (HEAD)
-	assert(cur == head);
 	// Free allocations to keep test leak-free
 	free_ast_shallow_cmd(root);
 	free(echo->value);
@@ -249,7 +245,7 @@ void	test_fgen_tree_simple_command_and_consumption(void)
 	free(hello);
 	free(eof);
 	free(head);
-	printf("✓ CMD node built, argv ok, cur_token consumed to HEAD\n");
+	printf("✓ CMD node built, argv ok (natural order)\n");
 	printf("✓ Test A PASSED\n\n");
 }
 
@@ -379,12 +375,104 @@ void	test_parse_redirection(void)
 	}
 }
 
-// Test 7: parse_simple_command (requires alloc_argv implementation)
+// Test 7: parse_simple_command
 void	test_parse_simple_command(void)
 {
+	t_argv	*argv_head;
+	t_token	word_token;
+	t_token	doller_token;
+	t_token	squoted_token;
+	int		result;
+	t_argv	*tmp;
+	int		count;
+	t_token	dquoted_token;
+
 	printf("=== Test 7: parse_simple_command ===\n");
-	printf("⚠️  Skipping - requires alloc_argv() implementation\n");
-	printf("    (Would test: TK_WORD, TK_DOLLER, expansion flags)\n\n");
+	// Test 1: TK_WORD (should expand)
+	argv_head = NULL;
+	memset(&word_token, 0, sizeof(t_token));
+	word_token.type = TK_WORD;
+	word_token.value = strdup("hello");
+	word_token.in_squote = false;
+	word_token.in_dquote = false;
+	result = parse_simple_command(&argv_head, &word_token);
+	assert(result == 1);
+	assert(argv_head != NULL);
+	assert(strcmp(argv_head->word, "hello") == 0);
+	assert(argv_head->to_expand == true);
+	printf("✓ TK_WORD parsed with to_expand=true\n");
+	free(word_token.value);
+	// Test 2: TK_DOLLER (bare $ - should NOT expand)
+	// Note: prepending means new items go to head
+	memset(&doller_token, 0, sizeof(t_token));
+	doller_token.type = TK_DOLLER;
+	doller_token.value = strdup("$");
+	doller_token.in_squote = false;
+	doller_token.in_dquote = false;
+	result = parse_simple_command(&argv_head, &doller_token);
+	assert(result == 1);
+	// After prepending, $ is now at head, hello is at next
+	assert(strcmp(argv_head->word, "$") == 0);
+	assert(argv_head->to_expand == false);
+	printf("✓ TK_DOLLER parsed with to_expand=false\n");
+	free(doller_token.value);
+	// Test 3: Single-quoted word (should NOT expand)
+	memset(&squoted_token, 0, sizeof(t_token));
+	squoted_token.type = TK_WORD;
+	squoted_token.value = strdup("$USER");
+	squoted_token.in_squote = true;
+	squoted_token.in_dquote = false;
+	result = parse_simple_command(&argv_head, &squoted_token);
+	assert(result == 1);
+	count = 0;
+	tmp = argv_head;
+	while (tmp)
+	{
+		// After prepending $USER, it's at position 0 (head)
+		if (count == 0)
+		{
+			assert(strcmp(tmp->word, "$USER") == 0);
+			assert(tmp->to_expand == false);
+		}
+		count++;
+		tmp = tmp->next;
+	}
+	assert(count == 3);
+	printf("✓ Single-quoted word parsed with to_expand=false\n");
+	free(squoted_token.value);
+	// Test 4: Double-quoted word (should expand)
+	memset(&dquoted_token, 0, sizeof(t_token));
+	dquoted_token.type = TK_WORD;
+	dquoted_token.value = strdup("$HOME");
+	dquoted_token.in_squote = false;
+	dquoted_token.in_dquote = true;
+	result = parse_simple_command(&argv_head, &dquoted_token);
+	assert(result == 1);
+	count = 0;
+	tmp = argv_head;
+	while (tmp)
+	{
+		// After prepending $HOME, it's at position 0 (head)
+		if (count == 0)
+		{
+			assert(strcmp(tmp->word, "$HOME") == 0);
+			assert(tmp->to_expand == true);
+		}
+		count++;
+		tmp = tmp->next;
+	}
+	assert(count == 4);
+	printf("✓ Double-quoted word parsed with to_expand=true\n");
+	free(dquoted_token.value);
+	// Cleanup
+	while (argv_head)
+	{
+		tmp = argv_head;
+		argv_head = argv_head->next;
+		free(tmp->word);
+		free(tmp);
+	}
+	printf("✓ Test 7 PASSED\n\n");
 }
 
 // Test 8: Integration - Simple command with redirection
@@ -421,33 +509,40 @@ void	test_simple_command_with_redirection(void)
 	free(head);
 }
 
-// Test 9: swap_with_parent
+// Test 9: swap_with_parent (forward reading: previous becomes LEFT child)
 void	test_swap_with_parent(void)
 {
 	t_ast	*parent;
 	t_ast	*new_node;
 	t_token	pipe_tok;
+	t_token	next_tok;
 	t_token	*cur;
 
 	printf("=== Test 9: swap_with_parent ===\n");
 	parent = alloc_node();
 	memset(parent, 0, sizeof(t_ast));
 	parent->type = NODE_CMD;
+	// Setup token with next pointer (forward reading needs it)
+	memset(&next_tok, 0, sizeof(t_token));
+	next_tok.type = TK_WORD;
 	memset(&pipe_tok, 0, sizeof(t_token));
 	pipe_tok.type = TK_PIPE;
+	pipe_tok.next = &next_tok;
 	cur = &pipe_tok;
 	new_node = swap_with_parent(&parent, &cur);
 	assert(new_node != NULL);
 	printf("✓ New node created\n");
-	assert(new_node->right != NULL);
-	printf("✓ Original parent is now right child\n");
-	assert(new_node->right->type == NODE_CMD);
-	printf("✓ Right child preserved correct type\n");
-	assert(new_node->right->parent == new_node);
+	assert(new_node->left != NULL);
+	printf("✓ Original parent is now left child (forward reading)\n");
+	assert(new_node->left->type == NODE_CMD);
+	printf("✓ Left child preserved correct type\n");
+	assert(new_node->left->parent == new_node);
 	printf("✓ Parent pointer updated correctly\n");
+	assert(cur == &next_tok);
+	printf("✓ cur_token advanced to next token\n");
 	printf("✓ Test 9 PASSED\n\n");
 	// Cleanup
-	free(new_node->right);
+	free(new_node->left);
 	free(new_node);
 }
 
@@ -550,17 +645,16 @@ int	main(void)
 	printf("================================================\n");
 	printf("✓ Token type checks: PASSED\n");
 	printf("✓ Redirection parsing: PASSED\n");
+	printf("✓ Command parsing: PASSED\n");
 	printf("✓ Tree manipulation: PASSED\n");
 	printf("✓ Edge cases: PASSED\n");
-	printf("⚠️  Command parsing: NEEDS alloc_argv()\n");
 	printf("⚠️  Full gen_tree: NEEDS integration test\n");
 	printf("\n");
 	printf("CRITICAL NOTES:\n");
-	printf("1. alloc_argv() function missing - prevents full testing\n");
-	printf("2. Tokens expected in REVERSE order (unusual design)\n");
-	printf("3. parse_command_list modifies **cur_token pointer\n");
-	printf("4. No error recovery in gen_tree (NULL returns)\n");
-	printf("5. syntax_check() is a stub (always returns 1)\n");
+	printf("1. Tokens expected in REVERSE order (unusual design)\n");
+	printf("2. parse_command_list modifies **cur_token pointer\n");
+	printf("3. No error recovery in gen_tree (NULL returns)\n");
+	printf("4. syntax_check() is a stub (always returns 1)\n");
 	printf("\n");
 	return (0);
 }
