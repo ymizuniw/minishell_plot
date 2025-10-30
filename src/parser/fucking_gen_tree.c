@@ -138,7 +138,7 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 			break ;
 	}
 	// After parsing,
-		tmp points to the first non-command token (operator/EOF/etc)
+	// tmp points to the first non-command token (operator/EOF/etc)
 	*cur_token = tmp;
 	return (1);
 }
