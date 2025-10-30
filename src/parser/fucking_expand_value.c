@@ -1,10 +1,6 @@
 
 #include "../../includes/minishell.h"
 
-// char			*word;
-// bool			to_expand;
-// struct s_argv	*next;
-
 int	before_doller_cat(char **expanded_word, size_t expanded_word_len,
 		char *value, size_t value_len)
 {
@@ -58,6 +54,8 @@ int	doller_cat(char **doller, char **expanded_word, size_t expanded_word_len)
 	return (1);
 }
 
+
+//this is the key function for word expansion.
 char	*expand_word(char *word)
 {
 	char	*expanded_word;
@@ -68,6 +66,8 @@ char	*expand_word(char *word)
 	char	*previous_doller;
 	size_t	word_len;
 
+	if (word==NULL)
+		return (strdup(""));
 	expanded_word_len = 0;
 	value_len = 0;
 	value = NULL;
@@ -83,7 +83,10 @@ char	*expand_word(char *word)
 			expanded_word_len = strlen(expanded_word);
 		if (value)
 			value_len = strlen(value);
-		value = strndup(previous_doller + 1, value_len);
+		size_t first_idx = 0;
+		if (previous_doller != word)
+			first_idx = 1;
+		value = strndup(previous_doller + first_idx, value_len);
 		if (!value)
 		{
 			// free_
@@ -101,31 +104,76 @@ char	*expand_word(char *word)
 	return (expanded_word);
 }
 
-char	**gen_argv(t_argv *argv_list)
-{
-	t_argv	*cur_argv;
-	size_t	argv_idx;
-	char	**argv;
+//"$" is not handling well, but it is recognized as TK_DOLLER in my lexer,
+//so it never comes here.
 
-	argv_idx = 0;
-	argv = NULL;
-	if (argv_list == NULL)
-		return (NULL);
-	while (cur_argv != NULL)
+int main(void)
+{
+
+	// "no expansion", "$UNIT", , "$JOINEDbb", "term $", "$"
+	size_t i = 0;
+	char *word_list[] = {"$", NULL};
+	for (i=0;word_list[i]!=NULL;i++)
 	{
-		argv = realloc(argv, sizeof(char *) * (argv_idx + 2));
-		if (!argv)
-		{
-			// free_argv();
-			return (NULL);
-		}
-		if (cur_argv->to_expand == true)
-			argv[argv_idx] = expand_word(cur_argv->word);
-		else
-			argv[argv_idx] = strdup(cur_argv->word);
-		argv_idx++;
-		cur_argv = cur_argv->next;
+		char *expanded_word = expand_word(word_list[i]);
+		//just for safety
+		if (expanded_word==NULL)
+			return (1);
+		printf("result: %s\n", expanded_word);
+		free(expanded_word);
 	}
-	argv[argv_idx] = NULL;
-	return (argv);
+	// for (i=0;i<1;i++)
+	// {
+	// 	char *expanded_word = expand_word(word_list[i]);
+	// 	printf("result: %s\n", expanded_word);
+	// 	free(expanded_word);
+	// }
+	return (0);
 }
+
+/*
+	gen_argv() runs on argv_list and extract argv.
+	the parser is from end to start, but by parse_simple_command(),
+	the ptr for command tokens are proceeded till the end of succeeded command token.
+
+	DATA_STRUCTURE:
+
+	char			*word;
+	bool			to_expand;
+	struct s_argv	*next;
+
+	for each argv_node, if to_expand is true, then expand doller and concatenate it to the word.
+	The env_list shall be provided later for this function's argment, though there is getenv() temporarily.
+
+	The return value is expanded(if doller is found) word list char **argv, for executor.
+*/
+
+// char	**gen_argv(t_argv *argv_list)
+// {
+// 	t_argv	*cur_argv;
+// 	size_t	argv_idx;
+// 	char	**argv;
+
+// 	argv_idx = 0;
+// 	argv = NULL;
+// 	if (argv_list == NULL)
+// 		return (NULL);
+// 	//if cur_argv exists,loop continues.
+// 	while (cur_argv != NULL)
+// 	{
+// 		argv = realloc(argv, sizeof(char *) * (argv_idx + 2));
+// 		if (!argv)
+// 		{
+// 			// free_argv();
+// 			return (NULL);
+// 		}
+// 		if (cur_argv->to_expand == true)
+// 			argv[argv_idx] = expand_word(cur_argv->word);
+// 		else
+// 			argv[argv_idx] = strdup(cur_argv->word);
+// 		argv_idx++;
+// 		cur_argv = cur_argv->next;
+// 	}
+// 	argv[argv_idx] = NULL;
+// 	return (argv);
+// }
