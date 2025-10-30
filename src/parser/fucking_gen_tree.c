@@ -95,6 +95,11 @@ int	parse_simple_command(t_argv **argv_head, t_token *command_token)
 		argv->next = new_argv;
 	}
 	new_argv->word = strdup(command_token->value);
+	if (!new_argv->word)
+	{
+		free(new_argv);
+		return (-1);
+	}
 	// TK_DOLLER is single '$' print token.
 	if (command_token->in_squote == false && command_token->type != TK_DOLLER)
 		new_argv->to_expand = true;
@@ -112,7 +117,9 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 		tmp ? (int)tmp->type : -1);
 	while (tmp->next && token_is_command(tmp->next->type))
 		tmp = tmp->next;
-	// Move tmp to the rightmost command token first (since tokens are reversed).
+	//ex. not_command_token->token1(argv[3]) -> token2(argv[2]) ->token3(argv[1]) ->token4(argv0) -> not_cmd_token
+	//tmp == token4
+	*cur_token = tmp;
 	while (token_is_command(tmp->type) || token_is_redirection(tmp->type))
 	{
 		if (token_is_redirection(tmp->type))
@@ -132,8 +139,7 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 	}
 	// After parsing the contiguous command/redirect sequence, expose the
 	// next token for the caller so it can continue from the correct position
-	*cur_token = tmp;
-		// hand back the first non-command/non-redir token to the left
+	// *cur_token = tmp; this is wrong?
 	printf("[parse_command_list] end next cur=%p type=%d\n", (void *)*cur_token,
 		*cur_token ? (int)(*cur_token)->type : -1);
 	return (1);
@@ -182,6 +188,7 @@ t_ast	*swap_with_parent(t_ast **parent, t_token **cur_token)
 	else if ((*cur_token)->type == TK_PIPE)
 		node->type = NODE_PIPE;
 	node->right = *parent;
+	node->parent = (*parent)->parent;
 	(*parent)->parent = node;
 	return (node);
 }
@@ -246,8 +253,8 @@ void	fgen_tree(t_ast **parent, t_token **cur_token)
 
 	if (!*cur_token || token_is_newline_or_eof((*cur_token)->type))
 		return ;
-	printf("[fgen_tree] enter cur=%p type=%d parent=%p\n", (void *)*cur_token,
-		(int)(*cur_token)->type, (void *)*parent);
+	// printf("[fgen_tree] enter cur=%p type=%d parent=%p\n", (void *)*cur_token,
+	// 	(int)(*cur_token)->type, (void *)*parent);
 	left = NULL;
 	node = NULL;
 	if (token_is_operator((*cur_token)->type))
@@ -262,12 +269,14 @@ void	fgen_tree(t_ast **parent, t_token **cur_token)
 	if (node == NULL)
 		return ;
 	*parent = node;
-	printf("[fgen_tree] built node=%p type=%d; recurse left with cur=%p type=%d\n",
-		(void *)node, (int)node->type, (void *)*cur_token,
-		(int)(*cur_token)->type);
-	fgen_tree(&left, cur_token);
-	(*parent)->left = left;
-	printf("[fgen_tree] exit node=%p left=%p right=%p subtree=%p\n",
-		(void *)*parent, (void *)(*parent)->left, (void *)(*parent)->right,
-		(void *)(*parent)->subtree);
+	// if (!*cur_token || token_is_newline_or_eof((*cur_token)->type))
+	// 	return ;	
+	t_token *next_token = (*cur_token)->next;
+	fgen_tree(&left, &next_token);
+	if (left)
+	{
+		node->left = left;
+		left->parent = node;
+	}
+	*cur_token = next_token;
 }
