@@ -2,7 +2,9 @@
 
 void	syntax_error(t_token_type type)
 {
-	char	*token = "unknown";
+	char	*token;
+
+	token = "unknown";
 	if (type == TK_NEWLINE)
 		token = TOKEN_VALUE_NEWLINE;
 	else if (type == TK_PIPE)

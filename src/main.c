@@ -10,7 +10,6 @@ char	*ft_readline(char const *prompt, bool interactive)
 		line = readline(prompt);
 		return (line);
 	}
-	// line = get_next_line(0);
 	return (line);
 }
 

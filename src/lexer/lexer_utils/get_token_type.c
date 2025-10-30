@@ -1,10 +1,10 @@
 #include "../../../includes/minishell.h"
 
-static t_token_type pipe_or_orif(char *input, size_t *idx)
+static t_token_type	pipe_or_orif(char *input, size_t *idx)
 {
 	if (input[*idx + 1] && input[*idx + 1] == '|')
 	{
-		(*idx)+=2;
+		(*idx) += 2;
 		return (TK_OR_IF);
 	}
 	else
@@ -14,25 +14,25 @@ static t_token_type pipe_or_orif(char *input, size_t *idx)
 	}
 }
 
-static t_token_type redir_in_or_heredoc(char *input, size_t *idx)
+static t_token_type	redir_in_or_heredoc(char *input, size_t *idx)
 {
 	if (input[*idx + 1] && input[*idx + 1] == '<')
 	{
-		(*idx)+=2;
+		(*idx) += 2;
 		return (TK_HEREDOC);
 	}
 	else
 	{
-		(*idx) +=1;
+		(*idx) += 1;
 		return (TK_REDIRECT_IN);
 	}
 }
 
-static t_token_type redir_out_or_append(char *input, size_t *idx)
+static t_token_type	redir_out_or_append(char *input, size_t *idx)
 {
 	if (input[*idx + 1] && input[*idx + 1] == '>')
 	{
-		(*idx)+=2;
+		(*idx) += 2;
 		return (TK_APPEND);
 	}
 	else
@@ -42,7 +42,7 @@ static t_token_type redir_out_or_append(char *input, size_t *idx)
 	}
 }
 
-static t_token_type andif_or_word(char *input, size_t *idx)
+static t_token_type	andif_or_word(char *input, size_t *idx)
 {
 	if (input[*idx + 1] && input[*idx + 1] == '&')
 	{
@@ -65,8 +65,8 @@ t_token_type	get_token_type(char *input, size_t *idx)
 	{
 		if (input[(*idx)] == '\n')
 		{
-		 	(*idx)++;
-			return(TK_NEWLINE);
+			(*idx)++;
+			return (TK_NEWLINE);
 		}
 		if (input[*idx] == '|')
 			return (pipe_or_orif(input, idx));
@@ -78,7 +78,7 @@ t_token_type	get_token_type(char *input, size_t *idx)
 			return (andif_or_word(input, idx));
 		else if (input[*idx] == '(')
 		{
-		 	(*idx)++;
+			(*idx)++;
 			return (TK_LPAREN);
 		}
 		else if (input[*idx] == ')')

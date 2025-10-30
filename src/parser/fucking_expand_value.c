@@ -54,7 +54,7 @@ int	doller_cat(char **doller, char **expanded_word, size_t expanded_word_len)
 	return (1);
 }
 
-//this is the key function for word expansion.
+// this is the key function for word expansion.
 char	*expand_word(char *word)
 {
 	char	*expanded_word;
@@ -64,8 +64,9 @@ char	*expand_word(char *word)
 	size_t	value_len;
 	char	*previous_doller;
 	size_t	word_len;
+	size_t	first_idx;
 
-	if (word==NULL)
+	if (word == NULL)
 		return (strdup(""));
 	expanded_word_len = 0;
 	value_len = 0;
@@ -82,7 +83,7 @@ char	*expand_word(char *word)
 			expanded_word_len = strlen(expanded_word);
 		if (value)
 			value_len = strlen(value);
-		size_t first_idx = 0;
+		first_idx = 0;
 		if (previous_doller != word)
 			first_idx = 1;
 		value = strndup(previous_doller + first_idx, value_len);
@@ -104,19 +105,21 @@ char	*expand_word(char *word)
 }
 
 //"$" is not handling well, but it is recognized as TK_DOLLER in my lexer,
-//so it never comes here.
+// so it never comes here.
 
-int main(void)
+int	main(void)
 {
+	size_t	i;
+	char	*word_list[] = {"$", NULL};
+	char	*expanded_word;
 
 	// "no expansion", "$UNIT", , "$JOINEDbb", "term $", "$"
-	size_t i = 0;
-	char *word_list[] = {"$", NULL};
-	for (i=0;word_list[i]!=NULL;i++)
+	i = 0;
+	for (i = 0; word_list[i] != NULL; i++)
 	{
-		char *expanded_word = expand_word(word_list[i]);
-		//just for safety
-		if (expanded_word==NULL)
+		expanded_word = expand_word(word_list[i]);
+		// just for safety
+		if (expanded_word == NULL)
 			return (1);
 		printf("result: %s\n", expanded_word);
 		free(expanded_word);
@@ -141,10 +144,13 @@ int main(void)
 	bool			to_expand;
 	struct s_argv	*next;
 
-	for each argv_node, if to_expand is true, then expand doller and concatenate it to the word.
-	The env_list shall be provided later for this function's argment, though there is getenv() temporarily.
+	for each argv_node, if to_expand is true,
+		then expand doller and concatenate it to the word.
+	The env_list shall be provided later for this function's argment,
+		though there is getenv() temporarily.
 
-	The return value is expanded(if doller is found) word list char **argv, for executor.
+	The return value is expanded(if doller is found) word list char **argv,
+		for executor.
 */
 
 char	**gen_argv(t_argv *argv_list)
@@ -157,7 +163,7 @@ char	**gen_argv(t_argv *argv_list)
 	argv = NULL;
 	if (argv_list == NULL)
 		return (NULL);
-	//if cur_argv exists,loop continues.
+	// if cur_argv exists,loop continues.
 	while (cur_argv != NULL)
 	{
 		argv = realloc(argv, sizeof(char *) * (argv_idx + 2));

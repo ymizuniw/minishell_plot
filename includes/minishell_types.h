@@ -7,6 +7,7 @@
 # include <ctype.h> //isspace()->rem
 # include <dirent.h>
 # include <fcntl.h> //open()
+# include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>

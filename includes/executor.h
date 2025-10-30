@@ -4,13 +4,13 @@
 # include "minishell_types.h"
 
 // executor entry
-int				ast_traversal(t_ast *node, t_shell *shell, bool execute);
+int				ast_traversal(t_ast *node, t_shell *shell);
 
 // redirection and command execution helpers
 int				do_redirection(t_ast *node);
 int				exec_command(t_ast *node, t_shell *shell, int execute);
-int				exec_pipe(t_ast *node, t_shell *shell, bool execute);
-int				exec_subshell(t_ast *node, t_shell *shell, bool execute);
+int				exec_pipe(t_ast *node, t_shell *shell);
+int				exec_subshell(t_ast *node, t_shell *shell);
 
 // heredoc utils
 unsigned int	ft_rand(unsigned int *seed);

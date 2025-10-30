@@ -1,9 +1,9 @@
 #include "../../../../includes/minishell.h"
 
 // generate a random num
-unsigned int ft_rand(unsigned int *seed)
+size_t	ft_rand(size_t *seed)
 {
-	*seed = (*seed * 1103515245u + 12345u) & 0x7fffffff;
+	*seed = (*seed % INT_MAX);
 	return (*seed);
 }
 
@@ -12,12 +12,12 @@ char	*ft_mkstmp(char *template)
 	static const char	charset[] = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz0123456789";
 	char				*p;
 	size_t				len;
-	unsigned int		num;
+	size_t				num;
 	void				*ptr;
-	unsigned int		num_keep;
+	size_t				num_keep;
 	char				*name;
-	unsigned int		random;
-	unsigned int		idx;
+	size_t				random;
+	size_t				idx;
 
 	len = strlen(template);
 	ptr = &num;
@@ -27,12 +27,13 @@ char	*ft_mkstmp(char *template)
 	if (!name)
 		return (NULL);
 	p = name + len - 1;
-	while (strchr(name, 'X') != NULL)
+	p = strchr(name, 'X');
+	while (p != NULL)
 	{
 		random = ft_rand(&num);
 		if (random == 0)
 			random = 1;
-		idx = (num / random) % (unsigned int)(sizeof(charset) - 1);
+		idx = (num / random) % (size_t)(sizeof(charset) - 1);
 		*p = charset[idx];
 		num /= 10;
 		if (num == 0)
@@ -47,7 +48,7 @@ int	ft_mkstmpfd(char *template, char **filename)
 	size_t	try_limit;
 	int		fd;
 
-	try_limit = 5000;
+	try_limit = 10000;
 	if (template == NULL)
 		return (-1);
 	while (try_limit > 0)

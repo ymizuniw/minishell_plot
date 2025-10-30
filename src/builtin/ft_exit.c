@@ -43,19 +43,16 @@ void	ft_exit(char **cmd)
 	printf("exit\n");
 	if (cmd[1])
 	{
-		// cmd[1] が数値かどうか確認
 		if (!is_numeric(cmd[1]))
 		{
-			print_err_num(cmd); // "exit: <arg>: numeric argument required"
-			exit(2);            // 数字でない場合は 2 で終了
+			print_err_num(cmd);
+			exit(2);
 		}
-		// cmd[2] があれば、複数引数と見なしてエラー
 		if (cmd[2])
 		{
-			print_err_args(); // "exit: too many arguments"
-			exit(2);          // 複数引数の場合は 2 で終了
+			print_err_args();
+			exit(2);
 		}
-		// 数字が一つだけ来た場合、そのまま返す（256で割った余り）
 		exit_code = atoi(cmd[1]);
 		exit(exit_code % 256);
 	}

@@ -13,7 +13,7 @@ static void	signal_handler(int signum)
 	}
 }
 
-//just before execve, rest it default sigaction.
+// just before execve, rest it default sigaction.
 static int	set_sig_dfl(void)
 {
 	struct sigaction	sact;

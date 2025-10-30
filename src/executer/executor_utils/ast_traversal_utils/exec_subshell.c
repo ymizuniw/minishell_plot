@@ -17,7 +17,7 @@ int	exec_subshell(t_ast *node, t_shell *shell, bool execute)
 	if (pid == 0)
 	{
 		if (node && node->subtree)
-			return (ast_traversal(node->subtree, shell, execute));
+			return (ast_traversal(node->subtree, shell));
 		else
 			return (0);
 	}

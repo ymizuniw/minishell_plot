@@ -2,7 +2,9 @@
 
 void	exec_builtin(t_shell *shell, char **cmd)
 {
-	int fd = 1; // 暫定
+	int	fd;
+
+	fd = 1;
 	if (!cmd || !shell)
 		exit(1);
 	if (strncmp(cmd[0], "echo", 5) == 0)

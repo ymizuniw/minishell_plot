@@ -24,7 +24,6 @@ void	ft_pwd(t_shell *shell, int fd)
 	char	*cwd;
 
 	(void)shell;
-	// 常にgetcwd()で現在のディレクトリを取得
 	cwd = get_pwd();
 	if (!cwd)
 	{

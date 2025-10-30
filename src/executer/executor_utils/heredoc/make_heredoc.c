@@ -1,11 +1,11 @@
-
 #include "../../../../includes/minishell.h"
 
 char	*ext_unit(char *src, size_t start, size_t end)
 {
 	char	*unit;
+	size_t	len;
 
-	size_t len = end - start;
+	len = end - start;
 	unit = xmalloc(sizeof(char) * len);
 	strncpy(unit, &src[start], len);
 	unit[len] = '\0';
@@ -22,31 +22,37 @@ int	join_value(char **res, const char *value, size_t size1, size_t size2)
 	return (1);
 }
 
-//improved ver heredoc_value_expansion.
+// improved ver heredoc_value_expansion.
 char	*heredoc_value_expansion(const char *line, bool in_quote, size_t len)
 {
-	size_t	i = 0;
-	char	*res = strdup("");
+	size_t		i;
+	char		*res;
+	size_t		start;
+	char		*varname;
+	const char	*val = getenv(varname);
+	char		tmp[2] = {line[i++], '\0'};
+
+	i = 0;
+	res = strdup("");
 	while (i < len)
 	{
 		if (line[i] == '$' && !in_quote)
 		{
-			size_t start = ++i;
+			start = ++i;
 			while (i < len && (isalnum(line[i]) || line[i] == '_'))
 				i++;
-			char *varname = ext_unit((char *)line, start, i);
-			const char *val = getenv(varname);
-			if (!val) val = "";
+			varname = ext_unit((char *)line, start, i);
+			if (!val)
+				val = "";
 			join_value(&res, val, strlen(res), strlen(val));
 			free(varname);
 		}
 		else
 		{
-			char tmp[2] = {line[i++], '\0'};
 			join_value(&res, tmp, strlen(res), 1);
 		}
 	}
-	return res;
+	return (res);
 }
 
 char	*heredoc_expansion(char *line, bool in_quote, size_t line_len)
@@ -73,11 +79,12 @@ int	get_document(t_redir *hd, char **document, size_t *document_len)
 		if (strcmp(line, delim) == 0)
 			return (1);
 		if (!line)
-			break;
+			break ;
 		if (strcmp(line, delim) == 0)
-			break;
+			break ;
 		value = heredoc_expansion(line, hd->delim_quoted, strlen(line));
-		if (!value || !join_value(document, value, *document_len, strlen(value)))
+		if (!value || !join_value(document, value, *document_len,
+				strlen(value)))
 		{
 			xfree(line);
 			xfree(value);
@@ -117,14 +124,23 @@ int	get_tmp_fd(char *src, size_t size, char **filename)
 	return (tmp_fd);
 }
 
-//refined version
+// refined version
 int	make_heredoc(t_redir *hd)
 {
-	char	*document = NULL;
-	size_t	document_len = 0;
-	char	*filename = NULL;
-	int		fd, tmp_fd, herepipe[2];
+	char	*document;
+	size_t	document_len;
+	char	*filename;
+	ssize_t	wb;
+	int		fd;
+	int		tmp_fd;
+	int		herepipe[2];
 
+	document = NULL;
+	document_len = 0;
+	filename = NULL;
+	fd = 0;
+	tmp_fd = 0;
+	memset(&herepipe, 0, sizeof(int) * 2);
 	if (get_document(hd, &document, &document_len) < 0)
 		return (-1);
 	if (document_len == 0)
@@ -137,7 +153,7 @@ int	make_heredoc(t_redir *hd)
 	{
 		if (pipe(herepipe) < 0)
 			return (perror("pipe"), free(document), -1);
-		ssize_t wb = write(herepipe[1], document, document_len);
+		wb = write(herepipe[1], document, document_len);
 		close(herepipe[1]);
 		free(document);
 		if (wb != (ssize_t)document_len)

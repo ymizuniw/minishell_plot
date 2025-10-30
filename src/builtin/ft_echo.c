@@ -30,7 +30,6 @@ void	ft_echo(char **cmd)
 		newline = false;
 		i++;
 	}
-	// chenge ft_printf
 	while (cmd[i])
 	{
 		printf("%s", cmd[i]);

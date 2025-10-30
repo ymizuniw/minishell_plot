@@ -119,9 +119,9 @@ void	test_logical_operators(void)
 void	test_parentheses(void)
 {
 	const char	*input = "(echo hello) && (echo world)";
-	// const char *input = "(cat)";
 	t_token		*tokens;
 
+	// const char *input = "(cat)";
 	tokens = lexer(input);
 	assert(tokens != NULL);
 	printf("Test 6: Parentheses\n");
@@ -131,16 +131,22 @@ void	test_parentheses(void)
 	printf("✓ Test 6 passed\n\n");
 }
 
-static void run_case(const char *input)
+static void	run_case(const char *input)
 {
-	t_token *tokens = lexer(input);
+	t_token	*tokens;
+	t_token	*cur;
+
+	tokens = lexer(input);
 	assert(tokens != NULL);
 	// quick pass to ensure EOF at end
-	t_token *cur = tokens; while (cur->next) cur = cur->next; assert(cur->type == TK_EOF);
+	cur = tokens;
+	while (cur->next)
+		cur = cur->next;
+	assert(cur->type == TK_EOF);
 	free_token_list(tokens);
 }
 
-int main(void)
+int	main(void)
 {
 	printf("=================================\n");
 	printf("    LEXER TEST SUITE\n");
@@ -161,5 +167,5 @@ int main(void)
 	run_case("(a)||b\n");
 	run_case("echo $USER > out\n");
 	printf("ok\n");
-	return 0;
+	return (0);
 }
