@@ -54,7 +54,6 @@ int	doller_cat(char **doller, char **expanded_word, size_t expanded_word_len)
 	return (1);
 }
 
-
 //this is the key function for word expansion.
 char	*expand_word(char *word)
 {
@@ -148,32 +147,32 @@ int main(void)
 	The return value is expanded(if doller is found) word list char **argv, for executor.
 */
 
-// char	**gen_argv(t_argv *argv_list)
-// {
-// 	t_argv	*cur_argv;
-// 	size_t	argv_idx;
-// 	char	**argv;
+char	**gen_argv(t_argv *argv_list)
+{
+	t_argv	*cur_argv;
+	size_t	argv_idx;
+	char	**argv;
 
-// 	argv_idx = 0;
-// 	argv = NULL;
-// 	if (argv_list == NULL)
-// 		return (NULL);
-// 	//if cur_argv exists,loop continues.
-// 	while (cur_argv != NULL)
-// 	{
-// 		argv = realloc(argv, sizeof(char *) * (argv_idx + 2));
-// 		if (!argv)
-// 		{
-// 			// free_argv();
-// 			return (NULL);
-// 		}
-// 		if (cur_argv->to_expand == true)
-// 			argv[argv_idx] = expand_word(cur_argv->word);
-// 		else
-// 			argv[argv_idx] = strdup(cur_argv->word);
-// 		argv_idx++;
-// 		cur_argv = cur_argv->next;
-// 	}
-// 	argv[argv_idx] = NULL;
-// 	return (argv);
-// }
+	argv_idx = 0;
+	argv = NULL;
+	if (argv_list == NULL)
+		return (NULL);
+	//if cur_argv exists,loop continues.
+	while (cur_argv != NULL)
+	{
+		argv = realloc(argv, sizeof(char *) * (argv_idx + 2));
+		if (!argv)
+		{
+			// free_argv();
+			return (NULL);
+		}
+		if (cur_argv->to_expand == true)
+			argv[argv_idx] = expand_word(cur_argv->word);
+		else
+			argv[argv_idx] = strdup(cur_argv->word);
+		argv_idx++;
+		cur_argv = cur_argv->next;
+	}
+	argv[argv_idx] = NULL;
+	return (argv);
+}

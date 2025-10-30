@@ -3,8 +3,7 @@
 
 t_ast *parse(t_token *token_head);
 
-void print_traversal(t_ast *node, int depth, const char *side)
-{
+void print_traversal(t_ast *node, int depth, const char *side) {
     int i;
     t_argv *arg;
     

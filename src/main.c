@@ -55,10 +55,8 @@ int	shell_loop(t_shell *shell)
 	char	*line;
 	t_token	*token_list;
 
-	// t_ast		*ast;
 	line = NULL;
 	token_list = NULL;
-	// ast = NULL;
 	while (1)
 	{
 		line = ft_readline("minishell$ ", shell->interactive);

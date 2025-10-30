@@ -29,7 +29,6 @@ Appending Redirected Output
 
               [n]>>word
         
-
    Here Documents
        This type of redirection instructs the shell to read input from the current source until a line containing only
        word (with no trailing blanks) is seen.  All of the lines read up to that point are then used as the standard input
@@ -49,4 +48,3 @@ Appending Redirected Output
 
        If the redirection operator is <<-, then all leading tab characters are stripped from input lines and the line
        containing delimiter.  This allows here-documents within shell scripts to be indented in a natural fashion.
-
