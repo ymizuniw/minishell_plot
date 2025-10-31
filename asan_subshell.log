@@ -1,0 +1,23 @@
+bash: ;: command not found
+
+=================================================================
+==247810==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 4213 byte(s) in 40 object(s) allocated from:
+    #0 0x7b6edbcfd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5dfb08b2d08b in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x808b) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #2 0x5dfb08b30c38 in create_env_string (/home/ymizuniw/minishell_plot/minishell+0xbc38) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #3 0x5dfb08b30e0f in generate_envp (/home/ymizuniw/minishell_plot/minishell+0xbe0f) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #4 0x5dfb08b30a61 in search_and_exec (/home/ymizuniw/minishell_plot/minishell+0xba61) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #5 0x5dfb08b2e493 in exec_command (/home/ymizuniw/minishell_plot/minishell+0x9493) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #6 0x5dfb08b2ddc7 in ast_traversal (/home/ymizuniw/minishell_plot/minishell+0x8dc7) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #7 0x5dfb08b2da07 in executor (/home/ymizuniw/minishell_plot/minishell+0x8a07) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #8 0x5dfb08b29bf4 in exec_one_ast (/home/ymizuniw/minishell_plot/minishell+0x4bf4) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #9 0x5dfb08b29f29 in parse_and_exec (/home/ymizuniw/minishell_plot/minishell+0x4f29) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #10 0x5dfb08b2a1f9 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x51f9) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #11 0x5dfb08b2a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+    #12 0x7b6edb82a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #13 0x7b6edb82a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #14 0x5dfb08b297a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 16d162c638525efda506552860def4a182247ca6)
+
+SUMMARY: AddressSanitizer: 4213 byte(s) leaked in 40 allocation(s).

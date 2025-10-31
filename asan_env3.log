@@ -1,0 +1,140 @@
+
+=================================================================
+==249991==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 120 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x7063d1a86d84 in __GI___getdelim libio/iogetdelim.c:65
+    #2 0x7063d1e9a102 in getline ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:5317
+    #3 0x5cb5d3d799ea in ft_readline (/home/ymizuniw/minishell_plot/minishell+0x49ea) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d79ff1 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x4ff1) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #7 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #8 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Direct leak of 48 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5cb5d3d7cf82 in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x7f82) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d7c8bd in alloc_node (/home/ymizuniw/minishell_plot/minishell+0x78bd) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d87a8e in gen_command_node (/home/ymizuniw/minishell_plot/minishell+0x12a8e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d8687d in fgen_tree (/home/ymizuniw/minishell_plot/minishell+0x1187d) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d86eb7 in parse (/home/ymizuniw/minishell_plot/minishell+0x11eb7) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d86f52 in parser (/home/ymizuniw/minishell_plot/minishell+0x11f52) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x5cb5d3d79eff in parse_and_exec (/home/ymizuniw/minishell_plot/minishell+0x4eff) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #8 0x5cb5d3d7a1f9 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x51f9) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #9 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #10 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #11 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #12 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 48 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5cb5d3d7cf82 in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x7f82) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d7c8e5 in alloc_token (/home/ymizuniw/minishell_plot/minishell+0x78e5) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d83969 in init_token (/home/ymizuniw/minishell_plot/minishell+0xe969) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d84682 in lexer (/home/ymizuniw/minishell_plot/minishell+0xf682) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d7a180 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x5180) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #8 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #9 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 48 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5cb5d3d7cf82 in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x7f82) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d7c8e5 in alloc_token (/home/ymizuniw/minishell_plot/minishell+0x78e5) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d840ed in handle_eof (/home/ymizuniw/minishell_plot/minishell+0xf0ed) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d849ab in lexer (/home/ymizuniw/minishell_plot/minishell+0xf9ab) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d7a180 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x5180) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #8 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #9 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 48 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5cb5d3d7cf82 in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x7f82) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d7c8e5 in alloc_token (/home/ymizuniw/minishell_plot/minishell+0x78e5) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d83e64 in handle_word (/home/ymizuniw/minishell_plot/minishell+0xee64) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d840c6 in handle_word_and_doller (/home/ymizuniw/minishell_plot/minishell+0xf0c6) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d845c0 in handle_operators_and_words (/home/ymizuniw/minishell_plot/minishell+0xf5c0) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d8493b in lexer (/home/ymizuniw/minishell_plot/minishell+0xf93b) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x5cb5d3d7a180 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x5180) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #8 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #9 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #10 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #11 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 24 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5cb5d3d7cf82 in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x7f82) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d7c90d in alloc_argv (/home/ymizuniw/minishell_plot/minishell+0x790d) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d8734b in parse_simple_command (/home/ymizuniw/minishell_plot/minishell+0x1234b) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d8790a in parse_command_list (/home/ymizuniw/minishell_plot/minishell+0x1290a) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d87bce in gen_command_node (/home/ymizuniw/minishell_plot/minishell+0x12bce) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d8687d in fgen_tree (/home/ymizuniw/minishell_plot/minishell+0x1187d) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x5cb5d3d86eb7 in parse (/home/ymizuniw/minishell_plot/minishell+0x11eb7) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #8 0x5cb5d3d86f52 in parser (/home/ymizuniw/minishell_plot/minishell+0x11f52) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #9 0x5cb5d3d79eff in parse_and_exec (/home/ymizuniw/minishell_plot/minishell+0x4eff) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #10 0x5cb5d3d7a1f9 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x51f9) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #11 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #12 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #13 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #14 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 24 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efd9c7 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x5cb5d3d7cf82 in xmalloc (/home/ymizuniw/minishell_plot/minishell+0x7f82) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d7c8d1 in alloc_cmd (/home/ymizuniw/minishell_plot/minishell+0x78d1) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d87b28 in gen_command_node (/home/ymizuniw/minishell_plot/minishell+0x12b28) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d8687d in fgen_tree (/home/ymizuniw/minishell_plot/minishell+0x1187d) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d86eb7 in parse (/home/ymizuniw/minishell_plot/minishell+0x11eb7) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d86f52 in parser (/home/ymizuniw/minishell_plot/minishell+0x11f52) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x5cb5d3d79eff in parse_and_exec (/home/ymizuniw/minishell_plot/minishell+0x4eff) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #8 0x5cb5d3d7a1f9 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x51f9) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #9 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #10 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #11 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #12 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 4 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1ef74e8 in strdup ../../../../src/libsanitizer/asan/asan_interceptors.cpp:578
+    #1 0x5cb5d3d873ab in parse_simple_command (/home/ymizuniw/minishell_plot/minishell+0x123ab) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d8790a in parse_command_list (/home/ymizuniw/minishell_plot/minishell+0x1290a) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d87bce in gen_command_node (/home/ymizuniw/minishell_plot/minishell+0x12bce) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d8687d in fgen_tree (/home/ymizuniw/minishell_plot/minishell+0x1187d) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d86eb7 in parse (/home/ymizuniw/minishell_plot/minishell+0x11eb7) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d86f52 in parser (/home/ymizuniw/minishell_plot/minishell+0x11f52) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x5cb5d3d79eff in parse_and_exec (/home/ymizuniw/minishell_plot/minishell+0x4eff) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #8 0x5cb5d3d7a1f9 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x51f9) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #9 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #10 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #11 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #12 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 4 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1efc778 in realloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:85
+    #1 0x5cb5d3d85ee6 in handle_plain (/home/ymizuniw/minishell_plot/minishell+0x10ee6) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d8623d in word_cat (/home/ymizuniw/minishell_plot/minishell+0x1123d) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d83eed in handle_word (/home/ymizuniw/minishell_plot/minishell+0xeeed) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d840c6 in handle_word_and_doller (/home/ymizuniw/minishell_plot/minishell+0xf0c6) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x5cb5d3d845c0 in handle_operators_and_words (/home/ymizuniw/minishell_plot/minishell+0xf5c0) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #6 0x5cb5d3d8493b in lexer (/home/ymizuniw/minishell_plot/minishell+0xf93b) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #7 0x5cb5d3d7a180 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x5180) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #8 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #9 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #10 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #11 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+Indirect leak of 1 byte(s) in 1 object(s) allocated from:
+    #0 0x7063d1ef74e8 in strdup ../../../../src/libsanitizer/asan/asan_interceptors.cpp:578
+    #1 0x5cb5d3d8414f in handle_eof (/home/ymizuniw/minishell_plot/minishell+0xf14f) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #2 0x5cb5d3d849ab in lexer (/home/ymizuniw/minishell_plot/minishell+0xf9ab) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #3 0x5cb5d3d7a180 in shell_loop (/home/ymizuniw/minishell_plot/minishell+0x5180) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #4 0x5cb5d3d7a43e in main (/home/ymizuniw/minishell_plot/minishell+0x543e) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+    #5 0x7063d1a2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #6 0x7063d1a2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #7 0x5cb5d3d797a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: 93cf5934ee8a428131f2f810067ceccbf00c522d)
+
+SUMMARY: AddressSanitizer: 369 byte(s) leaked in 10 allocation(s).

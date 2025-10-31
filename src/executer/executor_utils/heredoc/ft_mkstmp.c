@@ -1,6 +1,6 @@
 #include "../../../../includes/minishell.h"
 
-// generate a random num
+// its randomness is matter.
 unsigned int	ft_rand(unsigned int *seed)
 {
 	*seed = (*seed % INT_MAX);

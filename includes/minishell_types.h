@@ -38,7 +38,7 @@
 # define TOKEN_VALUE_HEREDOC "<<"
 # define TOKEN_VALUE_APPEND ">>"
 
-void rl_replace_line (const char *text, int clear_undo);
+void				rl_replace_line(const char *text, int clear_undo);
 
 typedef struct s_env
 {
@@ -47,15 +47,6 @@ typedef struct s_env
 	int				exported;
 	struct s_env	*next;
 }					t_env;
-
-typedef struct s_shell
-{
-	bool			interactive;
-	int				last_exit_status;
-	t_env			*env_list;
-	// t_command_hash *cmd_hash;
-	char			*pwd;
-}					t_shell;
 
 typedef enum e_metachar
 {
@@ -152,6 +143,18 @@ typedef struct s_ast
 	t_cmd			*cmd;
 	struct s_ast	*right;
 }					t_ast;
+
+typedef struct s_shell
+{
+	bool			interactive;
+	int				last_exit_status;
+	t_env			*env_list;
+	// t_command_hash *cmd_hash;
+	char			*pwd;
+	t_ast			*root;
+	t_token			*token_list;
+	char			*line_ptr;
+}					t_shell;
 
 typedef struct s_result
 {

@@ -6,11 +6,26 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 17:44:05 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/10/31 19:36:29 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/11/01 02:53:35 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../../includes/minishell.h"
+
+static void	free_envp(char **envp)
+{
+	int	i;
+
+	if (!envp)
+		return ;
+	i = 0;
+	while (envp[i])
+	{
+		xfree(envp[i]);
+		i++;
+	}
+	xfree(envp);
+}
 
 static void	exec_with_slash(t_shell *shell, char **cmd_args, char **env)
 {
@@ -37,6 +52,7 @@ static void	exec_with_slash(t_shell *shell, char **cmd_args, char **env)
 	{
 		perror("fork");
 		shell->last_exit_status = 1;
+		free_envp(env);
 		return ;
 	}
 	if (pid == 0)
@@ -44,21 +60,22 @@ static void	exec_with_slash(t_shell *shell, char **cmd_args, char **env)
 		set_sig_dfl();
 		execve(cmd_args[0], cmd_args, env);
 		perror("execve");
-		exit(127);
+		free_envp(env);
+		ft_exit(cmd_args, 127, shell);
 	}
 	handle_child(&shell->last_exit_status, pid);
+	free_envp(env);
 }
 
 void	search_and_exec(t_shell *shell, char **cmd_args)
 {
 	int		has_slash;
-	char	**env;
 	int		i;
 	char	*last_arg;
+	char	**env;
 
 	if (!cmd_args || !cmd_args[0])
 		return ;
-	// Set _ to the last argument of the command
 	i = 0;
 	while (cmd_args[i])
 		i++;
@@ -70,15 +87,17 @@ void	search_and_exec(t_shell *shell, char **cmd_args)
 		exec_builtin(shell, cmd_args);
 		return ;
 	}
-	env = generate_envp(shell->env_list);
-	if (!env)
+	if (has_slash)
 	{
-		shell->last_exit_status = 1;
+		env = generate_envp(shell->env_list);
+		if (!env)
+		{
+			shell->last_exit_status = 1;
+			return ;
+		}
+		exec_with_slash(shell, cmd_args, env);
 		return ;
 	}
-	if (has_slash)
-		exec_with_slash(shell, cmd_args, env);
 	else
 		search_in_path_and_exec(shell, cmd_args);
-	free(env);
 }

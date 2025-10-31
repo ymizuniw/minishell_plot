@@ -52,18 +52,27 @@ char	*extract_value(const char *str)
 	return (strdup(equal_sign + 1));
 }
 
+// invalid variable name will be denied?
 void	set_variable(t_shell *shell, char *key, char *value, int exported)
 {
 	t_env	*current;
 	t_env	*new;
+	char	*dup;
 
+	if (!shell || !key || !value)
+	{
+		return ;
+	}
 	current = shell->env_list;
 	while (current)
 	{
 		if (strncmp(current->key, key, strlen(key) + 1) == 0)
 		{
+			dup = strdup(value);
+			if (!dup)
+				return ;
 			xfree(current->value);
-			current->value = strdup(value);
+			current->value = dup;
 			if (exported)
 				current->exported = 1;
 			return ;
@@ -74,7 +83,18 @@ void	set_variable(t_shell *shell, char *key, char *value, int exported)
 	if (!new)
 		return ;
 	new->key = strdup(key);
+	if (new->key == NULL)
+	{
+		xfree(new);
+		return ;
+	}
 	new->value = strdup(value);
+	if (new->value == NULL)
+	{
+		xfree(new->key);
+		xfree(new);
+		return ;
+	}
 	new->exported = exported;
 	new->next = shell->env_list;
 	shell->env_list = new;

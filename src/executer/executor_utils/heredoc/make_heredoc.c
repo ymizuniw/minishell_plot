@@ -7,6 +7,8 @@ char	*ext_unit(char *src, size_t start, size_t end)
 
 	len = end - start;
 	unit = xmalloc(sizeof(char) * (len + 1));
+	if (unit == NULL)
+		return (NULL);
 	strncpy(unit, &src[start], len);
 	unit[len] = '\0';
 	return (unit);
@@ -44,6 +46,8 @@ char	*heredoc_value_expansion(const char *line, bool in_quote, size_t len)
 					|| line[i] == '_'))
 				i++;
 			varname = ext_unit((char *)line, start, i);
+			if (varname == NULL)
+				return (NULL);
 			val = getenv(varname);
 			if (!val)
 				val = "";
@@ -91,12 +95,10 @@ int	get_document(t_redir *hd, char **document, size_t *document_len)
 	while (1)
 	{
 		line = readline("> ");
-		if (strcmp(line, delim) == 0)
-			return (1);
 		if (!line)
 			break ;
 		if (strcmp(line, delim) == 0)
-			break ;
+			return (1);
 		value = heredoc_expansion(line, hd->delim_quoted, strlen(line));
 		if (!value || !join_value(document, value, *document_len,
 				strlen(value)))
@@ -106,6 +108,8 @@ int	get_document(t_redir *hd, char **document, size_t *document_len)
 			return (-1);
 		}
 		*document_len += strlen(value);
+		free(line);
+		free(value);
 	}
 	return (-1);
 }
@@ -157,7 +161,10 @@ int	make_heredoc(t_redir *hd)
 	tmp_fd = 0;
 	memset(&herepipe, 0, sizeof(int) * 2);
 	if (get_document(hd, &document, &document_len) < 0)
+	{
+		xfree(document);
 		return (-1);
+	}
 	if (document_len == 0)
 	{
 		fd = open("/dev/null", O_RDONLY);

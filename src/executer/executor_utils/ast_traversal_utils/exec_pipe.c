@@ -1,5 +1,7 @@
 #include "../../../../includes/minishell.h"
 
+// the lack of close failure perror and trying to close other fd.
+
 int	exec_pipe(t_ast *node, t_shell *shell)
 {
 	int		pip[2];
@@ -28,11 +30,10 @@ int	exec_pipe(t_ast *node, t_shell *shell)
 		set_sig_dfl();
 		close(pip[0]);
 		if (dup2(pip[1], STDOUT_FILENO) < 0)
-			_exit(1);
+			ft_exit(node->cmd->argv, 1, shell);
 		close(pip[1]);
-		// Producer: RIGHT subtree writes to pipe
 		ast_traversal(node->right, shell);
-		_exit(shell->last_exit_status);
+		ft_exit(node->cmd->argv, shell->last_exit_status, shell);
 	}
 	left_pid = fork();
 	if (left_pid < 0)
@@ -49,11 +50,10 @@ int	exec_pipe(t_ast *node, t_shell *shell)
 		set_sig_dfl();
 		close(pip[1]);
 		if (dup2(pip[0], STDIN_FILENO) < 0)
-			_exit(1);
+			ft_exit(node->cmd->argv, shell->last_exit_status, shell);
 		close(pip[0]);
-		// Consumer: LEFT subtree reads from pipe
 		ast_traversal(node->left, shell);
-		_exit(shell->last_exit_status);
+		ft_exit(node->cmd->argv, shell->last_exit_status, shell);
 	}
 	close(pip[0]);
 	close(pip[1]);

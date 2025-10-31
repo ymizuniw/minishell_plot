@@ -66,7 +66,6 @@ int	handle_child(int *last_exit_status, pid_t pid)
 	}
 	if (WIFSIGNALED(local_status))
 	{
-		// Signal terminated: exit code = 128 + signal number
 		*last_exit_status = 128 + WTERMSIG(local_status);
 		if (WTERMSIG(local_status) == SIGQUIT)
 			write(STDERR_FILENO, "Quit (core dumped)\n", 19);
@@ -74,14 +73,8 @@ int	handle_child(int *last_exit_status, pid_t pid)
 			write(STDOUT_FILENO, "\n", 1);
 	}
 	else if (WIFEXITED(local_status))
-	{
-		// Normal exit: get actual exit code
 		*last_exit_status = WEXITSTATUS(local_status);
-	}
 	else
-	{
-		// Stopped or other status
 		*last_exit_status = 1;
-	}
 	return (0);
 }

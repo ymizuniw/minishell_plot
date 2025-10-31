@@ -54,20 +54,19 @@ int	doller_cat(char **doller, char **expanded_word, size_t expanded_word_len,
 		env_entry = find_env(shell->env_list, key);
 		value = env_entry ? env_entry->value : (char *)"";
 	}
-	free(key);
+	xfree(key);
 	value_len = strlen(value);
 	tmp = realloc(*expanded_word, expanded_word_len + value_len + 1);
 	if (!tmp)
 	{
-		if (need_free_value)
-			free(value);
+		xfree(value);
 		return (-1);
 	}
 	*expanded_word = tmp;
 	memcpy(*expanded_word + expanded_word_len, value, value_len);
 	(*expanded_word)[expanded_word_len + value_len] = '\0';
 	if (need_free_value)
-		free(value);
+		xfree(value);
 	*doller = *doller + 1 + value_idx;
 	return (1);
 }
@@ -125,7 +124,7 @@ char	**gen_argv(t_argv *argv_list, t_shell *shell)
 		list_len++;
 		cur_argv = cur_argv->next;
 	}
-	argv = malloc(sizeof(char *) * (list_len + 1));
+	argv = xmalloc(sizeof(char *) * (list_len + 1));
 	if (!argv)
 		return (NULL);
 	cur_argv = argv_list;

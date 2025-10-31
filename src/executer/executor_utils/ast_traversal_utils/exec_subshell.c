@@ -18,7 +18,7 @@ int	exec_subshell(t_ast *node, t_shell *shell)
 		set_sig_dfl();
 		if (node && node->subtree)
 			ast_traversal(node->subtree, shell);
-		_exit(shell->last_exit_status);
+		ft_exit(node->cmd->argv, shell->last_exit_status, shell);
 	}
 	handle_child(&shell->last_exit_status, pid);
 	return (0);

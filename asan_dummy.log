@@ -1,0 +1,15 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==248741==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000010 (pc 0x62add2a49979 bp 0x7fffe268c7b0 sp 0x7fffe268c790 T0)
+==248741==The signal is caused by a READ memory access.
+==248741==Hint: address points to the zero page.
+    #0 0x62add2a49979 in free_ast_tree (/home/ymizuniw/minishell_plot/minishell+0x7979) (BuildId: ff1f56263e892815d83366c675ccc3c475b8a6d4)
+    #1 0x62add2a49f77 in free_shell (/home/ymizuniw/minishell_plot/minishell+0x7f77) (BuildId: ff1f56263e892815d83366c675ccc3c475b8a6d4)
+    #2 0x62add2a4744a in main (/home/ymizuniw/minishell_plot/minishell+0x544a) (BuildId: ff1f56263e892815d83366c675ccc3c475b8a6d4)
+    #3 0x74bad3c2a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #4 0x74bad3c2a28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x62add2a467a4 in _start (/home/ymizuniw/minishell_plot/minishell+0x47a4) (BuildId: ff1f56263e892815d83366c675ccc3c475b8a6d4)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/home/ymizuniw/minishell_plot/minishell+0x7979) (BuildId: ff1f56263e892815d83366c675ccc3c475b8a6d4) in free_ast_tree
+==248741==ABORTING

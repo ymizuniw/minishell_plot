@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 21:00:12 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/10/31 19:37:09 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/11/01 01:50:30 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ static void	free_envp(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		free(envp[i]);
+		xfree(envp[i]);
 		i++;
 	}
-	free(envp);
+	xfree(envp);
 }
 
 static char	*create_env_string(const char *key, const char *value)
@@ -33,7 +33,7 @@ static char	*create_env_string(const char *key, const char *value)
 	size_t	len;
 
 	len = strlen(key) + strlen(value) + 2; // '=' and '\0'
-	str = malloc(len);
+	str = xmalloc(len);
 	if (!str)
 		return (NULL);
 	snprintf(str, len, "%s=%s", key, value);
@@ -57,7 +57,7 @@ char	**generate_envp(t_env *env_list)
 		current = current->next;
 	}
 	current = env_list;
-	envp = malloc(sizeof(char *) * (count + 1));
+	envp = xmalloc(sizeof(char *) * (count + 1));
 	if (!envp)
 		return (NULL);
 	i = 0;
@@ -93,14 +93,14 @@ void	search_in_path_and_exec(t_shell *shell, char **cmd_args)
 	envp = generate_envp(shell->env_list);
 	if (!envp)
 	{
-		free(cmd_path);
+		xfree(cmd_path);
 		return ;
 	}
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
-		free(cmd_path);
+		xfree(cmd_path);
 		free_envp(envp);
 		shell->last_exit_status = 1;
 		return ;
@@ -110,11 +110,11 @@ void	search_in_path_and_exec(t_shell *shell, char **cmd_args)
 		set_sig_dfl();
 		execve(cmd_path, cmd_args, envp);
 		perror("execve");
-		free(cmd_path);
+		xfree(cmd_path);
 		free_envp(envp);
-		exit(127);
+		ft_exit(cmd_args, 127, shell);
 	}
-	free(cmd_path);
+	xfree(cmd_path);
 	free_envp(envp);
 	handle_child(&shell->last_exit_status, pid);
 }

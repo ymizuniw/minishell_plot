@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 22:49:57 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/10/31 14:08:36 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/11/01 01:36:28 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,18 @@ char	*find_command_path(t_shell *shell, char *cmd)
 		len_cmd = ft_strlen(cmd);
 		full_path = malloc(len_pwd + len_cmd + 2);
 		if (!full_path)
+		{
+			xfree(path_env);
 			return (NULL);
+		}
 		memcpy(full_path, shell->pwd, len_pwd);
 		full_path[len_pwd] = '/';
 		memcpy(full_path + len_pwd + 1, cmd, len_cmd);
 		full_path[len_pwd + len_cmd + 1] = '\0';
 		if (access(full_path, X_OK) == 0)
 			return (full_path);
-		free(full_path);
+		xfree(full_path);
+		xfree(path_env);
 		shell->last_exit_status = 127;
 		write(2, "bash: ", 6);
 		write(2, cmd, ft_strlen(cmd));

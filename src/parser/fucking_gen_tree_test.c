@@ -22,7 +22,7 @@ t_ast				*gen_eof_newline_node(t_ast *parent, t_token **cur_token);
 void				fgen_tree(t_ast **parent, t_token **cur_token);
 
 // Helpers to free structures built by the alt parser (argv is a t_argv list)
-static void	free_argv_list(t_argv *head)
+void	free_argv_list(t_argv *head)
 {
 	t_argv	*cur;
 	t_argv	*next;

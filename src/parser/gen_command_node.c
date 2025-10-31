@@ -56,7 +56,7 @@ int	parse_simple_command(t_argv **argv_head, t_token *command_token)
 		free(new_argv);
 		return (-1);
 	}
-	//condition2 shall be $IFS values. bool doll_ifs();
+	// condition2 shall be $IFS values. bool doll_ifs();
 	if (command_token->in_squote == false && strchr(command_token->value, '$'))
 		new_argv->to_expand = true;
 	else

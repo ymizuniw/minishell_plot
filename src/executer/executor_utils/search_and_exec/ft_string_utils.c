@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 14:10:00 by ymizuniw          #+#    #+#             */
-/*   Updated: 2025/10/31 14:12:46 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/11/01 01:37:17 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*ft_strdup(const char *s)
 	if (!s)
 		return (NULL);
 	len = ft_strlen(s);
-	dup = malloc(len + 1);
+	dup = xmalloc(len + 1);
 	if (!dup)
 		return (NULL);
 	i = 0;
@@ -168,7 +168,7 @@ static char	*get_next_word(char const **s, char c)
 	len = 0;
 	while ((*s)[len] && (*s)[len] != c)
 		len++;
-	word = malloc(len + 1);
+	word = xmalloc(len + 1);
 	if (!word)
 		return (NULL);
 	i = 0;
@@ -191,7 +191,7 @@ char	**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	words = count_words(s, c);
-	arr = malloc(sizeof(char *) * (words + 1));
+	arr = xmalloc(sizeof(char *) * (words + 1));
 	if (!arr)
 		return (NULL);
 	i = 0;
@@ -201,8 +201,8 @@ char	**ft_split(char const *s, char c)
 		if (!arr[i])
 		{
 			while (i > 0)
-				free(arr[--i]);
-			free(arr);
+				xfree(arr[--i]);
+			xfree(arr);
 			return (NULL);
 		}
 		i++;

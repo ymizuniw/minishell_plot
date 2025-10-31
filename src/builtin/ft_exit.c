@@ -35,7 +35,7 @@ void	print_err_args(void)
 	write(2, msg, strlen(msg));
 }
 
-void	ft_exit(char **cmd, int last_exit_status)
+void	ft_exit(char **cmd, int last_exit_status, t_shell *shell)
 {
 	int	exit_code;
 
@@ -45,15 +45,19 @@ void	ft_exit(char **cmd, int last_exit_status)
 		if (!is_numeric(cmd[1]))
 		{
 			print_err_num(cmd);
+			free_shell(shell);
 			exit(2);
 		}
 		if (cmd[2])
 		{
 			print_err_args();
+			free_shell(shell);
 			exit(2);
 		}
 		exit_code = atoi(cmd[1]);
+		free_shell(shell);
 		exit(exit_code % 256);
 	}
+	free_shell(shell);
 	exit(last_exit_status);
 }

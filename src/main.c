@@ -16,7 +16,7 @@ char	*ft_readline(char const *prompt, bool interactive)
 	nread = getline(&line, &len, stdin);
 	if (nread == -1)
 	{
-		free(line);
+		xfree(line);
 		return (NULL);
 	}
 	if (nread > 0 && line[nread - 1] == '\n')
@@ -30,6 +30,7 @@ static void	exec_one_ast(t_ast *ast, t_shell *shell)
 
 	if (!ast)
 		return ;
+	shell->root = ast;
 	res = executor(ast, shell);
 	if (res)
 	{
@@ -37,6 +38,7 @@ static void	exec_one_ast(t_ast *ast, t_shell *shell)
 		free_result(res);
 	}
 	free_ast_tree(ast);
+	shell->root = NULL;
 }
 
 int	parse_and_exec(t_token *token_list, t_shell *shell)
@@ -44,24 +46,21 @@ int	parse_and_exec(t_token *token_list, t_shell *shell)
 	t_token	*cur;
 	t_ast	*ast;
 
+	ast = NULL;
 	if (!token_list || !shell)
 		return (0);
 	cur = token_list;
-	while (cur && cur->type != TK_EOF)
+	while (cur->type == TK_HEAD || cur->type == TK_NEWLINE)
 	{
-		if (cur->type == TK_HEAD || cur->type == TK_NEWLINE)
-		{
-			cur = cur->next;
-			if (cur->type == TK_EOF)
-				return (1);
-			continue ;
-		}
-		// Parse one command, advancing cur to next unconsumed token
-		ast = parser(&cur);
-		if (ast)
-			exec_one_ast(ast, shell);
-		// cur now points to NEWLINE or EOF after parser advanced it
+		cur = cur->next;
+		if (cur->type == TK_EOF)
+			return (1);
+		// continue ;
 	}
+	shell->root = ast;
+	ast = parser(&cur);
+	if (ast)
+		exec_one_ast(ast, shell);
 	return (1);
 }
 
@@ -79,6 +78,7 @@ int	shell_loop(t_shell *shell)
 		{
 			shell->last_exit_status = 130;
 			g_signum = 0;
+			xfree(line);
 		}
 		if (!line)
 		{
@@ -89,10 +89,15 @@ int	shell_loop(t_shell *shell)
 		if (shell->interactive && *line)
 			add_history(line);
 		token_list = lexer(line);
+		shell->line_ptr = line;
+		shell->token_list = token_list;
 		parse_and_exec(token_list, shell);
+		if (shell->token_list)
+		{
+			free_token_list(shell->token_list);
+			shell->token_list = NULL;
+		}
 		xfree(line);
-		if (token_list)
-			free_token_list(token_list);
 	}
 	return (0);
 }
@@ -116,11 +121,8 @@ int	main(int argc, char **argv, char **env)
 		set_variable(&shell, "PWD", pwd, 1);
 	}
 	shell.last_exit_status = 0;
-	// Initialize _ to empty or to the shell path
 	set_variable(&shell, "_", "/usr/bin/minishell", 1);
 	shell_loop(&shell);
-	if (shell.pwd)
-		free(shell.pwd);
-	free_env_list(shell.env_list);
+	free_shell(&shell);
 	return (shell.last_exit_status);
 }

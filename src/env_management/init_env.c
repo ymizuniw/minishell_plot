@@ -10,7 +10,22 @@ void	init_env_from_envp(t_shell *shell, char **envp)
 	while (envp[i])
 	{
 		key = extract_key(envp[i]);
+		if (key == NULL)
+		{
+			i++;
+			continue ;
+		}
 		value = extract_value(envp[i]);
+		if (value == NULL)
+		{
+			value = strdup("");
+			if (!value)
+			{
+				xfree(key);
+				i++;
+				continue ;
+			}
+		}
 		set_variable(shell, key, value, 1);
 		xfree(key);
 		xfree(value);
@@ -20,16 +35,10 @@ void	init_env_from_envp(t_shell *shell, char **envp)
 
 void	free_env_list(t_env *env_list)
 {
-	t_env	*current;
-	t_env	*next;
-
-	current = env_list;
-	while (current)
-	{
-		next = current->next;
-		xfree(current->key);
-		xfree(current->value);
-		xfree(current);
-		current = next;
-	}
+	if (env_list == NULL)
+		return ;
+	free_env_list(env_list->next);
+	xfree(env_list->key);
+	xfree(env_list->value);
+	xfree(env_list);
 }

@@ -7,7 +7,6 @@ t_result	*executor(t_ast *ast, t_shell *shell)
 	res = alloc_result();
 	if (!res || !shell)
 		return (NULL);
-	// Execute the AST
 	ast_traversal(ast, shell);
 	res->root = ast;
 	res->exit_code = shell->last_exit_status;
