@@ -72,6 +72,7 @@ int	doller_cat(char **doller, char **expanded_word, size_t expanded_word_len,
 	return (1);
 }
 
+//before before_doller_cat() is called, 
 char	*expand_word(char *word, t_shell *shell)
 {
 	char	*expanded;
@@ -132,6 +133,14 @@ char	**gen_argv(t_argv *argv_list, t_shell *shell)
 	while (cur_argv != NULL)
 	{
 		argv_idx--;
+		//if cur_argv->to_expand==true, split by $IFS values,
+		//and realloc() argv, cpy and proceed index.
+		//argv = realloc(argv, sizeof(char)*(list_len + additional_len + 1));
+		//if (argv==NULL){realloc_fail_process();}
+		//char **part_after_split = split_by_ifs();
+		//if (part_after_split==NULL){split_fail_process();}
+		//cpy_parts_to_argv();//internally the argv_idx is proceeded.
+		//flag to_expand should be kept.
 		if (cur_argv->to_expand == true)
 			argv[argv_idx] = expand_word(cur_argv->word, shell);
 		else

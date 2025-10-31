@@ -1,7 +1,7 @@
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -D_DEFAULT_SOURCE
-# -fsanitize=address
+CFLAGS = -fsanitize=address -Wall -Wextra -Werror -D_DEFAULT_SOURCE
+
 # -g
 #for Mac Environment
 CPPFLAGS = -I/opt/homebrew/opt/readline/include/

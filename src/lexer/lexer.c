@@ -131,7 +131,7 @@ int	handle_eof(t_token *token_head)
 int	handle_internal_separator(t_token *token_head, char const *input,
 		size_t *idx)
 {
-	if (input[*idx] == '\n')
+	if (input[*idx] && input[*idx] == '\n')
 	{
 		token_head->count_newline++;
 		if (handle_newline(token_head, input, idx) < 0)
@@ -173,10 +173,14 @@ t_token	*lexer(const char *input)
 	dummy_head->type = TK_HEAD;
 	idx = 0;
 	input_len = strlen(input);
+	//debug
+	printf("input_len: %zu\n", input_len);
+	printf("input: %s\n", input);
 	while (idx < input_len)
 	{
-		if (isspace((unsigned char)input[idx])
-			&& handle_internal_separator(dummy_head, input, &idx) < 0)
+		if (input[idx])
+			printf("cur input[%zu]\n: %c\n", idx, input[idx]);
+		if (input[idx] && isspace((unsigned char)input[idx]) && handle_internal_separator(dummy_head, input, &idx) < 0)
 			return (NULL);
 		if (idx >= input_len)
 			break ;

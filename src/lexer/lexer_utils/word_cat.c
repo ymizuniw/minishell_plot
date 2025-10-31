@@ -12,13 +12,14 @@ int handle_quotation(char **word, size_t word_len, char const*input, size_t *idx
 		//syntax_error.
 		return (-1);
 	}
-	add_len = quote_close - &input[*idx];
+	add_len = quote_close - &input[*idx] + 1;
+	printf("add_len: %zu\n", add_len);
 	*word = realloc(*word, sizeof(char) * (word_len + add_len + 1));
 	if (!*word)
 		return (0);
 	strncpy(*word + word_len, &input[*idx], add_len);
 	(*word)[add_len]='\0';
-	*idx += add_len;//right to apply ptr move quantity to *idx.
+	*idx += add_len;
 	*consumed_len = add_len;
 	return (1);
 }
