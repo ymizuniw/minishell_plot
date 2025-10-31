@@ -67,8 +67,8 @@ size_t	word_cat(char **word, size_t word_len, char const *input,
 			if (d_close)
 			{
 				size_t ext_len = (size_t)(d_close - &input[*idx + 1]);
-				*word = realloc(*word, sizeof(char)*(*idx + ext_len + 2));
-				if (*word)
+				*word = realloc(*word, sizeof(char)*(*idx + ext_len + 1));
+				if (!*word)
 					return 0;
 				memcpy(*word + word_len, &input[*idx + 1], ext_len);
 				(*word)[word_len + ext_len] = '\0';
