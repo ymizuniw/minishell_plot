@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 22:49:57 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/11/01 01:36:28 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/11/01 05:16:43 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ char	*find_command_path(t_shell *shell, char *cmd)
 	size_t	len_cmd;
 	size_t	len_pwd;
 
+	if (!cmd || !cmd[0])
+		return (NULL);
 	path_env = get_env_value(shell->env_list, "PATH");
 	if (!path_env || !*path_env)
 	{

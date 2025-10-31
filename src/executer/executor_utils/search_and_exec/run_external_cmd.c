@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 21:00:12 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/11/01 01:50:30 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/11/01 05:36:56 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*create_env_string(const char *key, const char *value)
 	char	*str;
 	size_t	len;
 
-	len = strlen(key) + strlen(value) + 2; // '=' and '\0'
+	len = strlen(key) + strlen(value) + 2;
 	str = xmalloc(len);
 	if (!str)
 		return (NULL);
@@ -88,8 +88,9 @@ void	search_in_path_and_exec(t_shell *shell, char **cmd_args)
 	if (!cmd_args || !cmd_args[0])
 		return ;
 	cmd_path = find_command_path(shell, cmd_args[0]);
-	if (!cmd_path)
+	if (!cmd_path || !cmd_path[0])
 		return ;
+	// printf("cmd_path: %s\n", cmd_path);
 	envp = generate_envp(shell->env_list);
 	if (!envp)
 	{

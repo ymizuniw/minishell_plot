@@ -58,7 +58,7 @@ size_t	word_cat(char **word, size_t word_len, char const *input,
 		size_t input_len, size_t *idx)
 {
 	// printf("\n==word_cat() called.==\ninput[%zu]: %s\n", *idx, &input[*idx]);
-	while (*idx<input_len)
+	while (*idx<input_len && !isspace((int)input[*idx]) && is_meta_char(input[*idx])==MT_OTHER)
 	{
 		char q_open = is_quote(input[*idx]);
 		if (q_open!='\0')

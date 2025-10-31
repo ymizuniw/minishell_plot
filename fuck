@@ -1,0 +1,15 @@
+cmd_path: /bin/cat
+fuck you
+[?2004hminishell$ ^C[?2004l
+minishell$ [?2004h^C[?2004l
+
+[?2004h^C[?2004l
+
+[?2004h[?2004l
+exit
+[?2004hminishell$ ^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004hq[?2004l
