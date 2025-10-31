@@ -35,11 +35,10 @@ void	print_err_args(void)
 	write(2, msg, strlen(msg));
 }
 
-void	ft_exit(char **cmd)
+void	ft_exit(char **cmd, int last_exit_status)
 {
 	int	exit_code;
 
-	exit_code = 0;
 	printf("exit\n");
 	if (cmd[1])
 	{
@@ -56,5 +55,5 @@ void	ft_exit(char **cmd)
 		exit_code = atoi(cmd[1]);
 		exit(exit_code % 256);
 	}
-	exit(0);
+	exit(last_exit_status);
 }

@@ -110,6 +110,8 @@ int	main(int argc, char **argv, char **env)
 		set_variable(&shell, "PWD", pwd, 1);
 	}
 	shell.last_exit_status = 0;
+	// Initialize _ to empty or to the shell path
+	set_variable(&shell, "_", "/usr/bin/minishell", 1);
 	shell_loop(&shell);
 	if (shell.pwd)
 		free(shell.pwd);

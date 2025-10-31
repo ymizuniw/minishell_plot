@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 17:44:05 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/10/31 14:34:39 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/10/31 16:29:48 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,17 @@ void	search_and_exec(t_shell *shell, char **cmd_args)
 {
 	int		has_slash;
 	char	**env;
+	int		i;
+	char	*last_arg;
 
 	if (!cmd_args || !cmd_args[0])
 		return ;
+	// Set _ to the last argument of the command
+	i = 0;
+	while (cmd_args[i])
+		i++;
+	last_arg = (i > 0) ? cmd_args[i - 1] : cmd_args[0];
+	set_variable(shell, "_", last_arg, 1);
 	has_slash = (ft_strchr(cmd_args[0], '/') != NULL);
 	if (is_builtin(cmd_args[0]))
 	{

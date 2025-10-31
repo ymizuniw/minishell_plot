@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 02:05:22 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/10/31 14:12:45 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/10/31 16:38:22 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ t_env				*find_env(t_env *env_list, const char *key);
 
 void				exec_builtin(t_shell *shell, char **cmd);
 void				run_builtin(t_shell *shell, char **cmd);
-void				ft_echo(char **cmd, int fd);
-void				ft_cd(char **cmd, t_shell *shell, int fd);
-void				ft_pwd(t_shell *shell, int fd);
-void				ft_export(t_shell *shell, char **cmd, int fd);
-void				ft_unset(t_shell *shell, char **cmd);
-void				ft_env(t_shell *shell, char **cmd);
-void				ft_exit(char **cmd);
+int					ft_echo(char **cmd, int fd);
+int					ft_cd(char **cmd, t_shell *shell, int fd);
+int					ft_pwd(t_shell *shell, int fd);
+int					ft_export(t_shell *shell, char **cmd, int fd);
+int					ft_unset(t_shell *shell, char **cmd);
+int					ft_env(t_shell *shell, char **cmd);
+void				ft_exit(char **cmd, int last_exit_status);
 
 size_t				ft_strlen(const char *s);
 char				*ft_strchr(const char *s, int c);

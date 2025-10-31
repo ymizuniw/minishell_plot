@@ -19,7 +19,7 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
-void	ft_pwd(t_shell *shell, int fd)
+int	ft_pwd(t_shell *shell, int fd)
 {
 	char	*cwd;
 
@@ -29,9 +29,10 @@ void	ft_pwd(t_shell *shell, int fd)
 	{
 		write(2, "pwd: error retrieving current directory: ", 41);
 		perror("getcwd");
-		return ;
+		return (1);
 	}
 	ft_putstr_fd(cwd, fd);
 	ft_putchar_fd('\n', fd);
 	xfree(cwd);
+	return (0);
 }
