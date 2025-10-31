@@ -2,7 +2,7 @@
 
 // fork() and call ast_traversal for subtree. is execute flag is false,
 // call ast_traversal with execute flag is false.
-int	exec_subshell(t_ast *node, t_shell *shell, bool execute)
+int	exec_subshell(t_ast *node, t_shell *shell)
 {
 	int		status;
 	pid_t	pid;

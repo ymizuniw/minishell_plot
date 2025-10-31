@@ -16,6 +16,7 @@
 # include <stdlib.h>  //malloc()
 # include <string.h>  //strncpy()->rem
 # include <strings.h> //bzero()
+# include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h> //write()
 

@@ -5,7 +5,6 @@ int	exec_command(t_ast *node, t_shell *shell)
 {
 	int	redir_ret;
 
-	(void)shell;
 	if (!node || !node->cmd)
 		return (-1);
 	redir_ret = do_redirection(node);
@@ -17,5 +16,6 @@ int	exec_command(t_ast *node, t_shell *shell)
 	}
 	if (!node->cmd->argv || !node->cmd->argv[0])
 		return (0);
+	search_and_exec(shell, node->cmd->argv);
 	return (0);
 }

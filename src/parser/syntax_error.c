@@ -1,4 +1,4 @@
-#include "../../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void	syntax_error(t_token_type type)
 {

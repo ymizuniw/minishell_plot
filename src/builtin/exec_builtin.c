@@ -8,7 +8,7 @@ void	exec_builtin(t_shell *shell, char **cmd)
 	if (!cmd || !shell)
 		exit(1);
 	if (strncmp(cmd[0], "echo", 5) == 0)
-		ft_echo(cmd);
+		ft_echo(cmd, fd);
 	else if (strncmp(cmd[0], "cd", 3) == 0)
 		ft_cd(cmd, shell, fd);
 	else if (strncmp(cmd[0], "pwd", 4) == 0)

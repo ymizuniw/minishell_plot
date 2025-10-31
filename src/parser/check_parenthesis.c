@@ -1,4 +1,4 @@
-#include "../../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 // check if parenthesis arrangement is correct.
 int	check_parenthesis(t_token *token)

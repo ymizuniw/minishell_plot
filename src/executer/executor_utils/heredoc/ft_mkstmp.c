@@ -1,7 +1,7 @@
 #include "../../../../includes/minishell.h"
 
 // generate a random num
-size_t	ft_rand(size_t *seed)
+unsigned int	ft_rand(unsigned int *seed)
 {
 	*seed = (*seed % INT_MAX);
 	return (*seed);
@@ -12,12 +12,12 @@ char	*ft_mkstmp(char *template)
 	static const char	charset[] = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz0123456789";
 	char				*p;
 	size_t				len;
-	size_t				num;
+	unsigned int		num;
 	void				*ptr;
-	size_t				num_keep;
+	unsigned int		num_keep;
 	char				*name;
-	size_t				random;
-	size_t				idx;
+	unsigned int		random;
+	unsigned int		idx;
 
 	len = strlen(template);
 	ptr = &num;
@@ -33,7 +33,7 @@ char	*ft_mkstmp(char *template)
 		random = ft_rand(&num);
 		if (random == 0)
 			random = 1;
-		idx = (num / random) % (size_t)(sizeof(charset) - 1);
+		idx = (num / random) % (unsigned int)(sizeof(charset) - 1);
 		*p = charset[idx];
 		num /= 10;
 		if (num == 0)

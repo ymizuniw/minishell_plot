@@ -30,13 +30,8 @@ command          : simple_command
                  | compound_command redirect_list
                  | function_definition
                  ;
-compound_command : brace_group
+compound_command :
                  | subshell
-                 | for_clause
-                 | case_clause
-                 | if_clause
-                 | while_clause
-                 | until_clause
                  ;
 subshell         : '(' compound_list ')'
                  ;
@@ -46,62 +41,15 @@ compound_list    : linebreak term
 term             : term separator and_or
                  |                and_or
                  ;
-for_clause       : For name                                      do_group
-                 | For name                       sequential_sep do_group
-                 | For name linebreak in          sequential_sep do_group
-                 | For name linebreak in wordlist sequential_sep do_group
                  ;
 name             : NAME                     /* Apply rule 5 */
-                 ;
-in               : In                       /* Apply rule 6 */
                  ;
 wordlist         : wordlist WORD
                  |          WORD
                  ;
-case_clause      : Case WORD linebreak in linebreak case_list    Esac
-                 | Case WORD linebreak in linebreak case_list_ns Esac
-                 | Case WORD linebreak in linebreak              Esac
-                 ;
-case_list_ns     : case_list case_item_ns
-                 |           case_item_ns
-                 ;
-case_list        : case_list case_item
-                 |           case_item
-                 ;
-case_item_ns     :     pattern ')' linebreak
-                 |     pattern ')' compound_list
-                 | '(' pattern ')' linebreak
-                 | '(' pattern ')' compound_list
-                 ;
-case_item        :     pattern ')' linebreak     DSEMI linebreak
-                 |     pattern ')' compound_list DSEMI linebreak
-                 | '(' pattern ')' linebreak     DSEMI linebreak
-                 | '(' pattern ')' compound_list DSEMI linebreak
                  ;
 pattern          :             WORD         /* Apply rule 4 */
                  | pattern '|' WORD         /* Do not apply rule 4 */
-                 ;
-if_clause        : If compound_list Then compound_list else_part Fi
-                 | If compound_list Then compound_list           Fi
-                 ;
-else_part        : Elif compound_list Then compound_list
-                 | Elif compound_list Then compound_list else_part
-                 | Else compound_list
-                 ;
-while_clause     : While compound_list do_group
-                 ;
-until_clause     : Until compound_list do_group
-                 ;
-function_definition : fname '(' ')' linebreak function_body
-                 ;
-function_body    : compound_command                /* Apply rule 9 */
-                 | compound_command redirect_list  /* Apply rule 9 */
-                 ;
-fname            : NAME                            /* Apply rule 8 */
-                 ;
-brace_group      : Lbrace compound_list Rbrace
-                 ;
-do_group         : Do compound_list Done           /* Apply rule 6 */
                  ;
 simple_command   : cmd_prefix cmd_word cmd_suffix
                  | cmd_prefix cmd_word

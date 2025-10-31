@@ -25,7 +25,6 @@ SEARCH_EXEC_DIR = $(EXECUTER_UTILS_DIR)/search_and_exec
 LEXER_DIR = $(SRC_DIR)/lexer
 LEXER_UTILS_DIR = $(LEXER_DIR)/lexer_utils
 PARSER_DIR = $(SRC_DIR)/parser
-PARSER_UTILS_DIR = $(PARSER_DIR)/parser_utils
 SIGNAL_MANAGEMENT_DIR = $(SRC_DIR)/signal_management
 
 # SOURCE FILES
@@ -62,7 +61,10 @@ AST_TRAVERSAL_SRC = $(AST_TRAVERSAL_DIR)/ast_traversal.c \
 HEREDOC_SRC = $(HEREDOC_DIR)/ft_mkstmp.c \
               $(HEREDOC_DIR)/make_heredoc.c
 
-SEARCH_EXEC_SRC = $(SEARCH_EXEC_DIR)/search_and_exec.c
+SEARCH_EXEC_SRC = $(SEARCH_EXEC_DIR)/search_and_exec.c \
+                  $(SEARCH_EXEC_DIR)/run_external_cmd.c \
+                  $(SEARCH_EXEC_DIR)/find_command_path.c \
+                  $(SEARCH_EXEC_DIR)/ft_string_utils.c
 
 LEXER_SRC = $(LEXER_DIR)/lexer.c
 
@@ -75,15 +77,13 @@ LEXER_UTILS_SRC = $(LEXER_UTILS_DIR)/prepend_tokens.c \
                   $(LEXER_UTILS_DIR)/set_token_type.c \
                   $(LEXER_UTILS_DIR)/word_cat.c
 
-PARSER_SRC = $(PARSER_DIR)/parser.c
-
-PARSER_UTILS_SRC = $(PARSER_UTILS_DIR)/cat_word.c \
-                   $(PARSER_UTILS_DIR)/check_parenthesis.c \
-                   $(PARSER_UTILS_DIR)/expand_value.c \
-                   $(PARSER_UTILS_DIR)/gen_tree.c \
-                   $(PARSER_UTILS_DIR)/set_argv.c \
-                   $(PARSER_UTILS_DIR)/syntax_checker.c \
-                   $(PARSER_UTILS_DIR)/syntax_error.c
+PARSER_SRC = $(PARSER_DIR)/fucking_gen_tree.c \
+             $(PARSER_DIR)/gen_command_node.c \
+             $(PARSER_DIR)/gen_op_sep_sub_node.c \
+             $(PARSER_DIR)/token_type_identification.c \
+             $(PARSER_DIR)/check_parenthesis.c \
+             $(PARSER_DIR)/syntax_checker.c \
+             $(PARSER_DIR)/syntax_error.c
 
 SIGNAL_MANAGEMENT_SRC = $(SIGNAL_MANAGEMENT_DIR)/signal_management.c
 

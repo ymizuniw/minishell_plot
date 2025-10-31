@@ -1,32 +1,46 @@
 #include "../../../../includes/minishell.h"
 
-static int	do_each_redirection(char *const *filename, int file_mask,
-		int file_perm, int io_num)
+static int	do_each_redirection(const char *filename, int flags, mode_t perm,
+		int io_fd)
 {
 	int	fd;
 
-	fd = open(filename, file_mask, file_perm);
+	if (!filename)
+		return (-1);
+	if (perm == 0)
+		fd = open(filename, flags);
+	else
+		fd = open(filename, flags, perm);
 	if (fd < 0)
 		return (-1);
-	dup2(fd, io_num);
+	if (dup2(fd, io_fd) < 0)
+	{
+		close(fd);
+		return (-1);
+	}
 	close(fd);
+	return (0);
 }
 
-static int	do_redirect_hd(t_ast *cur)
+static int	do_redirect_hd(t_redir *hd)
 {
 	int	fd;
 
-	fd = make_heredoc(cur);
+	fd = make_heredoc(hd);
 	if (fd < 0)
 		return (-1);
-	dup2(fd, STDIN_FILENO);
+	if (dup2(fd, STDIN_FILENO) < 0)
+	{
+		close(fd);
+		return (-1);
+	}
 	close(fd);
+	return (0);
 }
 
 int	do_redirection(t_ast *node)
 {
 	t_redir	*cur;
-	int		fd;
 
 	if (!node || !node->cmd)
 		return (-1);
@@ -34,16 +48,29 @@ int	do_redirection(t_ast *node)
 	while (cur != NULL)
 	{
 		if (cur->type == REDIR_IN)
-			do_each_redirection(cur->filename, O_RDONLY, STDIN_FILENO, 0000);
+		{
+			if (do_each_redirection(cur->filename, O_RDONLY, 0,
+					STDIN_FILENO) < 0)
+				return (-1);
+		}
 		else if (cur->type == REDIR_HEREDOC)
-			do_redirect_hd(cur);
+		{
+			if (do_redirect_hd(cur) < 0)
+				return (-1);
+		}
 		else if (cur->type == REDIR_OUT)
-			do_each_redirection(cur->filename, O_WRONLY | O_CREAT | O_TRUNC,
-				0644, STDOUT_FILENO);
+		{
+			if (do_each_redirection(cur->filename, O_WRONLY | O_CREAT | O_TRUNC,
+					0644, STDOUT_FILENO) < 0)
+				return (-1);
+		}
 		else if (cur->type == REDIR_APPEND)
-			do_each_redirection(cur->filename, O_WRONLY | O_CREAT | O_TRUNC,
-				0644, STDOUT_FILENO);
+		{
+			if (do_each_redirection(cur->filename,
+					O_WRONLY | O_CREAT | O_APPEND, 0644, STDOUT_FILENO) < 0)
+				return (-1);
+		}
 		cur = cur->next;
 	}
-	return (1);
+	return (0);
 }

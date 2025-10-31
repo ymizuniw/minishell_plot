@@ -6,7 +6,7 @@ char	*ext_unit(char *src, size_t start, size_t end)
 	size_t	len;
 
 	len = end - start;
-	unit = xmalloc(sizeof(char) * len);
+	unit = xmalloc(sizeof(char) * (len + 1));
 	strncpy(unit, &src[start], len);
 	unit[len] = '\0';
 	return (unit);
@@ -17,39 +17,54 @@ int	join_value(char **res, const char *value, size_t size1, size_t size2)
 	*res = realloc(*res, sizeof(char) * (size1 + size2 + 1));
 	if (*res == NULL)
 		return (0);
-	strncpy(*res + size1 + 1, value, size2);
+	strncpy(*res + size1, value, size2);
 	(*res)[size1 + size2] = '\0';
 	return (1);
 }
 
-// improved ver heredoc_value_expansion.
 char	*heredoc_value_expansion(const char *line, bool in_quote, size_t len)
 {
 	size_t		i;
 	char		*res;
 	size_t		start;
 	char		*varname;
-	const char	*val = getenv(varname);
-	char		tmp[2] = {line[i++], '\0'};
+	const char	*val;
+	char		tmp[2];
 
 	i = 0;
 	res = strdup("");
+	if (!res)
+		return (NULL);
 	while (i < len)
 	{
 		if (line[i] == '$' && !in_quote)
 		{
 			start = ++i;
-			while (i < len && (isalnum(line[i]) || line[i] == '_'))
+			while (i < len && (isalnum((unsigned char)line[i])
+					|| line[i] == '_'))
 				i++;
 			varname = ext_unit((char *)line, start, i);
+			val = getenv(varname);
 			if (!val)
 				val = "";
-			join_value(&res, val, strlen(res), strlen(val));
+			if (!join_value(&res, val, strlen(res), strlen(val)))
+			{
+				free(varname);
+				free(res);
+				return (NULL);
+			}
 			free(varname);
 		}
 		else
 		{
-			join_value(&res, tmp, strlen(res), 1);
+			tmp[0] = line[i];
+			tmp[1] = '\0';
+			if (!join_value(&res, tmp, strlen(res), 1))
+			{
+				free(res);
+				return (NULL);
+			}
+			i++;
 		}
 	}
 	return (res);
