@@ -7,10 +7,16 @@ void	fgen_tree(t_ast **parent, t_token **cur_token)
 	t_ast	*node;
 	t_ast	*op_node;
 
-	if (!parent || !cur_token || !*cur_token
-		|| token_is_newline_or_eof((*cur_token)->type)
-		|| (*cur_token)->type == TK_HEAD)
+	if (!parent || !cur_token || !*cur_token || (*cur_token)->type == TK_HEAD)
 		return ;
+	// Stop at NEWLINE or EOF (command separator)
+	if (token_is_newline_or_eof((*cur_token)->type))
+	{
+		// Advance past NEWLINE for next command
+		if ((*cur_token)->type == TK_NEWLINE)
+			*cur_token = (*cur_token)->next;
+		return ;
+	}
 	node = NULL;
 	if (token_is_command((*cur_token)->type))
 		node = gen_command_node(*parent, cur_token);
@@ -37,25 +43,34 @@ void	fgen_tree(t_ast **parent, t_token **cur_token)
 		*parent = node;
 }
 
-t_ast	*parse(t_token *token_head)
+t_ast	*parse(t_token **cur_token)
 {
 	t_ast	*root;
-	t_token	*cur;
 
 	root = NULL;
-	if (!token_head || token_head->type != TK_HEAD)
+	if (!cur_token || !*cur_token)
+	{
+		fprintf(stderr, "DEBUG parse: cur_token is NULL\n");
 		return (NULL);
-	cur = token_head->next;
-	if (!cur || cur->type == TK_EOF)
+	}
+	// Skip TK_HEAD if present (it's just a sentinel node)
+	if ((*cur_token)->type == TK_HEAD)
+		*cur_token = (*cur_token)->next;
+	if (!*cur_token || (*cur_token)->type == TK_EOF)
+	{
+		fprintf(stderr, "DEBUG parse: cur is NULL or TK_EOF\n");
 		return (NULL);
-	fgen_tree(&root, &cur);
-	if (cur && cur->type != TK_EOF && cur->type != TK_HEAD)
-		return (NULL);
+	}
+	fprintf(stderr, "DEBUG parse: Calling fgen_tree with cur->type=%d\n",
+		(*cur_token)->type);
+	fgen_tree(&root, cur_token);
+	fprintf(stderr, "DEBUG parse: After fgen_tree, root=%p cur->type=%d\n",
+		(void *)root, *cur_token ? (int)(*cur_token)->type : -1);
 	return (root);
 }
 
 // legacy entry point expected by main.c and headers
-t_ast	*parser(t_token *token_list)
+t_ast	*parser(t_token **cur_token)
 {
-	return (parse(token_list));
+	return (parse(cur_token));
 }

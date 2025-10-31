@@ -1,0 +1,307 @@
+#include "../../../../includes/minishell.h"
+
+// if
+
+int	before_doller_cat(char **expanded_word, size_t expanded_word_len,
+		char *value, size_t value_len)
+{
+	*expanded_word = realloc(*expanded_word, sizeof(char) * (expanded_word_len
+				+ value_len + 1));
+	if (*expanded_word == NULL)
+		return (-1);
+	memcpy(*expanded_word + expanded_word_len, value, value_len);
+	(*expanded_word)[expanded_word_len + value_len] = '\0';
+	return (1);
+}
+
+int	doller_cat(char **doller, char **expanded_word, size_t expanded_word_len,
+		t_shell *shell)
+{
+	size_t	value_idx;
+	char	*key;
+	char	*value;
+	size_t	value_len;
+	t_env	*env_entry;
+	bool	need_free_value;
+	char	*tmp;
+
+	value_idx = 0;
+	need_free_value = false;
+	// --- 無効ケース（$ の直後が終端または無効文字） ---
+	if ((*doller)[1] == '\0' || (!isalnum((*doller)[1]) && (*doller)[1] != '_'
+			&& (*doller)[1] != '?'))
+	{
+		before_doller_cat(expanded_word, expanded_word_len, "$", 1);
+		*doller = strchr(*doller + 1, '$');
+		return (1);
+	}
+	// --- $? の特例 ---
+	if ((*doller)[1] == '?')
+		value_idx = 1;
+	else
+		while ((*doller)[1 + value_idx] && (isalnum((unsigned char)(*doller)[1
+					+ value_idx]) || (*doller)[1 + value_idx] == '_'))
+			value_idx++;
+	key = strndup(*doller + 1, value_idx);
+	if (!key)
+		return (-1);
+	if (strcmp(key, "?") == 0)
+	{
+		value = ft_itoa(shell->last_exit_status);
+		need_free_value = true;
+	}
+	else
+	{
+		env_entry = find_env(shell->env_list, key);
+		value = env_entry ? env_entry->value : "";
+	}
+	free(key);
+	value_len = strlen(value);
+	tmp = realloc(*expanded_word, expanded_word_len + value_len + 1);
+	if (!tmp)
+	{
+		if (need_free_value)
+			free(value);
+		return (-1);
+	}
+	*expanded_word = tmp;
+	memcpy(*expanded_word + expanded_word_len, value, value_len);
+	(*expanded_word)[expanded_word_len + value_len] = '\0';
+	if (need_free_value)
+		free(value);
+	*doller = strchr(*doller + 1 + value_idx, '$');
+	return (1);
+}
+
+// int	doller_cat(char **doller, char **expanded_word,
+		size_t expanded_word_len,
+// 		t_shell *shell)
+// {
+// 	size_t	value_idx;
+// 	char	*key;
+// 	char	*value;
+// 	size_t	value_len;
+// 	t_env	*env_entry;
+// 	bool	need_free_value;
+
+// 	value_idx = 0;
+// 	need_free_value = false;
+// 	while ((*doller)[1 + value_idx] != '\0'
+// 		&& (isalnum((unsigned char)(*doller)[1 + value_idx]) || (*doller)[1
+// 			+ value_idx] == '_' || (*doller)[1 + value_idx] == '?'))
+// 		value_idx++;
+// 	key = strndup(*doller + 1, value_idx);
+// 	if (!key)
+// 		return (-1);
+// 	if (strcmp(key, "?") == 0)
+// 	{
+// 		value = ft_itoa(shell->last_exit_status);
+// 		need_free_value = true;
+// 	}
+// 	else
+// 	{
+// 		env_entry = find_env(shell->env_list, key);
+// 		if (env_entry != NULL)
+// 			value = env_entry->value;
+// 		else
+// 			value = "";
+// 	}
+// 	free(key);
+// 	key = NULL;
+// 	value_idx++;
+// 	if (*expanded_word != NULL)
+// 		expanded_word_len = strlen(*expanded_word);
+// 	if (value != NULL)
+// 		value_len = strlen(value);
+// 	*expanded_word = realloc(*expanded_word, sizeof(char) * (expanded_word_len
+// 				+ value_len) + 1);
+// 	if (*expanded_word == NULL)
+// 	{
+// 		if (need_free_value)
+// 			free(value);
+// 		return (-1);
+// 	}
+// 	memcpy(*expanded_word + expanded_word_len, value, value_len);
+// 	(*expanded_word)[expanded_word_len + value_len] = '\0';
+// 	if (need_free_value)
+// 		free(value);
+// 	*doller = strchr(*doller + value_idx + 1, '$');
+// 	return (1);
+// }
+
+char	*expand_word(char *word, t_shell *shell)
+{
+	char	*expanded;
+	char	*d;
+	size_t	exp_len;
+	size_t	plain_len;
+	size_t	tail_len;
+
+	expanded = NULL;
+	d = strchr(word, '$');
+	exp_len = 0;
+	while (d)
+	{
+		plain_len = d - word;
+		before_doller_cat(&expanded, exp_len, word, plain_len);
+		exp_len += plain_len;
+		doller_cat(&d, &expanded, exp_len, shell);
+		exp_len = strlen(expanded);
+		word = d;
+	}
+	if (*word)
+	{
+		tail_len = strlen(word);
+		before_doller_cat(&expanded, exp_len, word, tail_len);
+	}
+	return (expanded ? expanded : strdup(""));
+}
+
+// // this is the key function for word expansion.
+// char	*expand_word(char *word, t_shell *shell)
+// {
+// 	char	*expanded_word;
+// 	char	*doller;
+// 	char	*value;
+// 	size_t	expanded_word_len;
+// 	size_t	value_len;
+// 	char	*previous_doller;
+// 	size_t	word_len;
+// 	size_t	first_idx;
+
+// 	if (word == NULL)
+// 		return (strdup(""));
+// 	expanded_word_len = 0;
+// 	value_len = 0;
+// 	value = NULL;
+// 	expanded_word = NULL;
+// 	doller = strchr(word, '$');
+// 	if (!doller)
+// 		return (strdup(word));
+// 	previous_doller = word;
+// 	while (doller)
+// 	{
+// 		value_len = (size_t)(doller - previous_doller);
+// 		if (expanded_word)
+// 			expanded_word_len = strlen(expanded_word);
+// 		if (value)
+// 			value_len = strlen(value);
+// 		first_idx = 0;
+// 		if (previous_doller != word)
+// 			first_idx = 1;
+// 		value = strndup(previous_doller + first_idx, value_len);
+// 		if (!value)
+// 		{
+// 			// free_
+// 			return (NULL);
+// 		}
+// 		before_doller_cat(&expanded_word, expanded_word_len, value, value_len);
+// 		doller_cat(&doller, &expanded_word, expanded_word_len, shell);
+// 		previous_doller = doller;
+// 	}
+// 	word_len = strlen(word);
+// 	if (doller == &word[word_len])
+// 		return (expanded_word);
+// 	else
+// 		before_doller_cat(&expanded_word, expanded_word_len, value, value_len);
+// 	return (expanded_word);
+// }
+
+//"$" is not handling well, but it is recognized as TK_DOLLER in my lexer,
+// so it never comes here.
+
+// int	main(void)
+// {
+// 	size_t	i;
+// 	char	*word_list[] = {"$", NULL};
+// 	char	*expanded_word;
+
+// 	// "no expansion", "$UNIT", , "$JOINEDbb", "term $", "$"
+// 	i = 0;
+// 	for (i = 0; word_list[i] != NULL; i++)
+// 	{
+// 		expanded_word = expand_word(word_list[i]);
+// 		// just for safety
+// 		if (expanded_word == NULL)
+// 			return (1);
+// 		printf("result: %s\n", expanded_word);
+// 		free(expanded_word);
+// 	}
+// 	// for (i=0;i<1;i++)
+// 	// {
+// 	// 	char *expanded_word = expand_word(word_list[i]);
+// 	// 	printf("result: %s\n", expanded_word);
+// 	// 	free(expanded_word);
+// 	// }
+// 	return (0);
+// }
+
+/*
+	gen_argv() runs on argv_list and extract argv.
+	the parser is from end to start, but by parse_simple_command(),
+	the ptr for command tokens are proceeded till the end of succeeded command token.
+
+	DATA_STRUCTURE:
+
+	char			*word;
+	bool			to_expand;
+	struct s_argv	*next;
+
+	for each argv_node, if to_expand is true,
+		then expand doller and concatenate it to the word.
+	The env_list shall be provided later for this function's argment,
+		though there is getenv() temporarily.
+
+	The return value is expanded(if doller is found) word list char **argv,
+		for executor.
+*/
+
+char	**gen_argv(t_argv *argv_list, t_shell *shell)
+{
+	t_argv	*cur_argv;
+	size_t	argv_idx;
+	size_t	list_len;
+	char	**argv;
+
+	argv_idx = 0;
+	argv = NULL;
+	fprintf(stderr, "DEBUG gen_argv: called with argv_list=%p\n",
+		(void *)argv_list);
+	if (argv_list == NULL)
+	{
+		fprintf(stderr, "DEBUG gen_argv: argv_list is NULL, returning NULL\n");
+		return (NULL);
+	}
+	// Count list length first
+	list_len = 0;
+	cur_argv = argv_list;
+	while (cur_argv)
+	{
+		list_len++;
+		cur_argv = cur_argv->next;
+	}
+	// Allocate array
+	argv = malloc(sizeof(char *) * (list_len + 1));
+	if (!argv)
+		return (NULL);
+	// Fill array in REVERSE order (parser creates list backward)
+	cur_argv = argv_list;
+	argv_idx = list_len;
+	while (cur_argv != NULL)
+	{
+		argv_idx--;
+		fprintf(stderr, "DEBUG gen_argv: Processing word='%s', to_expand=%d\n",
+			cur_argv->word, cur_argv->to_expand);
+		if (cur_argv->to_expand == true)
+			argv[argv_idx] = expand_word(cur_argv->word, shell);
+		else
+			argv[argv_idx] = strdup(cur_argv->word);
+		fprintf(stderr, "DEBUG gen_argv: argv[%zu]='%s'\n", argv_idx,
+			argv[argv_idx]);
+		cur_argv = cur_argv->next;
+	}
+	argv[list_len] = NULL;
+	fprintf(stderr, "DEBUG gen_argv: Returning argv with %zu elements\n",
+		list_len);
+	return (argv);
+}

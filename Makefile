@@ -64,7 +64,9 @@ HEREDOC_SRC = $(HEREDOC_DIR)/ft_mkstmp.c \
 SEARCH_EXEC_SRC = $(SEARCH_EXEC_DIR)/search_and_exec.c \
                   $(SEARCH_EXEC_DIR)/run_external_cmd.c \
                   $(SEARCH_EXEC_DIR)/find_command_path.c \
-                  $(SEARCH_EXEC_DIR)/ft_string_utils.c
+                  $(SEARCH_EXEC_DIR)/ft_string_utils.c \
+                  $(SEARCH_EXEC_DIR)/fucking_expand_value.c \
+                  $(SEARCH_EXEC_DIR)/ft_itoa.c
 
 LEXER_SRC = $(LEXER_DIR)/lexer.c
 

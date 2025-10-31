@@ -3,7 +3,8 @@
 // conduct redirection and execute command.
 int	exec_command(t_ast *node, t_shell *shell)
 {
-	int	redir_ret;
+	int		redir_ret;
+	char	**expanded_argv;
 
 	if (!node || !node->cmd)
 		return (-1);
@@ -14,8 +15,21 @@ int	exec_command(t_ast *node, t_shell *shell)
 			perror(node->cmd->redir->filename);
 		return (1);
 	}
-	if (!node->cmd->argv || !node->cmd->argv[0])
+	// Expand argv_list to char** just before execution
+	if (!node->cmd->argv_list)
 		return (0);
-	search_and_exec(shell, node->cmd->argv);
+	expanded_argv = gen_argv(node->cmd->argv_list, shell);
+	if (!expanded_argv || !expanded_argv[0])
+	{
+		if (expanded_argv)
+			free(expanded_argv);
+		return (0);
+	}
+	// Execute with expanded argv
+	search_and_exec(shell, expanded_argv);
+	// Clean up expanded argv
+	for (int i = 0; expanded_argv[i]; i++)
+		free(expanded_argv[i]);
+	free(expanded_argv);
 	return (0);
 }

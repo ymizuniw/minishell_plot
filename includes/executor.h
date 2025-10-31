@@ -24,4 +24,9 @@ void			search_in_path_and_exec(t_shell *shell, char **cmd_args);
 char			*find_command_path(t_shell *shell, char *cmd);
 char			**generate_envp(t_env *env_list);
 
+// Variable expansion (at execution time)
+char			**gen_argv(t_argv *argv_list, t_shell *shell);
+char			*expand_word(char *word, t_shell *shell);
+char			*ft_itoa(int n);
+
 #endif

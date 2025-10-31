@@ -25,6 +25,7 @@ int	exec_pipe(t_ast *node, t_shell *shell)
 	}
 	if (right_pid == 0)
 	{
+		set_sig_dfl();
 		close(pip[0]);
 		if (dup2(pip[1], STDOUT_FILENO) < 0)
 			_exit(1);
@@ -45,6 +46,7 @@ int	exec_pipe(t_ast *node, t_shell *shell)
 	}
 	if (left_pid == 0)
 	{
+		set_sig_dfl();
 		close(pip[1]);
 		if (dup2(pip[0], STDIN_FILENO) < 0)
 			_exit(1);

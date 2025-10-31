@@ -136,8 +136,8 @@ typedef struct s_argv
 
 typedef struct s_cmd
 {
+	t_argv			*argv_list;
 	char			**argv;
-	// t_argv *argv_list;
 	t_redir			*redir;
 }					t_cmd;
 

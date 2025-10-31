@@ -12,7 +12,6 @@
 
 // main.c
 t_token		*lexer(const char *input);
-t_ast		*parser(t_token *token_list);
 t_result	*executor(t_ast *ast, t_shell *shell);
 
 #endif

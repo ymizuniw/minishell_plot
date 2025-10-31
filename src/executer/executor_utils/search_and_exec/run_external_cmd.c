@@ -6,7 +6,7 @@
 /*   By: ymizuniw <ymizuniw@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 21:00:12 by kemotoha          #+#    #+#             */
-/*   Updated: 2025/10/31 14:05:54 by ymizuniw         ###   ########.fr       */
+/*   Updated: 2025/10/31 14:30:21 by ymizuniw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ void	search_in_path_and_exec(t_shell *shell, char **cmd_args)
 {
 	pid_t	pid;
 	char	*cmd_path;
-	int		status;
 	char	**envp;
 
 	if (!cmd_args || !cmd_args[0])
@@ -103,18 +102,19 @@ void	search_in_path_and_exec(t_shell *shell, char **cmd_args)
 		perror("fork");
 		free(cmd_path);
 		free_envp(envp);
+		shell->last_exit_status = 1;
 		return ;
 	}
 	if (pid == 0)
 	{
+		set_sig_dfl();
 		execve(cmd_path, cmd_args, envp);
 		perror("execve");
 		free(cmd_path);
 		free_envp(envp);
-		shell->last_exit_status = 127;
 		exit(127);
 	}
 	free(cmd_path);
 	free_envp(envp);
-	waitpid(pid, &status, 0);
+	handle_child(&shell->last_exit_status, pid);
 }

@@ -4,8 +4,8 @@
 # include "minishell_types.h"
 
 // Public parser API
-t_ast	*parse(t_token *token_head);
-t_ast	*parser(t_token *token_list);
+t_ast	*parse(t_token **cur_token);
+t_ast	*parser(t_token **cur_token);
 
 // Token classification helpers
 int		token_is_operator(t_token_type type);
