@@ -3,8 +3,8 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -D_DEFAULT_SOURCE
 # -fsanitize=address
 # -g
-LDFLAGS = -lreadline
-INC = includes
+CPPFLAGS = -I/opt/homebrew/opt/readline/include/
+LDFLAGS = -L/opt/homebrew/opt/readline/lib
 
 #for later rename.
 # lex_util_
@@ -113,10 +113,10 @@ CORE_OBJS := $(CORE_SRCS:.c=.o)
 
 # COMPILATION RULES
 %.o: %.c
-	$(CC) $(CFLAGS) -I$(INC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) $(CPPFLAGS) -lreadline -o $(NAME)
 
 all: $(NAME)
 
