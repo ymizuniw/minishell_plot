@@ -7,22 +7,25 @@ int	handle_quotation(char **word, size_t word_len, char const *input,
 		size_t *idx, size_t *consumed_len, char quote_open)
 {
 	size_t	add_len;
-	char	*quote_close;
+	char	*quote_close = NULL;
 
-	quote_close = strchr(&input[*idx + 1], quote_open);
+	if (input[*idx+1] && quote_open)
+		quote_close = strchr(&input[*idx + 1], quote_open);
 	if (!quote_close)
 	{
-		// syntax_error.
-		return (-1);
+		printf("this branch.\n");
+		// (*idx)++;
+		return (0);
 	}
-	add_len = quote_close - &input[*idx] + 1;
 	// printf("add_len: %zu\n", add_len);
+
+	add_len = quote_close - &input[*idx] -1;
 	*word = realloc(*word, sizeof(char) * (word_len + add_len + 1));
 	if (!*word)
-		return (0);
-	strncpy(*word + word_len, &input[*idx], add_len);
+		return (-1);
+	strncpy(*word + word_len, &input[*idx+1], add_len);
 	(*word)[add_len] = '\0';
-	*idx += add_len;
+	*idx += add_len + 2;
 	*consumed_len = add_len;
 	return (1);
 }
@@ -37,8 +40,8 @@ int	handle_plain(char **word, size_t word_len, char const *input,
 	add_len = 0;
 	tmp_ptr = &input[*idx];
 	while (*idx < input_len && !isspace((int)input[*idx])
-		&& is_meta_char(input[*idx]) == MT_OTHER && !is_quote(input[*idx]))
-		(*idx)++; // here idx is proceeded, so consumed_len is no need, is it?
+		&& is_meta_char(input[*idx]) == MT_OTHER)
+		(*idx)++;
 	add_len = &input[*idx] - tmp_ptr;
 	if (add_len == 0)
 		return (-1);
@@ -68,15 +71,28 @@ size_t	word_cat(char **word, size_t word_len, char const *input,
 		size_t input_len, size_t *idx)
 {
 	size_t			consumed_len;
-	unsigned char	quote_open;
+	unsigned char	quote_open = '\0';
 
 	consumed_len = 0;
-	quote_open = is_quote(input[*idx]);
+	if (input[*idx])
+		quote_open = is_quote(input[*idx]);
+	printf("\n==word_cat() called.==\ninput[%zu]: %s\n", *idx, &input[*idx]);
 	if (quote_open)
 	{
-		if (handle_quotation(word, word_len, input, idx, &consumed_len,
-				quote_open) < 0)
+		int quote_even = 0;
+		quote_even = handle_quotation(word, word_len, input, idx, &consumed_len,
+				quote_open);
+		if (quote_even == 0)
+		{
+			if (handle_plain(word, word_len, input, input_len, idx,
+				&consumed_len) < 0)
 			return (0);
+		}
+		// else if (quote_even < 0)
+		// 	return (0);
+		// if (handle_quotation(word, word_len, input, idx, &consumed_len,
+		// 		quote_open) < 0)
+		return (0);
 	}
 	else
 	{
@@ -85,7 +101,7 @@ size_t	word_cat(char **word, size_t word_len, char const *input,
 			return (0);
 	}
 	if (*idx < input_len && (is_quote(input[*idx])
-			|| (is_meta_char(input[*idx]) == MT_OTHER
+			&& (is_meta_char(input[*idx]) == MT_OTHER
 				&& !isspace((int)input[*idx]))))
 	{
 		if (cat_after_quotation(word, word_len, input, input_len, idx,
