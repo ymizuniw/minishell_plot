@@ -9,7 +9,7 @@ int	token_is_operator(t_token_type type)
 
 int	token_is_subshell_close(t_token_type type)
 {
-	if (type == TK_LPAREN)
+	if (type == TK_RPAREN)
 		return (1);
 	return (0);
 }

@@ -3,7 +3,16 @@
 //) command_list (
 static int	check_lparen(t_token *token)
 {
-	(void)token;
+	t_token	*next;
+
+	// Opening parenthesis should have content after it
+	if (!token || !token->next)
+		return (0);
+	next = token->next;
+	// Next token should be a command, another subshell, or redirection
+	if (token_is_command(next->type) || next->type == TK_LPAREN
+		|| token_is_redirection(next->type))
+		return (1);
 	return (0);
 }
 

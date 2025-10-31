@@ -33,11 +33,6 @@ t_ast	*gen_subshell_node(t_ast *parent, t_token **cur_token)
 
 	if (!cur_token)
 		return (NULL);
-	if (!syntax_check(*cur_token))
-	{
-		syntax_error((*cur_token)->type);
-		return (NULL);
-	}
 	node = alloc_node();
 	if (!node)
 		return (NULL);
@@ -45,7 +40,20 @@ t_ast	*gen_subshell_node(t_ast *parent, t_token **cur_token)
 	node->parent = parent;
 	node->type = NODE_SUBSHELL;
 	subroot = NULL;
-	fgen_tree(&subroot, cur_token);
+	// Skip TK_RPAREN first (marks beginning in reversed order)
+	if ((*cur_token)->type == TK_RPAREN)
+		*cur_token = (*cur_token)->next;
+	// Parse until TK_LPAREN (marks end in reversed order)
+	while (*cur_token && (*cur_token)->type != TK_LPAREN
+		&& (*cur_token)->type != TK_EOF)
+	{
+		fgen_tree(&subroot, cur_token);
+		if (*cur_token && (*cur_token)->type == TK_LPAREN)
+			break ;
+	}
+	// Skip TK_LPAREN at end
+	if (*cur_token && (*cur_token)->type == TK_LPAREN)
+		*cur_token = (*cur_token)->next;
 	node->subtree = subroot;
 	return (node);
 }
