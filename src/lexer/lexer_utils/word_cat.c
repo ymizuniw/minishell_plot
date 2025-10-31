@@ -9,11 +9,11 @@ int	handle_quotation(char **word, size_t word_len, char const *input,
 	size_t	add_len;
 	char	*quote_close = NULL;
 
-	if (input[*idx+1] && quote_open)
+	if (input[*idx+1])
 		quote_close = strchr(&input[*idx + 1], quote_open);
 	if (!quote_close)
 	{
-		printf("this branch.\n");
+		// printf("this branch.\n");
 		// (*idx)++;
 		return (0);
 	}
@@ -31,8 +31,8 @@ int	handle_quotation(char **word, size_t word_len, char const *input,
 }
 
 // idx is of input[*idx], and consumed_len is for *word's add_len?
-int	handle_plain(char **word, size_t word_len, char const *input,
-		size_t input_len, size_t *idx, size_t *consumed_len)
+int	handle_plain(char **word, size_t *word_len, char const *input,
+		size_t input_len, size_t *idx)
 {
 	size_t		add_len;
 	const char	*tmp_ptr;
@@ -45,68 +45,40 @@ int	handle_plain(char **word, size_t word_len, char const *input,
 	add_len = &input[*idx] - tmp_ptr;
 	if (add_len == 0)
 		return (-1);
-	*word = realloc(*word, sizeof(char) * (word_len + (add_len) + 1));
+	*word = realloc(*word, sizeof(char) * (*word_len + (add_len) + 1));
 	if (!*word)
 		return (-1);
-	strncpy(*word + word_len, tmp_ptr, add_len);
-	(*word)[word_len + add_len] = '\0';
-	*consumed_len = add_len; // next increment is done elsewhere?
-	return (1);
-}
-
-int	cat_after_quotation(char **word, size_t word_len, char const *input,
-		size_t input_len, size_t *idx, size_t *consumed_len)
-{
-	// size_t additional = 0;
-	// additional = word_cat(word, word_len + *consumed_len, input, input_len,
-	// 		idx);
-	// if (additional == 0)
-	// 	return (-1);
-	// *consumed_len += additional;
-	word_cat(word, word_len + *consumed_len, input, input_len, idx);
+	strncpy(*word + *word_len, tmp_ptr, add_len);
+	(*word)[*word_len + add_len] = '\0';
+	*word_len += add_len;
 	return (1);
 }
 
 size_t	word_cat(char **word, size_t word_len, char const *input,
 		size_t input_len, size_t *idx)
 {
-	size_t			consumed_len;
-	unsigned char	quote_open = '\0';
-
-	consumed_len = 0;
-	if (input[*idx])
-		quote_open = is_quote(input[*idx]);
-	printf("\n==word_cat() called.==\ninput[%zu]: %s\n", *idx, &input[*idx]);
-	if (quote_open)
+	// printf("\n==word_cat() called.==\ninput[%zu]: %s\n", *idx, &input[*idx]);
+	while (*idx<input_len)
 	{
-		int quote_even = 0;
-		quote_even = handle_quotation(word, word_len, input, idx, &consumed_len,
-				quote_open);
-		if (quote_even == 0)
+		char q_open = is_quote(input[*idx]);
+		if (q_open!='\0')
 		{
-			if (handle_plain(word, word_len, input, input_len, idx,
-				&consumed_len) < 0)
-			return (0);
+			char *d_close = strchr(&input[*idx + 1], q_open);
+			if (d_close)
+			{
+				size_t ext_len = (size_t)(d_close - &input[*idx + 1]);
+				*word = realloc(*word, sizeof(char)*(*idx + ext_len + 2));
+				if (*word)
+					return 0;
+				memcpy(*word + word_len, &input[*idx + 1], ext_len);
+				(*word)[word_len + ext_len] = '\0';
+				*idx += ext_len + 2;
+				word_len += ext_len;
+				continue ;
+			}
 		}
-		// else if (quote_even < 0)
-		// 	return (0);
-		// if (handle_quotation(word, word_len, input, idx, &consumed_len,
-		// 		quote_open) < 0)
-		return (0);
-	}
-	else
-	{
-		if (handle_plain(word, word_len, input, input_len, idx,
-				&consumed_len) < 0)
+		if (handle_plain(word, &word_len, input, input_len, idx) < 0)
 			return (0);
 	}
-	if (*idx < input_len && (is_quote(input[*idx])
-			&& (is_meta_char(input[*idx]) == MT_OTHER
-				&& !isspace((int)input[*idx]))))
-	{
-		if (cat_after_quotation(word, word_len, input, input_len, idx,
-				&consumed_len) < 0)
-			return (0);
-	}
-	return (consumed_len);
+	return (1);
 }
