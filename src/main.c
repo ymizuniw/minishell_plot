@@ -74,6 +74,11 @@ int	shell_loop(t_shell *shell)
 	while (1)
 	{
 		line = ft_readline("minishell$ ", shell->interactive);
+		if (g_signum == SIGINT)
+		{
+			shell->last_exit_status = 130;
+			g_signum = 0;
+		}
 		if (!line)
 		{
 			if (shell->interactive)
