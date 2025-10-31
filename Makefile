@@ -3,6 +3,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -D_DEFAULT_SOURCE
 # -fsanitize=address
 # -g
+#for Mac Environment
 CPPFLAGS = -I/opt/homebrew/opt/readline/include/
 LDFLAGS = -L/opt/homebrew/opt/readline/lib
 
