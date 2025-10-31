@@ -49,8 +49,6 @@ int	parse_and_exec(t_token *token_list, t_shell *shell)
 	cur = token_list;
 	while (cur && cur->type != TK_EOF)
 	{
-		fprintf(stderr, "DEBUG parse_and_exec: cur=%p type=%d\n", (void *)cur,
-			cur->type);
 		// Skip HEAD and NEWLINE tokens
 		if (cur->type == TK_HEAD || cur->type == TK_NEWLINE)
 		{
@@ -59,9 +57,6 @@ int	parse_and_exec(t_token *token_list, t_shell *shell)
 		}
 		// Parse one command, advancing cur to next unconsumed token
 		ast = parser(&cur);
-		fprintf(stderr,
-			"DEBUG parse_and_exec: parser returned ast=%p,cur->type=%d\n",
-			(void *)ast, cur ? (int)cur->type : -1);
 		if (ast)
 			exec_one_ast(ast, shell);
 		// cur now points to NEWLINE or EOF after parser advanced it
@@ -79,8 +74,6 @@ int	shell_loop(t_shell *shell)
 	while (1)
 	{
 		line = ft_readline("minishell$ ", shell->interactive);
-		fprintf(stderr, "DEBUG: Read line: %s (interactive=%d)\n",
-			line ? line : "(null)", shell->interactive);
 		if (!line)
 		{
 			if (shell->interactive)
@@ -90,10 +83,7 @@ int	shell_loop(t_shell *shell)
 		if (shell->interactive && *line)
 			add_history(line);
 		token_list = lexer(line);
-		fprintf(stderr, "DEBUG: Token list created: %p\n", (void *)token_list);
 		parse_and_exec(token_list, shell);
-		fprintf(stderr, "DEBUG: After parse_and_exec, exit_status=%d\n",
-			shell->last_exit_status);
 		xfree(line);
 		if (token_list)
 			free_token_list(token_list);

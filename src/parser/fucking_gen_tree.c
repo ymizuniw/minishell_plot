@@ -49,23 +49,13 @@ t_ast	*parse(t_token **cur_token)
 
 	root = NULL;
 	if (!cur_token || !*cur_token)
-	{
-		fprintf(stderr, "DEBUG parse: cur_token is NULL\n");
 		return (NULL);
-	}
 	// Skip TK_HEAD if present (it's just a sentinel node)
 	if ((*cur_token)->type == TK_HEAD)
 		*cur_token = (*cur_token)->next;
 	if (!*cur_token || (*cur_token)->type == TK_EOF)
-	{
-		fprintf(stderr, "DEBUG parse: cur is NULL or TK_EOF\n");
 		return (NULL);
-	}
-	fprintf(stderr, "DEBUG parse: Calling fgen_tree with cur->type=%d\n",
-		(*cur_token)->type);
 	fgen_tree(&root, cur_token);
-	fprintf(stderr, "DEBUG parse: After fgen_tree, root=%p cur->type=%d\n",
-		(void *)root, *cur_token ? (int)(*cur_token)->type : -1);
 	return (root);
 }
 

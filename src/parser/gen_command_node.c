@@ -72,23 +72,15 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 	int		parse_success;
 
 	if (!cmd || !cur_token || !*cur_token)
-	{
-		fprintf(stderr, "DEBUG parse_command_list: NULL input\n");
 		return (-1);
-	}
 	parse_success = 0;
 	tmp = *cur_token;
-	fprintf(stderr, "DEBUG parse_command_list: Starting with token type=%d\n",
-		tmp->type);
 	// Find the end of the command tokens
 	while (tmp->next && (token_is_command(tmp->next->type)
 			|| token_is_redirection(tmp->next->type)))
 		tmp = tmp->next;
 	// Save the token AFTER the last command token
 	end_token = tmp->next;
-	fprintf(stderr,
-		"DEBUG parse_command_list: After finding end,tmp->type=%d\n",
-		tmp->type);
 	while (1)
 	{
 		if (token_is_redirection(tmp->type))
@@ -107,24 +99,18 @@ int	parse_command_list(t_cmd *cmd, t_token **cur_token)
 		}
 		else
 			parse_success = parse_simple_command(&cmd->argv_list, tmp);
-		fprintf(stderr, "DEBUG parse_command_list: parse_success=%d\n",
-			parse_success);
 		if (parse_success == 0)
 		{
 			printf("parse %s failed\n", tmp->value);
 			return (-1);
 		}
 		tmp = tmp->prev;
-		fprintf(stderr, "DEBUG parse_command_list: tmp->prev=%p\n",
-			(void *)tmp);
 		if (tmp && (!token_is_command(tmp->type)
 				&& !token_is_redirection(tmp->type)))
 			break ;
 	}
 	// Set cur_token to the token AFTER the last command token
 	*cur_token = end_token;
-	fprintf(stderr, "DEBUG parse_command_list: Returning 1,cur_token type=%d\n",
-		(*cur_token)->type);
 	return (1);
 }
 
